@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 # usage: python plot_xvg.py pressure_1000.xvg [pressure_500.xvg ...]
+'''Plot and compare multiple GROMACS .xvg files (e.g. pressure, density, temperature).'''
+
 import sys
 from pathlib import Path
 import matplotlib.pyplot as plt

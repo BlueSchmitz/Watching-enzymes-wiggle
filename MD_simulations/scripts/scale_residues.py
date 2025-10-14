@@ -1,4 +1,6 @@
+#!/usr/bin/env python3
 # usage: python scale_residues.py > processed_scaled.top
+'''Adds "_" to specific atom names in processed.top'''
 
 # list with all residues named in the paper to be scaled
 residues_to_scale = list(range(19,26)) + list(range(75,83)) + \

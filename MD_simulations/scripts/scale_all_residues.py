@@ -1,5 +1,6 @@
+#!/usr/bin/env python3
 # usage: python scale_all_residues.py > processed_scaled_all.top
-# adds "_" to all residue names in processed.top
+'''Adds "_" to all atom names in processed.top'''
 
 section = None
 

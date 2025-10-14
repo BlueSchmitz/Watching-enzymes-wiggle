@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# usage: python plot_energy_comparison.py energies.xvg energies_scaled_1.00.xvg > energy_diff.log
+# usage: python plot_energy_comparison.py energies.xvg energies_scaled.xvg > energy_diff.log
+'''Compare and plot multiple energy terms from 2 GROMACS .xvg files.'''
 
 import sys
 import numpy as np
@@ -15,7 +16,7 @@ label1 = "Original"
 label2 = "Scaled"
 
 def read_xvg(fname):
-    #Reads multi-column .xvg file with legend info.
+    # Read multi-column .xvg file with legend info
     legends = []
     data = []
     with open(fname) as f:
@@ -45,7 +46,7 @@ terms = leg1
 plt.figure(figsize=(10,6))
 colors = plt.cm.tab10(np.linspace(0,1,len(terms)))
 
-print(f"\nComparing energy terms between:\n  • {file1.name} ({label1})\n  • {file2.name} ({label2})\n")
+print(f"\nComparing energy terms between:\n {file1.name} ({label1})\n and {file2.name} ({label2})\n")
 
 for i, term in enumerate(terms):
     # compute mean/std
