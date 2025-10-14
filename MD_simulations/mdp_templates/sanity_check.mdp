@@ -1,0 +1,30 @@
+; simple test mdp for making frames
+integrator           = md
+dt                   = 0.002
+nsteps               = 1000        ; 1000 steps -> 2 ps 
+nstxout-compressed   = 1
+nstenergy            = 1
+constraints          = h-bonds
+coulombtype          = PME
+rcoulomb             = 1.0
+rvdw                 = 1.0
+pbc                  = xyz
+rlist                = 1.0
+
+; velocities
+gen_vel              = yes
+gen_temp             = 298
+gen_seed             = 1
+
+; thermostat
+tcoupl               = V-rescale
+tc-grps              = System
+tau_t                = 0.1
+ref_t                = 298
+
+; barostat
+pcoupl               = Parrinello-Rahman
+pcoupltype           = isotropic
+tau_p                = 2.0
+ref_p                = 1.0
+compressibility      = 4.5e-5

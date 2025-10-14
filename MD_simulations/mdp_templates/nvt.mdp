@@ -1,0 +1,39 @@
+define                  = -DPOSRES             ; apply position restraints on protein atoms
+; Run parameters
+integrator              = md
+dt                      = 0.002                ; 2 fs
+nsteps                  = 100000               ; 200 ps
+; Output control 
+nstxout                 = 1000                 ; coordinates every 2 ps
+nstvout                 = 1000                 ; velocities every 2 ps
+nstenergy               = 1000                 ; energies every 2 ps
+nstlog                  = 1000                 ; log file output every 2 ps
+; Bond parameters
+continuation            = no                   ; first dynamics run
+constraint_algorithm    = lincs                ; holonomic constraints 
+constraints             = h-bonds              ; bonds involving H are constrained
+lincs_iter              = 1                    ; accuracy of LINCS
+lincs_order             = 4                    ; also related to accuracy
+; Nonbonded settings
+cutoff-scheme           = Verlet
+ns_type                 = grid                 ; search neighboring grid cells
+rcoulomb                = 1.0
+rvdw                    = 1.0
+DispCorr                = EnerPres
+; Electrostatics
+coulombtype             = PME                  ; Particle Mesh Ewald for long-range 
+pme_order               = 4                    ; cubic interpolation
+fourierspacing          = 0.16                 ; grid spacing for FFT
+; Temperature couplling is on
+tcoupl                  = V-rescale            ; modified Berendsen thermostat
+tc-grps                 = Protein Non-Protein
+tau_t                   = 0.1 0.1              ; time constant, in ps
+ref_t                   = 298 298              ; reference temperature, one for each
+; Pressure coupling is off
+pcoupl                  = no                   ; no pressure coupling in NVT
+; Periodic boundary conditions
+pbc                     = xyz                  ; 3-D PBC
+; Velocity generation
+gen_vel                 = yes                  ; assign velocities from Maxwell distribution
+gen_temp                = 298                  ; temperature for Maxwell distribution
+gen_seed                = -1                   ; generate a random seed

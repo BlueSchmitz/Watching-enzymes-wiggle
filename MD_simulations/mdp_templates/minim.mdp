@@ -1,0 +1,11 @@
+integrator  = steep      ; steepest descent algorithm
+emtol       = 500.0      ; maximum force (kJ/mol/nm)
+nsteps      = 50000      ; maximum number of steps
+cutoff-scheme = Verlet
+ns_type     = grid
+coulombtype = PME
+rcoulomb    = 1.0
+rvdw        = 1.0
+pbc         = xyz
+constraints = h-bonds
+constraint-algorithm = lincs
