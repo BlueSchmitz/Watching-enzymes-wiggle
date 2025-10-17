@@ -1,0 +1,5 @@
+#ignore the unzipped force field
+./MD_simulations/force_fields/amber99sb-star-ildnp
+
+#ignore all MODELLER and GROMACS outputs 
+MD_simulations/projects/*/outputs
