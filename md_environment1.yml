@@ -1,0 +1,106 @@
+name: md
+channels:
+  - conda-forge
+  - salilab
+  - defaults
+dependencies:
+  - _libgcc_mutex=0.1
+  - _openmp_mutex=4.5
+  - binutils_impl_linux-64=2.44
+  - bzip2=1.0.8
+  - c-ares=1.34.5
+  - ca-certificates=2025.10.5
+  - cmake=4.1.2
+  - conda-gcc-specs=15.2.0
+  - gcc=15.2.0
+  - gcc_impl_linux-64=15.2.0
+  - gfortran=15.2.0
+  - gfortran_impl_linux-64=15.2.0
+  - hdf5-1146=1.14.6
+  - kernel-headers_linux-64=5.14.0
+  - keyutils=1.6.3
+  - krb5=1.21.3
+  - ld_impl_linux-64=2.44
+  - libcurl=8.14.1
+  - libedit=3.1.20250104
+  - libev=4.33
+  - libexpat=2.7.1
+  - libffi=3.5.2
+  - libgcc=15.2.0
+  - libgcc-devel_linux-64=15.2.0
+  - libgcc-ng=15.2.0
+  - libgfortran5=15.2.0
+  - libgomp=15.2.0
+  - liblzma=5.8.1
+  - libnghttp2=1.67.0
+  - libnsl=2.0.1
+  - libsanitizer=15.2.0
+  - libsqlite=3.50.4
+  - libssh2=1.11.1
+  - libstdcxx=15.2.0
+  - libstdcxx-ng=15.2.0
+  - libuuid=2.41.2
+  - libuv=1.51.0
+  - libxcrypt=4.4.36
+  - libzlib=1.3.1
+  - make=4.4.1
+  - modeller=10.7
+  - ncurses=6.5
+  - openssl=3.5.4
+  - pip=25.2
+  - python=3.10.19
+  - readline=8.2
+  - rhash=1.4.6
+  - setuptools=80.9.0
+  - sysroot_linux-64=2.34
+  - tk=8.6.13
+  - tzdata=2025b
+  - wheel=0.45.1
+  - zlib=1.3.1
+  - zstd=1.5.7
+prefix: /home/blue/miniconda3/envs/md
+
+# Custom compiled software
+custom_packages:
+  gromacs:
+    version: 2024.3
+    path: $CONDA_PREFIX/bin/gmx_mpi
+    patched_with: plumed-2.9.3
+  plumed:
+    version: 2.9.3
+    path: $CONDA_PREFIX/bin/plumed
+
+# Build instructions / patch notes
+notes: |
+  This environment was created and tested by blue on WSL Ubuntu.
+  GROMACS was patched with PLUMED 2.9.3 inside this environment.
+  System compilers were explicitly forced to avoid conda GCC conflicts.
+
+build_gromacs_with_plumed: |
+  # Force system compilers
+  CC=/usr/bin/gcc
+  CXX=/usr/bin/g++
+  FC=/usr/bin/gfortran
+
+  # Patch Plumed and configure
+  cmake .. \
+    -DGMX_BUILD_OWN_FFTW=ON \
+    -DGMX_USE_PLUMED=ON \
+    -DREGRESSIONTEST_DOWNLOAD=ON \
+    -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
+    -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \
+    -DCMAKE_C_COMPILER=$CC \
+    -DCMAKE_CXX_COMPILER=$CXX \
+    -DCMAKE_Fortran_COMPILER=$FC \
+    -DGMX_THREAD_MPI=OFF \
+    -DGMX_MPI=ON
+
+  make -j$(nproc)
+  make install
+
+# MODELLER info
+modeller:
+  version: 10.7
+  license_variable: KEY_MODELLER
+  license_note: "Set automatically via activate.d/modeller.sh in this environment"
+
