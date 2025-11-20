@@ -8,7 +8,7 @@
 #SBATCH --partition=gpu-a100
 #SBATCH --mem-per-cpu=1GB
 #SBATCH --account=Research-AS-BN
-#SBATCH --output=/scratch/blueschmitz/5EKY_monomeric_auto/setup.out
+#SBATCH --output=/scratch/blueschmitz/5EKY_monomeric_auto/simple_MD.out
 #SBATCH --mail-type=ALL ##you can also set BEGIN/END
 
 : '

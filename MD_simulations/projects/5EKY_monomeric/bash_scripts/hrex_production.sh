@@ -2,8 +2,8 @@
 
 #SBATCH --job-name="hrex production run monomer 5EKY"   
 #SBATCH --time=48:00:00
-#SBATCH --ntasks=1 
-#SBATCH --cpus-per-task=8
+#SBATCH --ntasks=12 
+#SBATCH --cpus-per-task=2
 #SBATCH --gpus-per-task=1
 #SBATCH --partition=gpu-a100
 #SBATCH --mem-per-cpu=1GB

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# usage: python plot_energy_comparison.py energies.xvg energies_scaled.xvg > energy_diff.log
+# usage: python energy_comparison.py energies.xvg energies_scaled.xvg > energy_diff.log
 '''Compare and plot multiple energy terms from 2 GROMACS .xvg files.'''
 
 import sys
@@ -16,14 +16,11 @@ label1 = "Original"
 label2 = "Scaled"
 
 def read_xvg(fname):
-    # Read multi-column .xvg file with legend info
-    legends = []
+    # Read multi-column .xvg file 
     data = []
     with open(fname) as f:
         for line in f:
-            if line.startswith('@ s') and 'legend' in line:
-                legends.append(line.split('"')[1])
-            elif line.startswith(('#', '@')):
+            if line.startswith(('#', '@')):
                 continue
             else:
                 parts = line.split()
@@ -32,23 +29,31 @@ def read_xvg(fname):
     data = np.array(data)
     time = data[:,0]
     values = data[:,1:]
-    return time, values, legends
+    return time, values
 
 # Load both files
-t1, val1, leg1 = read_xvg(file1)
-t2, val2, leg2 = read_xvg(file2)
+t1, val1 = read_xvg(file1)
+t2, val2 = read_xvg(file2)
 
-if leg1 != leg2:
-    print("Warning: legend mismatch between files. Matching by order.")
-terms = leg1
+# Check number of columns (excluding time)
+ncols1 = val1.shape[1]
+ncols2 = val2.shape[1]
+
+if ncols1 != 10 or ncols2 != 10:
+    print(f"Error: expecting energy files with 10 energy columns.")
+    print(f"{file1.name} has {ncols1} columns, {file2.name} has {ncols2}.")
+    sys.exit(1)
+
+legends = ["Bond", "Angle", "Proper Dih.", "Per. Imp. Dih.", "LJ-14", "Coulomb-14",
+               "LJ (SR)", "Coulomb (SR)", "Coul. recip.", "Potential"]
 
 # Plot comparison
 plt.figure(figsize=(10,6))
-colors = plt.cm.tab10(np.linspace(0,1,len(terms)))
+colors = plt.cm.tab10(np.linspace(0,1,len(legends)))
 
 print(f"\nComparing energy terms between:\n {file1.name} ({label1})\n and {file2.name} ({label2})\n")
 
-for i, term in enumerate(terms):
+for i, term in enumerate(legends):
     # compute mean/std
     m1, s1 = np.mean(val1[:,i]), np.std(val1[:,i])
     m2, s2 = np.mean(val2[:,i]), np.std(val2[:,i])
