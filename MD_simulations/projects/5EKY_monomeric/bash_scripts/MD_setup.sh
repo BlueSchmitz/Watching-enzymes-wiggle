@@ -104,7 +104,7 @@ cp posre.itp ../4_equilibration/posre.itp
 echo "============= Energy minimization with GROMACS ============="
 cd ../3_minimization
 gmx_mpi grompp -f $minim -c solv_ions.gro -p topol.top -o em.tpr
-gmx_mpi mdrun -deffnm em
+srun gmx_mpi mdrun -deffnm em
 echo 10 0 | gmx_mpi energy -f em.edr -o potential.xvg # choose potential energy (10), 0 terminates input
 python ../plot_xvg.py potential.xvg
 
@@ -116,7 +116,7 @@ cp topol.top ../4_equilibration/topol.top
 cd ../4_equilibration
 # NVT Equilibration
 gmx_mpi grompp -f $nvt -c em.gro -r em.gro -p topol.top -o nvt.tpr
-gmx_mpi mdrun -deffnm nvt -cpt 15
+srun gmx_mpi mdrun -deffnm nvt -cpt 15
 echo 16 0 | gmx_mpi energy -f nvt.edr -o temperature.xvg # choose Temperature (16), 0 terminates input
 python ../plot_xvg.py temperature.xvg
 # NPT Equilibration
@@ -148,7 +148,7 @@ do
              -o npt_${i}.tpr \
               -maxwarn 1
   # ${prev:-nvt.gro} ensures the first run starts from NVT output, then continues from the last .gro
-  gmx_mpi mdrun -deffnm npt_${i} -cpt 15
+  srun gmx_mpi mdrun -deffnm npt_${i} -cpt 15
   echo 18 0 | gmx_mpi energy -f npt_${i}.edr -o pressure_${i}.xvg # choose Pressure (18), 0 terminates input
   echo 24 0 | gmx_mpi energy -f npt_${i}.edr -o density_${i}.xvg # choose Density (24), 0 terminates input
   prev=npt_${i}.gro
