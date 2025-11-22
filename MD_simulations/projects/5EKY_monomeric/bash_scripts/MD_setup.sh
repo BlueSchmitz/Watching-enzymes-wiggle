@@ -68,12 +68,12 @@ module list
 
 # Set paths for mdp_templates, force_fields and pdb file (to change quickly)
 export GMXLIB=../../../../force_fields # make sure this is correct
-minim=../../../mdp_templates/minim.mdp # Minimization mdp file
-nvt=../../../mdp_templates/nvt.mdp # NVT mdp file
-npt=../../../mdp_templates/npt.mdp # NPT mdp file
-sanity=../../../mdp_templates/sanity_check.mdp # Sanity check mdp file
-hrex=../../../mdp_templates/hrex.mdp # HREX mdp file
-tempering=../../../mdp_templates/tempering.mdp # Tempering mdp file
+minim=../../../../mdp_templates/minim.mdp # Minimization mdp file
+nvt=../../../../mdp_templates/nvt.mdp # NVT mdp file
+npt=../../../../mdp_templates/npt.mdp # NPT mdp file
+sanity=../../../../mdp_templates/sanity_check.mdp # Sanity check mdp file
+hrex=../../../../mdp_templates/hrex.mdp # HREX mdp file
+tempering=../../../../mdp_templates/tempering.mdp # Tempering mdp file
 pdb=../../inputs/5EKY_fill.BL00440001.pdb # Input PDB file (with correct protonation states)
 
 # mkdir outputs
