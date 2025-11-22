@@ -1,6 +1,6 @@
 #!/bin/bash  
 
-#SBATCH --job-name="monomeric 5EKY set up"   
+#SBATCH --job-name="monomeric 5EKY production run"   
 #SBATCH --time=48:00:00
 #SBATCH --ntasks=1 
 #SBATCH --cpus-per-task=8
@@ -8,7 +8,7 @@
 #SBATCH --partition=gpu-a100
 #SBATCH --mem-per-cpu=1GB
 #SBATCH --account=Research-AS-BN
-#SBATCH --output=/scratch/blueschmitz/5EKY_monomeric_auto/simple_MD.out
+#SBATCH --output=/scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/5EKY_monomeric/5EKYm_MD_%j.out
 #SBATCH --mail-type=ALL ##you can also set BEGIN/END
 
 : '
@@ -77,4 +77,13 @@ mkdir -p ./outputs/7_simple_MD
 
 ### Simple MD production run ###
 echo "============= Simple MD production run with GROMACS ============="
+cp ./outputs/4_equilibration/npt_5.gro ./outputs/7_simple_MD/npt_pro.gro
+cp ./outputs/4_equilibration/npt_5.cpt ./outputs/7_simple_MD/npt_pro.cpt
+cp ./outputs/4_equilibration/topol_5.top ./outputs/7_simple_MD/topol_pro.top
 cd ./outputs/7_simple_MD
+# remove any line that includes the posre file from the topology file
+sed -i '/posre_5.itp/d' topol_pro.top
+# run simple MD production
+gmx_mpi grompp -f $mdp/simple_MD.mdp -c npt_pro.gro -t npt_pro.cpt -p topol_pro.top -o md.tpr
+srun gmx_mpi mdrun -deffnm md -cpi md.cpt -append -cpt 15
+echo "Simple MD production run finished."

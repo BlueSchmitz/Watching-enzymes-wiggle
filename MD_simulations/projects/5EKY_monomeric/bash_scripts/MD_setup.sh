@@ -127,9 +127,6 @@ do
   cp topol.top topol_$i.top
   sed -i "s/posre.itp/posre_$i.itp/g" topol_$i.top
   echo "Modified topol.top to topol_$i.top."
-  # Change absolute path to force field to relative path in each topol file
-  sed -i "s|/home/blue/master/GROMACS/force_fields|../force_fields|g" topol_$i.top
-  echo "Modified path in topol_$i.top."
 done
 
 # NPT Equilibration
