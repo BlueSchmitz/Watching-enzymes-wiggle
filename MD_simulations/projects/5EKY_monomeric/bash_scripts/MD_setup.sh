@@ -8,7 +8,7 @@
 #SBATCH --partition=gpu-a100
 #SBATCH --mem-per-cpu=1GB
 #SBATCH --account=Research-AS-BN
-#SBATCH --output=/scratch/blueschmitz/5EKY_monomeric_auto/setup.out
+#SBATCH --output=/scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/5EKY_monomeric/5EKYm_setup%j.out
 #SBATCH --mail-type=ALL ##you can also set BEGIN/END
 
 : '
@@ -67,7 +67,7 @@ module load py-numpy/1.26.4
 module list
 
 # Set paths for mdp_templates, force_fields and pdb file (to change quickly)
-export GMXLIB=../../../force_fields # make sure this is correct
+export GMXLIB=../../force_fields # make sure this is correct
 minim=../../mdp_templates/minim.mdp # Minimization mdp file
 nvt=../../mdp_templates/nvt.mdp # NVT mdp file
 npt=../../mdp_templates/npt.mdp # NPT mdp file
