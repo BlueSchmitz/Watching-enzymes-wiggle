@@ -68,12 +68,8 @@ module list
 
 # Set paths for mdp_templates, force_fields and pdb file (to change quickly)
 export GMXLIB=../../../../force_fields # make sure this is correct
-minim=../../../../mdp_templates/minim.mdp # Minimization mdp file
-nvt=../../../../mdp_templates/nvt.mdp # NVT mdp file
-npt=../../../../mdp_templates/npt.mdp # NPT mdp file
-sanity=../../../../mdp_templates/sanity_check.mdp # Sanity check mdp file
-hrex=../../../../mdp_templates/hrex.mdp # HREX mdp file
-tempering=../../../../mdp_templates/tempering.mdp # Tempering mdp file
+mdp=../../../../mdp_templates
+scripts=../../../../scripts
 pdb=../../inputs/5EKY_fill.BL00440001.pdb # Input PDB file (with correct protonation states)
 
 # mkdir outputs
@@ -93,7 +89,7 @@ gmx_mpi editconf -f processed.gro -o boxed.gro -c -d 1.5 -bt cubic
 # Solvate
 gmx_mpi solvate -cp boxed.gro -cs spc216.gro -o solvated.gro -p topol.top
 # Add counterions (neutralize system)
-gmx_mpi grompp -f $minim -c solvated.gro -p topol.top -o ions.tpr -maxwarn 1 # warning ignores net charge 
+gmx_mpi grompp -f $mdp/minim.mdp -c solvated.gro -p topol.top -o ions.tpr -maxwarn 1 # warning ignores net charge 
 echo SOL | gmx_mpi genion -s ions.tpr -o solv_ions.gro -p topol.top -pname NA -neutral
 # -pname NA -neutral: add Na⁺ to neutralize (paper)
 cp solv_ions.gro ../3_minimization/solv_ions.gro
@@ -103,10 +99,10 @@ cp posre.itp ../4_equilibration/posre.itp
 ### 3 Energy minimization ###
 echo "============= Energy minimization with GROMACS ============="
 cd ../3_minimization
-gmx_mpi grompp -f $minim -c solv_ions.gro -p topol.top -o em.tpr
+gmx_mpi grompp -f $mdp/minim.mdp -c solv_ions.gro -p topol.top -o em.tpr
 srun gmx_mpi mdrun -deffnm em
 echo 10 0 | gmx_mpi energy -f em.edr -o potential.xvg # choose potential energy (10), 0 terminates input
-python ../plot_xvg.py potential.xvg
+python $scripts/plot_xvg.py potential.xvg
 
 ### 4 Equilibration ###
 echo "============= Equilibration with GROMACS ============="
@@ -115,10 +111,10 @@ cp em.gro ../4_equilibration/em.gro
 cp topol.top ../4_equilibration/topol.top
 cd ../4_equilibration
 # NVT Equilibration
-gmx_mpi grompp -f $nvt -c em.gro -r em.gro -p topol.top -o nvt.tpr
+gmx_mpi grompp -f $mdp/nvt.mdp -c em.gro -r em.gro -p topol.top -o nvt.tpr
 srun gmx_mpi mdrun -deffnm nvt -cpt 15
 echo 16 0 | gmx_mpi energy -f nvt.edr -o temperature.xvg # choose Temperature (16), 0 terminates input
-python ../plot_xvg.py temperature.xvg
+python $scripts/plot_xvg.py temperature.xvg
 # NPT Equilibration
 # Gradually reduce restraints from 1000 to 5 kJ mol−1 nm−2 by running 5 short NPT simulations of 500 ps each (5*500=2.5 ns)
 for i in 1000 500 250 100 5;
@@ -141,7 +137,7 @@ for i in 1000 500 250 100 5;
 do
   echo "Running NPT equilibration with restraints = ${i}"
 
-  gmx_mpi grompp -f $npt \
+  gmx_mpi grompp -f $mdp/npt.mdp \
              -c ${prev:-nvt.gro} \
              -r ${prev:-nvt.gro} \
              -p topol_${i}.top \
@@ -153,8 +149,8 @@ do
   echo 24 0 | gmx_mpi energy -f npt_${i}.edr -o density_${i}.xvg # choose Density (24), 0 terminates input
   prev=npt_${i}.gro
 done
-python ../plot_xvg.py pressure_*.xvg
-python ../plot_xvg.py density_*.xvg
+python $scripts/plot_xvg.py pressure_*.xvg
+python $scripts/plot_xvg.py density_*.xvg
 cp npt_5.gro ../6_HREX/npt_5.gro
 cp topol_5.top ../6_HREX/topol_5.top
 
