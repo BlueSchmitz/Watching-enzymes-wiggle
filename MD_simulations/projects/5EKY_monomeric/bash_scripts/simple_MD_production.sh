@@ -85,5 +85,5 @@ cd ./outputs/7_simple_MD
 sed -i '/posre_5.itp/d' topol_pro.top
 # run simple MD production
 gmx_mpi grompp -f $mdp/simple_MD.mdp -c npt_pro.gro -t npt_pro.cpt -p topol_pro.top -o md.tpr
-srun gmx_mpi mdrun -deffnm md -cpi md.cpt -append -cpt 15
+srun gmx_mpi mdrun -deffnm md -cpt 15
 echo "Simple MD production run finished."
