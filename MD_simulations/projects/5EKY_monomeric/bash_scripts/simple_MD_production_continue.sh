@@ -73,5 +73,6 @@ scripts=../../../../scripts
 pdb=../../inputs/5EKY_fill.BL00440001.pdb # Input PDB file (with correct protonation states)
 
 # continue simple MD production
+cd outputs/7_simple_MD
 srun gmx_mpi mdrun -deffnm md -cpi md.cpt -append
 echo "Simple MD production run finished."
