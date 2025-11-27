@@ -70,7 +70,7 @@ module list
 export GMXLIB=../../../../force_fields # make sure this is correct
 mdp=../../../../mdp_templates
 scripts=../../../../scripts
-pdb=../../inputs/5EKY_fill.BL00440001.pdb # Input PDB file (with correct protonation states)
+pdb=../../inputs/1JCLd_fill.BL00160001.pdb # Input PDB file (with correct protonation states)
 
 # mkdir outputs
 mkdir -p ./outputs/2_parametrization ./outputs/3_minimization ./outputs/4_equilibration ./outputs/5_sanity_checks ./outputs/6_HREX
