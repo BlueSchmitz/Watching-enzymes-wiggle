@@ -21,7 +21,7 @@ if len(sys.argv) != 8:
     print(f"Usage: {sys.argv[0]} <alnfile.ali> <part_sequence> <full_sequence> <#models> <#loop_refinements> <residue1> <residue2>")
     sys.exit(1)
 
-alnfile, part_sequence, full_sequence, models, loop_refinements, res1, res2 = sys.argv[1], sys.argv[2], sys.argv[3], int(sys.argv[4]), int(sys.argv[5], sys.argv[6], sys.argv[7])
+alnfile, part_sequence, full_sequence, models, loop_refinements, res1, res2 = sys.argv[1], sys.argv[2], sys.argv[3], int(sys.argv[4]), int(sys.argv[5]), sys.argv[6], sys.argv[7]
 
 # parse residues
 def parse_residue(res_str):
