@@ -1,0 +1,126 @@
+
+Due to MODULEPATH changes, the following have been reloaded:
+  1) fftw/3.3.10_openmp_True     2) gromacs/2024.3     3) plumed/2.9.3
+
+
+Currently Loaded Modules:
+  1) slurm/current                   17) libpng/1.6.39
+  2) DefaultModules                  18) python-venv/1.0
+  3) 2025                            19) py-pybind11/2.13.5
+  4) gcc-runtime/13.3.0              20) py-contourpy/1.3.0
+  5) glibc/2.28                      21) py-cycler/0.11.0
+  6) hwloc/2.11.1                    22) py-fonttools/4.39.4
+  7) openblas/0.3.28_threads_openmp  23) py-kiwisolver/1.4.5
+  8) gsl/2.8                         24) py-packaging/24.1
+  9) zlib/1.2.13                     25) libjpeg-turbo/3.0.3
+ 10) openmpi/4.1.7                   26) py-pillow/11.0.0
+ 11) fftw/3.3.10_openmp_True         27) py-pyparsing/3.1.2
+ 12) plumed/2.9.3                    28) py-six/1.16.0
+ 13) cuda/11.6                       29) py-python-dateutil/2.8.2
+ 14) gromacs/2024.3                  30) qhull/2020.2
+ 15) python/3.11.9                   31) py-matplotlib/3.9.2
+ 16) freetype/2.13.2                 32) py-numpy/1.26.4
+
+ 
+
+============= Simple MD production run with GROMACS =============
+               :-) GROMACS - gmx grompp, 2024.3-plumed_2.9.3 (-:
+
+Executable:   /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr/bin/gmx_mpi
+Data prefix:  /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr
+Working dir:  /scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/5EKY_monomeric/outputs/7_simple_MD
+Command line:
+  gmx_mpi grompp -f ../../../../mdp_templates/simple_MD.mdp -c npt_pro.gro -t npt_pro.cpt -p topol_pro.top -o md.tpr
+
+Ignoring obsolete mdp entry 'title'
+Ignoring obsolete mdp entry 'ns_type'
+Generating 1-4 interactions: fudge = 0.5
+Number of degrees of freedom in T-Coupling group Protein is 9782.78
+Number of degrees of freedom in T-Coupling group non-Protein is 122040.22
+Last frame         -1 time  500.000   
+
+Back Off! I just backed up md.tpr to ./#md.tpr.1#
+
+GROMACS reminds you: "And after some more talk we agreed that the wisdom of rats had been grossly overrated, being in fact no greater than that of men" (Joseph Conrad)
+
+Setting the LD random seed to -633674049
+
+Generated 2211 of the 2211 non-bonded parameter combinations
+
+Generated 2211 of the 2211 1-4 parameter combinations
+
+Excluding 3 bonded neighbours molecule type 'Protein_chain_A'
+
+turning H bonds into constraints...
+
+Excluding 2 bonded neighbours molecule type 'SOL'
+
+turning H bonds into constraints...
+
+Excluding 1 bonded neighbours molecule type 'NA'
+
+turning H bonds into constraints...
+Analysing residue names:
+There are:   259    Protein residues
+There are: 20337      Water residues
+There are:     7        Ion residues
+Analysing Protein...
+
+The largest distance between excluded atoms is 0.429 nm between atom 1703 and 1710
+
+Determining Verlet buffer for a tolerance of 0.005 kJ/mol/ps at 298 K
+
+Calculated rlist for 1x1 atom pair-list as 1.034 nm, buffer size 0.034 nm
+
+Set rlist, assuming 4x4 atom pair-list, to 1.000 nm, buffer size 0.000 nm
+
+Note that mdrun will redetermine rlist based on the actual pair-list setup
+
+Reading Coordinates, Velocities and Box size from old trajectory
+
+Will read whole trajectory
+
+Using frame at t = 500 ps
+
+Starting time for run is 0 ps
+Calculating fourier grid dimensions for X Y Z
+Using a fourier grid of 56x56x56, spacing 0.155 0.155 0.155
+
+Estimate for the relative computational load of the PME mesh part: 0.22
+
+This run will generate roughly -112588 Mb of data
+                :-) GROMACS - gmx mdrun, 2024.3-plumed_2.9.3 (-:
+
+Executable:   /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr/bin/gmx_mpi
+Data prefix:  /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr
+Working dir:  /scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/5EKY_monomeric/outputs/7_simple_MD
+Command line:
+  gmx_mpi mdrun -deffnm md -cpt 15
+
+Compiled SIMD is AVX2_256, but CPU also supports AVX_512 (see log).
+Reading file md.tpr, VERSION 2024.3-plumed_2.9.3 (single precision)
+GPU-aware MPI detected, but by default GROMACS will not make use the direct GPU communication capabilities of MPI. For improved performance try enabling the feature by setting the GMX_ENABLE_DIRECT_GPU_COMM environment variable.
+Changing nstlist from 10 to 100, rlist from 1 to 1.168
+
+
+1 GPU selected for this run.
+Mapping of GPU IDs to the 2 GPU tasks in the 1 rank on this node:
+  PP:0,PME:0
+PP tasks will do (non-perturbed) short-ranged interactions on the GPU
+PP task will update and constrain coordinates on the GPU
+PME tasks will do all aspects on the GPU
+Using 1 MPI process
+
+Non-default thread affinity set, disabling internal thread affinity
+
+Using 8 OpenMP threads 
+
+starting mdrun 'Protein in water'
+2500000000 steps, 5000000.0 ps.
+srun: Job step aborted: Waiting up to 122 seconds for job step to finish.
+slurmstepd: error: *** JOB 8643963 ON gpu011 CANCELLED AT 2025-11-24T16:04:12 DUE TO TIME LIMIT ***
+slurmstepd: error: *** STEP 8643963.0 ON gpu011 CANCELLED AT 2025-11-24T16:04:12 DUE TO TIME LIMIT ***
+
+
+Received the TERM signal, stopping within 100 steps
+
