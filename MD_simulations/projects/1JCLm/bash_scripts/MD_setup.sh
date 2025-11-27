@@ -1,6 +1,6 @@
 #!/bin/bash  
 
-#SBATCH --job-name="monomeric 5EKY set up"   
+#SBATCH --job-name="1JCLm set up"   
 #SBATCH --time=05:00:00
 #SBATCH --ntasks=1 
 #SBATCH --cpus-per-task=8
@@ -8,7 +8,7 @@
 #SBATCH --partition=gpu-a100
 #SBATCH --mem-per-cpu=1GB
 #SBATCH --account=Research-AS-BN
-#SBATCH --output=/scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/5EKY_monomeric/5EKYm_setup%j.out
+#SBATCH --output=/scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/1JCLm/1JCLm_setup%j.out
 #SBATCH --mail-type=ALL ##you can also set BEGIN/END
 
 : '
