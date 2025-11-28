@@ -59,10 +59,11 @@ set -euo pipefail
 module load 2024r1
 module load openmpi
 # Add your Spack MPI module path
+module use /home/blueschmitz/spack/share/spack/lmod/linux-rhel8-x86_64/Core
 module use /home/blueschmitz/spack/share/spack/lmod/linux-rhel8-x86_64/openmpi/4.1.6-w6w5qi5/Core
 # Load the modules
-module load gromacs/2020.6
 module load plumed/2.8.0
+module load gromacs/2020.6
 
 # Print modules 
 module list
