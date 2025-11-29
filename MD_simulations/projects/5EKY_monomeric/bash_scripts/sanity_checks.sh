@@ -133,7 +133,20 @@ gmx_mpi mdrun -rerun traj.xtc -s scaled_1.00.tpr -e ener_scaled_1.00.edr -g reru
 echo -e "1\n2\n3\n4\n5\n6\n7\n8\n9\n10" | gmx_mpi energy -f ener_pro.edr -o energies_pro.xvg -xvg none
 echo -e "1\n2\n3\n4\n5\n6\n7\n8\n9\n10" | gmx_mpi energy -f ener_scaled_1.00.edr -o energies_scaled_1.00.xvg -xvg none
 python $scripts/energy_comparison.py energies_pro.xvg energies_scaled_1.00.xvg > energy_diff_1.00.log
-# 2. Sanity check of replica-exchange implementation
+# 2. Sanity check of created topologies: compare energies between 1.00 scaled system and 0.5 scaled system
+# scale all residues to 0.5
+python $scripts/scale_all_residues.py > processed_scaled_all.top
+echo "Generated processed_scaled_all.top with all residues selected for scaling."
+bash $PLUMED_ROOT/lib/plumed/scripts/partial_tempering.sh 0.5 < processed_scaled_all.top  > scaled_0.5_all.top
+echo "Generated scaled_all_0.5.top with scaling factor 0.5 applied to all atoms."
+# produce tpr from scaled topology
+gmx_mpi grompp -f $mdp/sanity_check.mdp -c npt_5.gro -p scaled_0.5_all.top -o scaled_0.5_all.tpr -maxwarn 2
+# Recompute energies using the scaled topology and the previously made trajectory
+gmx_mpi mdrun -rerun traj.xtc -s scaled_0.5_all.tpr -e ener_scaled_0.5_all.edr -g rerun_scaled_0.5_all.log
+# compare energies
+echo -e "1\n2\n3\n4\n5\n6\n7\n8\n9\n10" | gmx_mpi energy -f ener_scaled_0.5_all.edr -o energies_scaled_0.5_all.xvg -xvg none
+python $pyscripts/energy_comparison.py energies_scaled_1.00.xvg energies_scaled_0.5_all.xvg > energy_diff_0.5_all.log
+# 3. Sanity check of replica-exchange implementation
 # Run a short HREX with two equivalent topology files (topol.tpr and scaled_1.00.tpr)
 mkdir -p ./rep0 ./rep1
 : > plumed.dat # empty plumed file

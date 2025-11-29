@@ -15,6 +15,20 @@ file1, file2 = Path(sys.argv[1]), Path(sys.argv[2])
 label1 = "Original"
 label2 = "Scaled"
 
+def extract_scaling_from_filename(fname):
+    # Extract scaling factor from filename, e.g. energies_scaled_1.00.xvg → "1.00"
+    base = fname.replace(".xvg", "")
+    parts = base.split("_")
+
+    # Find last part that can be converted to float
+    for p in reversed(parts):
+        try:
+            float(p)   # check if numeric
+            return p
+        except ValueError:
+            continue
+    return "unknown"
+
 def read_xvg(fname):
     # Read multi-column .xvg file 
     data = []
@@ -34,6 +48,7 @@ def read_xvg(fname):
 # Load both files
 t1, val1 = read_xvg(file1)
 t2, val2 = read_xvg(file2)
+scaling = extract_scaling_from_filename(file2.name)
 
 # Check number of columns (excluding time)
 ncols1 = val1.shape[1]
@@ -66,12 +81,12 @@ for i, term in enumerate(legends):
 
 plt.xlabel("Time (ps)")
 plt.ylabel("Energy (kJ/mol)")
-plt.title("Energy Term Comparison: Original vs Scaled Topology")
+plt.title(f"Energy Comparison (Scaling = {scaling})")
 plt.legend(fontsize=8, ncol=2)
 plt.grid(True, linestyle=':')
 plt.tight_layout()
 
-out_png = "energy_comparison.png"
+out_png = f"energy_comparison_{scaling}.png"
 plt.savefig(out_png, dpi=150)
 plt.close()
 
