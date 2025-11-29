@@ -94,7 +94,10 @@ echo SOL | gmx_mpi genion -s ions.tpr -o solv_ions.gro -p topol.top -pname NA -n
 # -pname NA -neutral: add Na⁺ to neutralize (paper)
 cp solv_ions.gro ../3_minimization/solv_ions.gro
 cp topol.top ../3_minimization/topol.top
-cp posre.itp ../4_equilibration/posre.itp
+cp topol_Protein_chain_A.itp ../3_minimization/topol_Protein_chain_A.itp
+cp topol_Protein_chain_B.itp ../3_minimization/topol_Protein_chain_B.itp
+cp posre_Protein_chain_B.itp ../3_minimization/posre_Protein_chain_B.itp
+cp posre_Protein_chain_A.itp ../3_minimization/posre_Protein_chain_A.itp
 
 ### 3 Energy minimization ###
 echo "============= Energy minimization with GROMACS ============="
