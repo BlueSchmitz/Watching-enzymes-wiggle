@@ -78,7 +78,7 @@ mkdir -p ./outputs/5_sanity_checks ./outputs/6_HREX
 
 ### 5 Set up HREX-MD with PLUMED ###
 echo "Setting up HREX-MD with GROMACS and PLUMED"
-cd ../6_HREX
+cd ./outputs/6_HREX
 # Files we need: npt_5.gro as the starting structure, topol.top without pointers to posre.itp (no more restraints)
 # 1. Remove constraints from topol.top by commenting out the line that includes posre_5.itp
 cp topol_5.top topol_prod.top
