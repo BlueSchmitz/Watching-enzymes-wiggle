@@ -98,7 +98,7 @@ do
   bash $PLUMED_ROOT/lib/plumed/scripts/partial_tempering.sh ${i} < processed_scaled.top  > ./rep${i}/scaled_${i}.top
   echo "Generated scaled_${i}.top in ./rep${i} with scaling factor ${i}."
   cd ./rep${i}
-  gmx_mpi grompp -f $mdp/hrex.mdp -c ../npt_5.gro -p scaled_${i}.top -o topol.tpr
+  gmx_mpi grompp -f ../$mdp/hrex.mdp -c ../npt_5.gro -p scaled_${i}.top -o topol.tpr
   echo "Generated topol.tpr from scaled_${i}.top in ./rep${i}."
   cd ..
 done 
