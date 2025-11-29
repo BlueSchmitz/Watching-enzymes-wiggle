@@ -4,7 +4,7 @@
 
 section = None
 
-with open("../processed.top") as f:
+with open("processed.top") as f:
     for line in f:
         stripped = line.strip()
         # Track section
