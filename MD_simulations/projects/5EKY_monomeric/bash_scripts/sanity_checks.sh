@@ -95,7 +95,7 @@ echo "Generated processed_scaled.top with selected residues for scaling."
 for i in 1.00 0.95 0.91 0.87 0.83 0.79 0.76 0.72 0.69 0.66 0.63 0.60;
 do 
   mkdir -p ./rep${i} # create directory for each replica
-  plumed $PLUMED_ROOT/lib/plumed/scripts/partial_tempering.sh ${i} < processed_scaled.top  > ./rep${i}/scaled_${i}.top
+  bash $PLUMED_ROOT/lib/plumed/scripts/partial_tempering.sh ${i} < processed_scaled.top  > ./rep${i}/scaled_${i}.top
   echo "Generated scaled_${i}.top in ./rep${i} with scaling factor ${i}."
   cd ./rep${i}
   gmx_mpi grompp -f $mdp/hrex.mdp -c ../npt_5.gro -p scaled_${i}.top -o topol.tpr
