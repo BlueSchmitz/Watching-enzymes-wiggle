@@ -1,7 +1,7 @@
 #!/bin/bash  
 
 #SBATCH --job-name="monomeric 5EKY sanity checks"   
-#SBATCH --time=48:00:00
+#SBATCH --time=05:00:00
 #SBATCH --ntasks=2
 #SBATCH --cpus-per-task=8
 #SBATCH --gpus-per-task=0
