@@ -64,6 +64,10 @@ module use /home/blueschmitz/spack/share/spack/lmod/linux-rhel8-x86_64/openmpi/4
 # Load the modules
 module load plumed/2.8.0
 module load gromacs/2020.6
+# Load python and necessary packages
+module load python/3.10.12
+module load py-matplotlib/3.7.1
+module load py-numpy/1.26.1
 
 # Print modules 
 module list
