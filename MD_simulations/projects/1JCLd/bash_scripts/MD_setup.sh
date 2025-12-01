@@ -168,5 +168,7 @@ python $scripts/plot_xvg.py pressure_*.xvg
 python $scripts/plot_xvg.py density_*.xvg
 cp npt_5.gro ../6_HREX/npt_5.gro
 cp topol_5.top ../6_HREX/topol_5.top
+cp topol_Protein_chain_A_5.itp ../6_HREX/topol_Protein_chain_A_5.itp
+cp topol_Protein_chain_B_5.itp ../6_HREX/topol_Protein_chain_B_5.itp
 
 echo "Setup completed successfully."
