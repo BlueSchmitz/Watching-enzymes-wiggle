@@ -112,6 +112,10 @@ echo "============= Equilibration with GROMACS ============="
 mkdir -p ../4_equilibration
 cp em.gro ../4_equilibration/em.gro
 cp topol.top ../4_equilibration/topol.top
+cp topol_Protein_chain_A.itp ../4_equilibration/topol_Protein_chain_A.itp
+cp topol_Protein_chain_B.itp ../4_equilibration/topol_Protein_chain_B.itp
+cp posre_Protein_chain_B.itp ../4_equilibration/posre_Protein_chain_B.itp
+cp posre_Protein_chain_A.itp ../4_equilibration/posre_Protein_chain_A.itp
 cd ../4_equilibration
 # NVT Equilibration
 gmx_mpi grompp -f $mdp/nvt.mdp -c em.gro -r em.gro -p topol.top -o nvt.tpr
@@ -122,14 +126,25 @@ python $scripts/plot_xvg.py temperature.xvg
 # Gradually reduce restraints from 1000 to 5 kJ mol−1 nm−2 by running 5 short NPT simulations of 500 ps each (5*500=2.5 ns)
 for i in 1000 500 250 100 5;
 do
-  # Copy posre.itp 5 times and modify the force constant in each file
-  cp posre.itp posre_$i.itp
-  sed -i "s/\b1000\b/$i/g" posre_$i.itp # \b for whole word match
-  echo "Modified posre.itp to posre_$i.itp."
-  # Modify topol.top to include the correct posre file for each run
-  cp topol.top topol_$i.top
-  sed -i "s/posre.itp/posre_$i.itp/g" topol_$i.top
-  echo "Modified topol.top to topol_$i.top."
+  # Copy posre.itp for both chains for each restraint and modify the force constant in each
+  cp posre_Protein_chain_B.itp posre_Protein_chain_B_$i.itp
+  cp posre_Protein_chain_A.itp posre_Protein_chain_A_$i.itp
+  sed -i "s/\b1000\b/$i/g" posre_Protein_chain_B_$i.itp # \b for whole word match
+  sed -i "s/\b1000\b/$i/g" posre_Protein_chain_A_$i.itp
+  echo "Modified posre_Protein_chain_A.itp to posre_Protein_chain_A_$i.itp."
+  echo "Modified posre_Protein_chain_B.itp to posre_Protein_chain_B_$i.itp."
+  # Modify topol.top for both chains to include the correct posre file for each run
+  cp topol.top topol_${i}.top
+  sed -i "s/topol_Protein_chain_A.itp/topol_Protein_chain_A_$i.itp/g" topol_${i}.top
+  sed -i "s/topol_Protein_chain_B.itp/topol_Protein_chain_B_$i.itp/g" topol_${i}.top
+  echo "Modified topol.top to topol_${i}.top."
+  # Modify topol files for both chains to include the correct posre file for each run
+  cp topol_Protein_chain_A.itp topol_Protein_chain_A_$i.top
+  cp topol_Protein_chain_B.itp topol_Protein_chain_B_$i.top
+  sed -i "s/posre_Protein_chain_A.itp/posre_Protein_chain_A_$i.itp/g" topol_Protein_chain_A_$i.top
+  sed -i "s/posre_Protein_chain_B.itp/posre_Protein_chain_B_$i.itp/g" topol_Protein_chain_B_$i.top
+  echo "Modified topol_Protein_chain_A.itp to topol_Protein_chain_A_$i.top."
+  echo "Modified topol_Protein_chain_B.itp to topol_Protein_chain_B_$i.top."
 done
 
 # NPT Equilibration
