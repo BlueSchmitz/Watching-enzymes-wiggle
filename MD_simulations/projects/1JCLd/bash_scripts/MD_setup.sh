@@ -139,12 +139,12 @@ do
   sed -i "s/topol_Protein_chain_B.itp/topol_Protein_chain_B_$i.itp/g" topol_${i}.top
   echo "Modified topol.top to topol_${i}.top."
   # Modify topol files for both chains to include the correct posre file for each run
-  cp topol_Protein_chain_A.itp topol_Protein_chain_A_$i.top
-  cp topol_Protein_chain_B.itp topol_Protein_chain_B_$i.top
-  sed -i "s/posre_Protein_chain_A.itp/posre_Protein_chain_A_$i.itp/g" topol_Protein_chain_A_$i.top
-  sed -i "s/posre_Protein_chain_B.itp/posre_Protein_chain_B_$i.itp/g" topol_Protein_chain_B_$i.top
-  echo "Modified topol_Protein_chain_A.itp to topol_Protein_chain_A_$i.top."
-  echo "Modified topol_Protein_chain_B.itp to topol_Protein_chain_B_$i.top."
+  cp topol_Protein_chain_A.itp topol_Protein_chain_A_$i.itp
+  cp topol_Protein_chain_B.itp topol_Protein_chain_B_$i.itp
+  sed -i "s/posre_Protein_chain_A.itp/posre_Protein_chain_A_$i.itp/g" topol_Protein_chain_A_$i.itp
+  sed -i "s/posre_Protein_chain_B.itp/posre_Protein_chain_B_$i.itp/g" topol_Protein_chain_B_$i.itp
+  echo "Modified topol_Protein_chain_A.itp to topol_Protein_chain_A_$i.itp."
+  echo "Modified topol_Protein_chain_B.itp to topol_Protein_chain_B_$i.itp."
 done
 
 # NPT Equilibration
