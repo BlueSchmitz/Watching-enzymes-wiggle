@@ -78,16 +78,12 @@ cd ./outputs/7_simple_MD
 ### Simple MD production run ###
 echo "============= Downsizing and Exporting trajectory ============="
 echo -e "1\nq" | gmx_mpi make_ndx -f md.tpr -o index.ndx # make index file with protein group (1)
-
-srun gmx_mpi trjconv \
-    -f md.xtc \
-    -s md.tpr \
-    -n index.ndx \
-    -o md_protein_downsized.xtc \
-    -dt 10 \
-    -center \
-    -pbc nojump \
-    -fit rot+trans << EOF
+# first checks if atoms jump across the box and then puts them back --> continuous trajectory
+gmx_mpi trjconv -f md.xtc -s md.tpr -n index.ndx -o md_protein_pbc.xtc -dt 10 -center -pbc nojump << EOF
+1
+EOF
+# then fit the protein to remove overall rotation and translation
+gmx_mpi trjconv -f md_protein_pbc.xtc -s md.tpr -n index.ndx -o md_protein_downsized.xtc -fit rot+trans << EOF
 1
 1
 EOF
