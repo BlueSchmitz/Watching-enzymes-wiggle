@@ -85,7 +85,6 @@ srun gmx_mpi trjconv \
     -n index.ndx \
     -o md_protein_downsized.xtc \
     -dt 10 \
-    -pbc mol \
     -center \
     -pbc nojump \
     -fit rot+trans << EOF
