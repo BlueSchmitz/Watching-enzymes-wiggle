@@ -79,7 +79,7 @@ cd ./outputs/7_simple_MD
 echo "============= Downsizing and Exporting trajectory ============="
 echo -e "1\nq" | gmx_mpi make_ndx -f md.tpr -o index.ndx # make index file with protein group (1)
 
-gmx_mpi trjconv \
+srun gmx_mpi trjconv \
     -f md.xtc \
     -s md.tpr \
     -n index.ndx \
