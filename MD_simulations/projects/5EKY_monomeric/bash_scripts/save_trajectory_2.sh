@@ -77,4 +77,4 @@ cd ./outputs/7_simple_MD
 
 ### Simple MD production run ###
 echo "============= Downsizing and Exporting trajectory ============="
-echo -e "1\n1" | gmx_mpi trjconv -f md_protein_downsized.xtc -s md.tpr -o md_protein_downsized_500frames.xtc -b 0 -e 500
+echo -e "1\n1" | gmx trjconv -f md.tpr -s md.tpr -o protein_for_chimerax.pdb -b 0 -e 0
