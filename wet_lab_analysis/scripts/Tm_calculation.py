@@ -11,6 +11,7 @@ import numpy as np
 from scipy.optimize import curve_fit
 import matplotlib.pyplot as plt
 import os
+import matplotlib.cm as cm
 
 # Use non-GUI backend (avoids Qt/Wayland errors)
 import matplotlib
@@ -35,7 +36,7 @@ os.makedirs("Tm_plots", exist_ok=True)
 summary_rows = []
 fit_rows = []
 
-for enzyme in sorted(set(col.split("_")[0] for col in enzymes)):  # group replicates
+for enzyme in sorted(set(col.split("_")[0] for col in enzymes)):
     reps = [col for col in enzymes if col.startswith(enzyme)]
     Tm_values = []
     success_count = 0
@@ -46,32 +47,32 @@ for enzyme in sorted(set(col.split("_")[0] for col in enzymes)):  # group replic
     plt.xlabel("Temperature")
     plt.ylabel("Fluorescence")
     
-    for rep in reps:
+    N = len(reps)
+    color_map = cm.get_cmap("viridis", N)  # Viridis colormap for replicates
+    
+    for i, rep in enumerate(reps):
+        color = color_map(i)
         ydata = df[rep].values
         
         # Initial guess
         p0 = [min(ydata), max(ydata), temperatures[np.argmax(np.gradient(ydata))], 1]
-        
-        # Use only data up to max fluorescence
         max_idx = np.argmax(ydata)
         x_fit_data = temperatures[:max_idx+1]
         y_fit_data = ydata[:max_idx+1]
         
         try:
             popt, pcov = curve_fit(boltzmann, x_fit_data, y_fit_data, p0=p0, maxfev=5000)
-            perr = np.sqrt(np.diag(pcov))  # parameter errors
+            perr = np.sqrt(np.diag(pcov))
             
-            # Derivative-based Tm extraction
+            # Derivative-based Tm
             x_fit = np.linspace(min(x_fit_data), max(x_fit_data), 500)
             y_fit = boltzmann(x_fit, *popt)
             dydx = np.gradient(y_fit, x_fit)
             Tm_derivative = x_fit[np.argmax(dydx)]
-            
-            # Store Tm
             Tm_values.append(Tm_derivative)
             success_count += 1
             
-            # Store replicate-level fit parameters
+            # Store replicate-level fit parameters (same as before)
             fit_rows.append({
                 "Enzyme": enzyme,
                 "Replicate": rep,
@@ -86,15 +87,18 @@ for enzyme in sorted(set(col.split("_")[0] for col in enzymes)):  # group replic
                 "Tm_derivative": Tm_derivative
             })
             
-            # Plot
-            plt.plot(temperatures, ydata, 'o', label=f'{rep} data')
-            plt.plot(x_fit, y_fit, '-', label=f'{rep} fit')
+            # Plot points and fit line
+            plt.plot(temperatures, ydata, 'o', color=color, label=f'{rep} data')
+            plt.plot(x_fit, y_fit, '-', color=color, label=f'{rep} fit')
+            
+            # Shaded fit uncertainty
+            y_upper = boltzmann(x_fit, *(popt + perr))
+            y_lower = boltzmann(x_fit, *(popt - perr))
+            plt.fill_between(x_fit, y_lower, y_upper, color=color, alpha=0.2)
             
         except Exception as e:
             print(f"Could not fit {rep}: {e}")
             fail_count += 1
-            
-            # Save failed replicate (with NaNs)
             fit_rows.append({
                 "Enzyme": enzyme,
                 "Replicate": rep,
@@ -109,11 +113,11 @@ for enzyme in sorted(set(col.split("_")[0] for col in enzymes)):  # group replic
                 "Tm_derivative": np.nan
             })
     
-    # Plot mean Tm
+    # Plot mean Tm ± SD
     if Tm_values:
         mean_Tm = np.mean(Tm_values)
         std_Tm = np.std(Tm_values)
-        plt.axvline(mean_Tm, color='r', linestyle='--', label=f'Tm = {mean_Tm:.2f} ± {std_Tm:.2f}')
+        plt.axvline(mean_Tm, color='red', linestyle='--', label=f'Mean Tm = {mean_Tm:.2f} ± {std_Tm:.2f}')
     else:
         mean_Tm = np.nan
         std_Tm = np.nan
@@ -122,7 +126,6 @@ for enzyme in sorted(set(col.split("_")[0] for col in enzymes)):  # group replic
     plt.savefig(f"Tm_plots/{enzyme}_Tm_plot.png", dpi=300)
     plt.close()
     
-    # Add to summary
     summary_rows.append({
         "Enzyme": enzyme,
         "Mean_Tm": mean_Tm,
