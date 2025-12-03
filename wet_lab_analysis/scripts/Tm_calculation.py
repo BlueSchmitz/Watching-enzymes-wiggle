@@ -11,20 +11,18 @@ import numpy as np
 from scipy.optimize import curve_fit
 import matplotlib.pyplot as plt
 import os
-import sys
 
-# Handle inputs
-if len(sys.argv) != 2:
-    print(f"Usage: {sys.argv[0]} <Tm_data.xlsx>")
-    sys.exit(1)
-
-file_path = sys.argv[1]
+# Use non-GUI backend (avoids Qt/Wayland errors)
+import matplotlib
+matplotlib.use("Agg")
 
 # Define Boltzmann sigmoid (lower plateau, upper plateau, Tm, slope)
 def boltzmann(x, A1, A2, Tm, k):
     return A1 + ((A2 - A1) / (1 + np.exp((Tm - x)/k)))
 
 # Load Excel
+import sys
+file_path = sys.argv[1]
 df = pd.read_excel(file_path)
 
 temperatures = df.iloc[:, 0].values
@@ -33,12 +31,15 @@ enzymes = df.columns[1:]  # assume columns like Enzyme1_Rep1, Enzyme1_Rep2, etc.
 # Create output folder
 os.makedirs("Tm_plots", exist_ok=True)
 
-# Prepare results dictionary
-results_summary = {"Enzyme": [], "Mean_Tm": [], "SD_Tm": []}
+# Prepare results dictionaries
+summary_rows = []
+fit_rows = []
 
-for enzyme in set(col.split("_")[0] for col in enzymes):  # group replicates by enzyme
+for enzyme in sorted(set(col.split("_")[0] for col in enzymes)):  # group replicates
     reps = [col for col in enzymes if col.startswith(enzyme)]
     Tm_values = []
+    success_count = 0
+    fail_count = 0
     
     plt.figure()
     plt.title(enzyme)
@@ -47,56 +48,96 @@ for enzyme in set(col.split("_")[0] for col in enzymes):  # group replicates by 
     
     for rep in reps:
         ydata = df[rep].values
+        
+        # Initial guess
         p0 = [min(ydata), max(ydata), temperatures[np.argmax(np.gradient(ydata))], 1]
-        # Find index of max fluorescence
+        
+        # Use only data up to max fluorescence
         max_idx = np.argmax(ydata)
-        # Use only data up to the maximum
         x_fit_data = temperatures[:max_idx+1]
         y_fit_data = ydata[:max_idx+1]
         
         try:
-            popt, pcov = curve_fit(boltzmann, x_fit_data, y_fit_data, p0=p0) # initial guess for Boltzmann parameters
-            # curve_fit: nonlinear least-squares fitting to Boltzmann function
-            # popt: best-fit parameters (A1, A2, Tm, k)
-            # pcov: covariance matrix (used to estimate parameter uncertainties)
-            perr = np.sqrt(np.diag(pcov)) # standard errors of each parameter (square root of the diagonal of pcov)
+            popt, pcov = curve_fit(boltzmann, x_fit_data, y_fit_data, p0=p0, maxfev=5000)
+            perr = np.sqrt(np.diag(pcov))  # parameter errors
             
-            # Derivative
-            x_fit = np.linspace(min(x_fit_data), max(x_fit_data), 500) # temperature grid for smooth plotting and derivative calculation
-            y_fit = boltzmann(x_fit, *popt) # fitted Boltzmann curve using the best-fit parameters
-            dydx = np.gradient(y_fit, x_fit) # numerical derivative of the fited curve
-            Tm_derivative = x_fit[np.argmax(dydx)] # finds the index of maximum derivative
+            # Derivative-based Tm extraction
+            x_fit = np.linspace(min(x_fit_data), max(x_fit_data), 500)
+            y_fit = boltzmann(x_fit, *popt)
+            dydx = np.gradient(y_fit, x_fit)
+            Tm_derivative = x_fit[np.argmax(dydx)]
+            
+            # Store Tm
             Tm_values.append(Tm_derivative)
+            success_count += 1
             
-            # Plot replicate
+            # Store replicate-level fit parameters
+            fit_rows.append({
+                "Enzyme": enzyme,
+                "Replicate": rep,
+                "A1": popt[0],
+                "A2": popt[1],
+                "Tm_fit": popt[2],
+                "k": popt[3],
+                "σA1": perr[0],
+                "σA2": perr[1],
+                "σTm": perr[2],
+                "σk": perr[3],
+                "Tm_derivative": Tm_derivative
+            })
+            
+            # Plot
             plt.plot(temperatures, ydata, 'o', label=f'{rep} data')
             plt.plot(x_fit, y_fit, '-', label=f'{rep} fit')
             
         except Exception as e:
             print(f"Could not fit {rep}: {e}")
+            fail_count += 1
+            
+            # Save failed replicate (with NaNs)
+            fit_rows.append({
+                "Enzyme": enzyme,
+                "Replicate": rep,
+                "A1": np.nan,
+                "A2": np.nan,
+                "Tm_fit": np.nan,
+                "k": np.nan,
+                "σA1": np.nan,
+                "σA2": np.nan,
+                "σTm": np.nan,
+                "σk": np.nan,
+                "Tm_derivative": np.nan
+            })
     
     # Plot mean Tm
     if Tm_values:
         mean_Tm = np.mean(Tm_values)
         std_Tm = np.std(Tm_values)
         plt.axvline(mean_Tm, color='r', linestyle='--', label=f'Tm = {mean_Tm:.2f} ± {std_Tm:.2f}')
-
-        # Add to results
-        results_summary["Enzyme"].append(enzyme)
-        results_summary["Mean_Tm"].append(mean_Tm)
-        results_summary["SD_Tm"].append(std_Tm)
+    else:
+        mean_Tm = np.nan
+        std_Tm = np.nan
     
     plt.legend()
     plt.savefig(f"Tm_plots/{enzyme}_Tm_plot.png", dpi=300)
     plt.close()
     
-    print(f"{enzyme}: Tm = {mean_Tm:.2f} ± {std_Tm:.2f} °C")
+    # Add to summary
+    summary_rows.append({
+        "Enzyme": enzyme,
+        "Mean_Tm": mean_Tm,
+        "SD_Tm": std_Tm,
+        "N_success": success_count,
+        "N_failed": fail_count
+    })
 
-# Save summary table to Excel
-results_df = pd.DataFrame(results_summary)
-# Create file name based on enzymes
-enzyme_list = sorted(set(col.split("_")[0] for col in enzymes))
-enzyme_str = "_".join(enzyme_list)
-output_file = f"Tm_summary_{enzyme_str}.xlsx"
-results_df.to_excel(output_file, index=False)
-print(f"Summary table saved to {output_file}")
+# Save to Excel with multiple sheets
+summary_df = pd.DataFrame(summary_rows)
+fits_df = pd.DataFrame(fit_rows)
+
+output_name = f"Tm_summary_{'_'.join(summary_df['Enzyme'])}.xlsx"
+with pd.ExcelWriter(output_name) as writer:
+    summary_df.to_excel(writer, sheet_name="Enzyme_Summary", index=False)
+    fits_df.to_excel(writer, sheet_name="Replicate_Fits", index=False)
+
+print(f"Summary saved to {output_name}")
