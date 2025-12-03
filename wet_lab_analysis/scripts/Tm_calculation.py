@@ -12,10 +12,8 @@ from scipy.optimize import curve_fit
 import matplotlib.pyplot as plt
 import os
 import matplotlib.cm as cm
-
-# Use non-GUI backend (avoids Qt/Wayland errors)
 import matplotlib
-matplotlib.use("Agg")
+matplotlib.use("Agg") # Use non-GUI backend (avoids errors)
 
 # Define Boltzmann sigmoid (lower plateau, upper plateau, Tm, slope)
 def boltzmann(x, A1, A2, Tm, k):
@@ -48,14 +46,14 @@ for enzyme in sorted(set(col.split("_")[0] for col in enzymes)):
     plt.ylabel("Fluorescence")
     
     N = len(reps)
-    color_map = cm.get_cmap("viridis", N)  # Viridis colormap for replicates
+    color_map = matplotlib.colormaps["viridis"].resampled(N)  # Viridis colormap for replicates
     
     for i, rep in enumerate(reps):
         color = color_map(i)
         ydata = df[rep].values
         
         # Initial guess
-        p0 = [min(ydata), max(ydata), temperatures[np.argmax(np.gradient(ydata))], 1]
+        p0 = [min(ydata), max(ydata), temperatures[np.argmax(np.gradient(ydata))], 2]
         max_idx = np.argmax(ydata)
         x_fit_data = temperatures[:max_idx+1]
         y_fit_data = ydata[:max_idx+1]
@@ -72,7 +70,7 @@ for enzyme in sorted(set(col.split("_")[0] for col in enzymes)):
             Tm_values.append(Tm_derivative)
             success_count += 1
             
-            # Store replicate-level fit parameters (same as before)
+            # Store fit parameters per replicate
             fit_rows.append({
                 "Enzyme": enzyme,
                 "Replicate": rep,
@@ -88,12 +86,20 @@ for enzyme in sorted(set(col.split("_")[0] for col in enzymes)):
             })
             
             # Plot points and fit line
-            plt.plot(temperatures, ydata, 'o', color=color, label=f'{rep} data')
+            plt.plot(temperatures, ydata, 'o', color=color, markersize=4, label=f'{rep} data')
             plt.plot(x_fit, y_fit, '-', color=color, label=f'{rep} fit')
             
             # Shaded fit uncertainty
-            y_upper = boltzmann(x_fit, *(popt + perr))
-            y_lower = boltzmann(x_fit, *(popt - perr))
+            y_upper = boltzmann(x_fit, 
+                                popt[0] + perr[0], 
+                                popt[1] + perr[1], 
+                                popt[2] + perr[2], 
+                                popt[3] + perr[3])
+            y_lower = boltzmann(x_fit, 
+                                popt[0] - perr[0], 
+                                popt[1] - perr[1], 
+                                popt[2] - perr[2], 
+                                popt[3] - perr[3])
             plt.fill_between(x_fit, y_lower, y_upper, color=color, alpha=0.2)
             
         except Exception as e:
