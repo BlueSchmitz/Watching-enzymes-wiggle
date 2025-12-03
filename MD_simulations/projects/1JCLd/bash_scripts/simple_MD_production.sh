@@ -79,12 +79,12 @@ echo "============= Simple MD production run with GROMACS ============="
 cp ./outputs/4_equilibration/npt_5.gro ./outputs/7_simple_MD/npt_pro.gro
 cp ./outputs/4_equilibration/npt_5.cpt ./outputs/7_simple_MD/npt_pro.cpt
 cp ./outputs/4_equilibration/topol_5.top ./outputs/7_simple_MD/topol_pro.top
-cp ./outputs/4_equilibration/topol_Protein_chain_A_5.itp ./outputs/7_simple_MD/topol_Protein_chain_A_pro.itp
-cp ./outputs/4_equilibration/topol_Protein_chain_B_5.itp ./outputs/7_simple_MD/topol_Protein_chain_B_pro.itp
+cp ./outputs/4_equilibration/topol_Protein_chain_A_5.itp ./outputs/7_simple_MD/topol_Protein_chain_A_5.itp
+cp ./outputs/4_equilibration/topol_Protein_chain_B_5.itp ./outputs/7_simple_MD/topol_Protein_chain_B_5.itp
 cd ./outputs/7_simple_MD
 # remove any line that includes the posre file from the topology file
-sed -i '/posre_Protein_chain_A_5.itp/d' topol_Protein_chain_A_pro.itp 
-sed -i '/posre_Protein_chain_B_5.itp/d' topol_Protein_chain_B_pro.itp 
+sed -i '/posre_Protein_chain_A_5.itp/d' topol_Protein_chain_A_5.itp 
+sed -i '/posre_Protein_chain_B_5.itp/d' topol_Protein_chain_B_5.itp 
 # run simple MD production
 gmx_mpi grompp -f $mdp/simple_MD.mdp -c npt_pro.gro -t npt_pro.cpt -p topol_pro.top -o md.tpr
 srun gmx_mpi mdrun -deffnm md -cpt 15
