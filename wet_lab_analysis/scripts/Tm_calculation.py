@@ -1,15 +1,30 @@
+#!/usr/bin/env python3
+# usage: python Tm_calculation.py Tm_data.xlsx
+
+'''
+Use this script to calculate melting temperatures (Tm) from fluorescence data in an Excel file
+by fitting a Boltzman sigmoid curve and finding the highest derivative.
+'''
+
 import pandas as pd
 import numpy as np
 from scipy.optimize import curve_fit
 import matplotlib.pyplot as plt
 import os
+import sys
+
+# Handle inputs
+if len(sys.argv) != 2:
+    print(f"Usage: {sys.argv[0]} <Tm_data.xlsx>")
+    sys.exit(1)
+
+file_path = sys.argv[1]
 
 # Define Boltzmann sigmoid (lower plateau, upper plateau, Tm, slope)
 def boltzmann(x, A1, A2, Tm, k):
     return A1 + ((A2 - A1) / (1 + np.exp((Tm - x)/k)))
 
 # Load Excel
-file_path = "Tm.xlsx"
 df = pd.read_excel(file_path)
 
 temperatures = df.iloc[:, 0].values
