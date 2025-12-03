@@ -79,5 +79,9 @@ for enzyme in set(col.split("_")[0] for col in enzymes):  # group replicates by 
 
 # Save summary table to Excel
 results_df = pd.DataFrame(results_summary)
-results_df.to_excel("Tm_summary.xlsx", index=False)
-print("Summary table saved to Tm_summary.xlsx")
+# Create file name based on enzymes
+enzyme_list = sorted(set(col.split("_")[0] for col in enzymes))
+enzyme_str = "_".join(enzyme_list)
+output_file = f"Tm_summary_{enzyme_str}.xlsx"
+results_df.to_excel(output_file, index=False)
+print(f"Summary table saved to {output_file}")
