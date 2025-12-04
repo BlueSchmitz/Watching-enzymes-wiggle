@@ -34,7 +34,7 @@ matplotlib.use("Agg")  # Use non-GUI backend
 # ---------- Configurable variables ----------
 SAMPLING_INTERVAL = 15.0       # seconds between data points
 WINDOW_POINTS = 9              # number of points in sliding window
-R2_THRESHOLD = 0.995           # threshold for accepting a window
+R2_THRESHOLD = 0.999           # threshold for accepting a window
 # Specific activity constants
 Vreaction = 0.0002             # liters
 extinction_coefficient_NADH = 6220.0  # M^-1 cm^-1
@@ -218,23 +218,11 @@ def main(infile):
 
             # --- Plotting ---
             # raw points
-            ax.plot(time, y, 'o', markersize=3, color=color, alpha=0.7, label=f'{rep} data')
+            ax.plot(time, y, '.', markersize=5, color=color, alpha=0.7, label=f'{rep} data', markeredgewidth=0)
 
-            # plot accepted window as slope triangles
-            for (start, end) in window_indices:
-                x_win = time[start:end].astype(float)
-                y_win = y[start:end].astype(float)
-    
-                # linear fit for the window
-                b = np.polyfit(x_win, y_win, 1)[1]  # get intercept
-                y_fit = m * x_win + b
-    
-                # Plot the dashed line representing the slope
-                ax.plot(x_win, y_fit, '--', color=color, linewidth=1, alpha=0.9)
-    
-                # Draw vertical lines to complete the triangle
-                ax.vlines(x_win[0], y_win[0], y_fit[0], color=color, linewidth=1, alpha=0.9, linestyles='dashed')
-                ax.vlines(x_win[-1], y_win[-1], y_fit[-1], color=color, linewidth=1, alpha=0.9, linestyles='dashed')
+            # Highlight points that are part of accepted windows
+            for start, end in window_indices:
+                ax.plot(time[start:end], y[start:end], 'v', color=color, markersize=5, markerfacecolor='none', markeredgewidth=0)
 
             # Also optionally plot the replicate-mean slope as a dashed line (across full time span)
             if not np.isnan(mean_slope):
