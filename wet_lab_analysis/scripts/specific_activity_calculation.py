@@ -172,7 +172,7 @@ def main(infile):
                 x_win = time[start:end].astype(float) # collect time values
                 y_win = y[start:end].astype(float) # collect absorbance values
 
-                # Skip windows that contain NaNs (because number of measurements differ)
+                # Skip windows that contain NaNs (because number of measurements differs between reps)
                 if np.isnan(x_win).any() or np.isnan(y_win).any():
                     continue
 
@@ -217,14 +217,29 @@ def main(infile):
                 replicate_counts.append(n_windows)
 
             # --- Plotting ---
+            
             # raw points
-            ax.plot(time, y, '.', markersize=5, color=color, alpha=0.7, label=f'{rep} data', markeredgewidth=0)
+            ax.plot(time, y, '.', markersize=5, color=color, alpha=0.7, markeredgewidth=0, label=f'{rep} data')
 
             # Highlight points that are part of accepted windows
+            accepted_indices = []
             for start, end in window_indices:
-                ax.plot(time[start:end], y[start:end], 'v', color=color, markersize=5, markerfacecolor='none', markeredgewidth=0)
+                accepted_indices.extend(range(start, end))
+            accepted_indices = np.unique(accepted_indices)
 
-            # Also optionally plot the replicate-mean slope as a dashed line (across full time span)
+            if len(accepted_indices) > 0:
+                ax.plot(
+                    time[accepted_indices],
+                    y[accepted_indices],
+                    'v',
+                    linestyle='None',
+                    color=color,
+                    markersize=5,
+                    markeredgewidth=0,
+                    label=f'{rep} accepted points'
+                )
+
+            # Plot the replicate-mean slope across full time span
             if not np.isnan(mean_slope):
                 # compute intercept by fitting slope to middle of data for plotting only
                 # b_mean chosen so that the line crosses the mean of y at mean of time
