@@ -171,6 +171,11 @@ def main(infile):
                 end = start + WINDOW_POINTS
                 x_win = time[start:end].astype(float) # collect time values
                 y_win = y[start:end].astype(float) # collect absorbance values
+                
+                # Debugging
+                print(f"Fitting window {start}-{end} for {rep}")
+                print("x_win:", x_win)
+                print("y_win:", y_win)
 
                 # Fit linear function and compute R2
                 m, r2 = linear_fit_and_r2(x_win, y_win)
