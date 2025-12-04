@@ -86,7 +86,7 @@ for enzyme in sorted(set(col.split("_")[0] for col in enzymes)):
             })
             
             # Plot points and fit line
-            plt.plot(temperatures, ydata, 'o', color=color, markersize=4, label=f'{rep} data')
+            plt.plot(temperatures, ydata, 'o', color=color, markersize=3, label=f'{rep} data')
             plt.plot(x_fit, y_fit, '-', color=color, label=f'{rep} fit')
             
             # Shaded fit uncertainty
@@ -100,7 +100,7 @@ for enzyme in sorted(set(col.split("_")[0] for col in enzymes)):
                                 popt[1] - perr[1], 
                                 popt[2] - perr[2], 
                                 popt[3] - perr[3])
-            plt.fill_between(x_fit, y_lower, y_upper, color=color, alpha=0.2)
+            plt.fill_between(x_fit, y_lower, y_upper, color=color, alpha=0.4)
             
         except Exception as e:
             print(f"Could not fit {rep}: {e}")
