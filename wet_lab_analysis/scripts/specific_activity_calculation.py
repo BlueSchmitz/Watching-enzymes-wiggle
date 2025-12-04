@@ -39,7 +39,7 @@ R2_THRESHOLD = 0.99            # threshold for accepting a window
 Vreaction = 0.0002             # liters
 extinction_coefficient_NADH = 6220.0  # M^-1 cm^-1
 Vprotein = 0.00001             # liters (volume of protein in reaction)
-path_length_l = 1.0            # cm
+path_length_l = 0.5            # cm
 # ------------------------------------------------
 
 def linear_fit_and_r2(x, y):
@@ -255,8 +255,9 @@ def main(infile):
             print(f"Warning: concentration for enzyme '{enz}' not found in lookup table. specific_activity will be NaN.")
             specific_activity = np.nan
         else:
-            specific_activity = (enzyme_mean_slope * 60 * Vreaction) / (extinction_coefficient_NADH * Vprotein * float(cprotein_value) * 1000 * path_length_l)
-
+            specific_activity = (enzyme_mean_slope * 60 * Vreaction * 1000000) / (extinction_coefficient_NADH * Vprotein * float(cprotein_value) * 1000 * path_length_l)
+            # *60 to convert sec to min, *1,000,000 to convert M to µM in numerator
+            # *1000 to convert mg/mL to g/L in denominator
         # Save enzyme summary
         enzyme_summary_rows.append({
             "Enzyme": enz,
