@@ -30,12 +30,13 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+plt.use("Agg")  # Use non-GUI backend
 
 # ---------- Configurable variables ----------
-SAMPLING_INTERVAL = 15.0       # seconds between data points (you stated 15 s)
+SAMPLING_INTERVAL = 15.0       # seconds between data points
 WINDOW_POINTS = 9              # number of points in sliding window
-R2_THRESHOLD = 0.99            # threshold for accepting a window
-# Specific activity constants (use these values you supplied)
+R2_THRESHOLD = 0.995           # threshold for accepting a window
+# Specific activity constants
 Vreaction = 0.0002             # liters
 extinction_coefficient_NADH = 6220.0  # M^-1 cm^-1
 Vprotein = 0.00001             # liters (volume of protein in reaction)
@@ -181,10 +182,11 @@ def main(infile):
                 window_rows.append({
                     "Enzyme": enz,
                     "Replicate": rep,
-                    "start_idx": start,
-                    "end_idx": end-1,
+                    "start_time": float(time[start]),
+                    "end_time": float(time[end-1]),
                     "slope_Abs_per_s": m,
-                    "R2": r2
+                    "R2": r2,
+                    "Accepted": r2 >= R2_THRESHOLD
                 })
                 if r2 >= R2_THRESHOLD:
                     window_slopes.append(m)
@@ -209,29 +211,38 @@ def main(infile):
                 "SD_slope_Abs_per_s": sd_slope
             })
 
-            # For enzyme-level averaging:
+            # Average per enzyme:
             if not np.isnan(mean_slope):
                 replicate_means.append(mean_slope)
                 replicate_sd.append(sd_slope)
                 replicate_counts.append(n_windows)
 
             # --- Plotting ---
-            # raw points (smaller markers)
-            ax.plot(time, y, 'o', markersize=3, color=color, alpha=0.7, label=f'{rep} data' if i==0 else None)
+            # raw points
+            ax.plot(time, y, 'o', markersize=3, color=color, alpha=0.7, label=f'{rep} data')
 
-            # overlay accepted window fits (if any): compute fitted lines for each accepted window and plot them
+            # plot accepted window as slope triangles
             for (start, end) in window_indices:
                 x_win = time[start:end].astype(float)
                 y_win = y[start:end].astype(float)
-                m, b = np.polyfit(x_win, y_win, 1)
-                ax.plot(x_win, m * x_win + b, '-', color=color, linewidth=2, alpha=0.9)
+    
+                # linear fit for the window
+                b = np.polyfit(x_win, y_win, 1)[1]  # get intercept
+                y_fit = m * x_win + b
+    
+                # Plot the dashed line representing the slope
+                ax.plot(x_win, y_fit, '--', color=color, linewidth=1, alpha=0.9)
+    
+                # Draw vertical lines to complete the triangle
+                ax.vlines(x_win[0], y_win[0], y_fit[0], color=color, linewidth=1, alpha=0.9, linestyles='dashed')
+                ax.vlines(x_win[-1], y_win[-1], y_fit[-1], color=color, linewidth=1, alpha=0.9, linestyles='dashed')
 
             # Also optionally plot the replicate-mean slope as a dashed line (across full time span)
             if not np.isnan(mean_slope):
                 # compute intercept by fitting slope to middle of data for plotting only
                 # b_mean chosen so that the line crosses the mean of y at mean of time
                 b_mean = np.mean(y) - mean_slope * np.mean(time)
-                ax.plot(time, mean_slope * time + b_mean, '--', color=color, alpha=0.6, linewidth=1)
+                ax.plot(time, mean_slope * time + b_mean, '-', color=color, alpha=0.7, linewidth=1)
 
         # End replicates loop for this enzyme
 
