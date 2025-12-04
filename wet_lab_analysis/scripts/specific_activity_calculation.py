@@ -2,8 +2,6 @@
 # usage: python specific_activity_calculation.py activity_assay_data.xlsx
 
 """
-activity_analysis.py
-
 Expects an Excel workbook where:
 - Sheet 1 (data) contains time in the first column (seconds) and columns named like:
     Enzyme1_Rep1, Enzyme1_Rep2, Enzyme2_Rep1, ...
@@ -30,7 +28,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-plt.use("Agg")  # Use non-GUI backend
+import matplotlib
+matplotlib.use("Agg")  # Use non-GUI backend
 
 # ---------- Configurable variables ----------
 SAMPLING_INTERVAL = 15.0       # seconds between data points
