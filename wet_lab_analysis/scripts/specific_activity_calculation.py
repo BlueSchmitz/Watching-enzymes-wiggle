@@ -254,7 +254,7 @@ def main(infile):
                 y_fit_line = mean_slope * time + intercept
                 # Debugging
                 print(f"[PLOT DEBUG]   Plotting mean slope line: y = {mean_slope} * x + {intercept}")
-                ax.plot(time, y_fit_line, '-', linewidth=2, color=color, alpha=0.9, label=f'{rep} mean slope')
+                ax.plot(time, y_fit_line, '-', linewidth=1, color=color, alpha=0.9, label=f'{rep} mean slope')
 
         # End replicates loop for this enzyme
 
@@ -293,7 +293,7 @@ def main(infile):
         })
 
         # Finalize plot
-        ax.legend(fontsize="small", loc="best")
+        ax.legend(fontsize="medium", loc = 'upper right')
         ax.grid(alpha=0.3)
         outpng = plot_dir / f"{enz}_activity.png"
         fig.tight_layout()

@@ -11,7 +11,7 @@ import numpy as np
 from scipy.optimize import curve_fit
 import matplotlib.pyplot as plt
 import os
-import matplotlib.cm as cm
+import math
 import matplotlib
 matplotlib.use("Agg") # Use non-GUI backend (avoids errors)
 
@@ -34,6 +34,14 @@ os.makedirs("Tm_plots", exist_ok=True)
 summary_rows = []
 fit_rows = []
 
+# Prepare multi-panel figure (automatic grid layout based on number of enzymes)
+unique_enzymes = sorted(set(col.split("_")[0] for col in enzymes))
+n = len(unique_enzymes)
+cols = math.ceil(math.sqrt(n))
+rows = math.ceil(n / cols)
+fig_panel, axes = plt.subplots(rows, cols, figsize=(cols * 5, rows * 4))
+axes = axes.flatten()
+
 for enzyme in sorted(set(col.split("_")[0] for col in enzymes)):
     reps = [col for col in enzymes if col.startswith(enzyme)]
     Tm_values = []
@@ -42,14 +50,20 @@ for enzyme in sorted(set(col.split("_")[0] for col in enzymes)):
     
     plt.figure()
     plt.title(enzyme)
-    plt.xlabel("Temperature")
-    plt.ylabel("Fluorescence")
+    plt.xlabel("Temperature (°C)")
+    plt.ylabel("Fluorescence RFU)") # relative fluorescence units
     
+    # Access correct subplot
+    ax_panel = axes[unique_enzymes.index(enzyme)]
+    ax_panel.set_title(enzyme)
+    ax_panel.set_xlabel("Temperature (°C)")
+    ax_panel.set_ylabel("Fluorescence (RFU)")
+
     N = len(reps)
-    color_map = matplotlib.colormaps["viridis"].resampled(N)  # Viridis colormap for replicates
+    cmap = plt.get_cmap("viridis", max(1, len(reps)))  # Viridis colormap for replicates
     
     for i, rep in enumerate(reps):
-        color = color_map(i)
+        color = cmap(i)
         ydata = df[rep].values
         
         # Initial guess
@@ -88,19 +102,22 @@ for enzyme in sorted(set(col.split("_")[0] for col in enzymes)):
             # Plot points and fit line
             plt.plot(temperatures, ydata, 'o', color=color, markersize=3, label=f'{rep} data')
             plt.plot(x_fit, y_fit, '-', color=color, label=f'{rep} fit')
-            
-            # Shaded fit uncertainty
-            y_upper = boltzmann(x_fit, 
-                                popt[0] + perr[0], 
-                                popt[1] + perr[1], 
-                                popt[2] + perr[2], 
-                                popt[3] + perr[3])
-            y_lower = boltzmann(x_fit, 
+            plt.fill_between(x_fit, y_lower := boltzmann(x_fit, 
                                 popt[0] - perr[0], 
                                 popt[1] - perr[1], 
                                 popt[2] - perr[2], 
-                                popt[3] - perr[3])
-            plt.fill_between(x_fit, y_lower, y_upper, color=color, alpha=0.4)
+                                popt[3] - perr[3]),
+                                y_upper := boltzmann(x_fit, 
+                                popt[0] + perr[0], 
+                                popt[1] + perr[1], 
+                                popt[2] + perr[2], 
+                                popt[3] + perr[3]),
+                                color=color, alpha=0.4)
+
+            # Replicate plotting in multi-panel
+            ax_panel.plot(temperatures, ydata, 'o', color=color, markersize=2)
+            ax_panel.plot(x_fit, y_fit, '-', color=color)
+            ax_panel.fill_between(x_fit, y_lower, y_upper, color=color, alpha=0.3)
             
         except Exception as e:
             print(f"Could not fit {rep}: {e}")
@@ -124,11 +141,15 @@ for enzyme in sorted(set(col.split("_")[0] for col in enzymes)):
         mean_Tm = np.mean(Tm_values)
         std_Tm = np.std(Tm_values)
         plt.axvline(mean_Tm, color='red', linestyle='--', label=f'Mean Tm = {mean_Tm:.2f} ± {std_Tm:.2f}')
+        # Add to panel
+        ax_panel.axvline(mean_Tm, color='red', linestyle='--')
     else:
         mean_Tm = np.nan
         std_Tm = np.nan
     
-    plt.legend()
+    plt.legend(fontsize="small", loc = 'upper right')
+    plt.grid(alpha=0.3)
+    plt.tight_layout()
     plt.savefig(f"Tm_plots/{enzyme}_Tm_plot.png", dpi=300)
     plt.close()
     
@@ -139,6 +160,17 @@ for enzyme in sorted(set(col.split("_")[0] for col in enzymes)):
         "N_success": success_count,
         "N_failed": fail_count
     })
+
+# Save combined panel of all enzymes
+for i in range(len(axes)):
+    if i >= len(unique_enzymes):
+        axes[i].axis("off") 
+
+fig_panel.tight_layout()
+fig_panel.savefig("Tm_plots/ALL_enzymes_panel.png", dpi=300)
+plt.close(fig_panel)
+
+print("Saved combined multi-enzyme panel: Tm_plots/ALL_enzymes_panel.png")
 
 # Save to Excel with multiple sheets
 summary_df = pd.DataFrame(summary_rows)
