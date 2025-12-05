@@ -221,7 +221,7 @@ def main(infile):
             f"accepted_windows={len(window_slopes)}, "
             f"mean_slope={mean_slope}"
             )
-            
+
             # raw points
             ax.plot(time, y, '.', markersize=5, color=color, alpha=0.7, markeredgewidth=0, label=f'{rep} data')
 
@@ -245,9 +245,11 @@ def main(infile):
 
             # Plot the replicate-mean slope across full time span
             if not np.isnan(mean_slope):
-                # compute intercept 
-                # b_mean chosen so that the line crosses the mean of y at mean of time
-                intercept = y[0] - mean_slope * time[0]
+                # compute intercept to pass through the mean accepted window region
+                if len(accepted_indices) > 0:
+                    t_mid = np.mean(time[accepted_indices])
+                    y_mid = np.mean(y[accepted_indices])
+                    intercept = y_mid - mean_slope * t_mid
                 # Predicted line across full time axis
                 y_fit_line = mean_slope * time + intercept
                 # Debugging
