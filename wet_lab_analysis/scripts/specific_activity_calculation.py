@@ -91,8 +91,6 @@ def main(infile):
     df_lookup = pd.read_excel(infile, sheet_name=sheet_lookup)
 
     # Prepare lookup dict: key = enzyme (string), value = protein concentration (float)
-    lookup_cols = {c.lower(): c for c in df_lookup.columns}
-    # attempt to find sensible column names
     enzyme_col = df_lookup.columns[0]
     conc_col = df_lookup.columns[1]
 
@@ -125,7 +123,7 @@ def main(infile):
 
     # Output containers
     replicate_rows = []   # per-replicate summary
-    window_rows = []      # each window slope/R2 if you want to save (optional)
+    window_rows = []      # each window slope/R2
     enzyme_summary_rows = []
 
     # Create output plot folder
@@ -223,7 +221,6 @@ def main(infile):
             f"accepted_windows={len(window_slopes)}, "
             f"mean_slope={mean_slope}"
             )
-
             
             # raw points
             ax.plot(time, y, '.', markersize=5, color=color, alpha=0.7, markeredgewidth=0, label=f'{rep} data')
@@ -248,11 +245,14 @@ def main(infile):
 
             # Plot the replicate-mean slope across full time span
             if not np.isnan(mean_slope):
-                # compute intercept by fitting slope to middle of data for plotting only
+                # compute intercept 
                 # b_mean chosen so that the line crosses the mean of y at mean of time
-                b_mean = np.mean(y) - mean_slope * np.mean(time)
-                print(f"[PLOT DEBUG]   Plotting mean slope line: y = {mean_slope} * x + {b_mean}")
-                ax.plot(time, mean_slope * time + b_mean, '-', color=color, alpha=0.7, linewidth=1)
+                intercept = y[0] - mean_slope * time[0]
+                # Predicted line across full time axis
+                y_fit_line = mean_slope * time + intercept
+                # Debugging
+                print(f"[PLOT DEBUG]   Plotting mean slope line: y = {mean_slope} * x + {intercept}")
+                ax.plot(time, y_fit_line, '-', linewidth=2, color=color, alpha=0.9, label=f'{rep} mean slope')
 
         # End replicates loop for this enzyme
 
@@ -307,7 +307,6 @@ def main(infile):
         pd.DataFrame(enzyme_summary_rows).to_excel(writer, sheet_name="Enzyme_Summary", index=False)
 
     print("Saved summary Excel to", out_xlsx)
-    print("Done.")
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
