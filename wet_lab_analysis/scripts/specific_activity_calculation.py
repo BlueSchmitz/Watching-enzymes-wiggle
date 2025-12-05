@@ -251,6 +251,7 @@ def main(infile):
                 # compute intercept by fitting slope to middle of data for plotting only
                 # b_mean chosen so that the line crosses the mean of y at mean of time
                 b_mean = np.mean(y) - mean_slope * np.mean(time)
+                print(f"[PLOT DEBUG]   Plotting mean slope line: y = {mean_slope} * x + {b_mean}")
                 ax.plot(time, mean_slope * time + b_mean, '-', color=color, alpha=0.7, linewidth=1)
 
         # End replicates loop for this enzyme
