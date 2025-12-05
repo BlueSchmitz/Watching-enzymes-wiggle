@@ -217,6 +217,13 @@ def main(infile):
                 replicate_counts.append(n_windows)
 
             # --- Plotting ---
+            # Debugging 
+            print(
+            f"[PLOT DEBUG] Enzyme={enz}, Rep={rep}, "
+            f"accepted_windows={len(window_slopes)}, "
+            f"mean_slope={mean_slope}"
+            )
+
             
             # raw points
             ax.plot(time, y, '.', markersize=5, color=color, alpha=0.7, markeredgewidth=0, label=f'{rep} data')
@@ -234,7 +241,7 @@ def main(infile):
                     'v',
                     linestyle='None',
                     color=color,
-                    markersize=5,
+                    markersize=6,
                     markeredgewidth=0,
                     label=f'{rep} accepted points'
                 )
@@ -268,7 +275,7 @@ def main(infile):
             print(f"Warning: concentration for enzyme '{enz}' not found in lookup table. specific_activity will be NaN.")
             specific_activity = np.nan
         else:
-            specific_activity = (enzyme_mean_slope * 60 * Vreaction * 1000000) / (extinction_coefficient_NADH * Vprotein * float(cprotein_value) * 1000 * path_length_l)
+            specific_activity = -1*((enzyme_mean_slope * 60 * Vreaction * 1000000) / (extinction_coefficient_NADH * Vprotein * float(cprotein_value) * 1000 * path_length_l))
             # *60 to convert sec to min, *1,000,000 to convert M to µM in numerator
             # *1000 to convert mg/mL to g/L in denominator
         # Save enzyme summary
