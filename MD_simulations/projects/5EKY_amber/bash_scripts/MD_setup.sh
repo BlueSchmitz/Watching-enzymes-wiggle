@@ -75,7 +75,7 @@ mdp=$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/mdp_templates
 pdb=$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/5EKY_amber/inputs # Input PDB file (with correct protonation states)
 scripts=$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/scripts
 
-cd $HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/5EKY_amber/outputs
+cd $HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/5EKY_amber
 # mkdir outputs
 mkdir -p ./outputs/3_minimization ./outputs/4_equilibration ./outputs/5_sanity_checks ./outputs/6_HREX
 
@@ -95,7 +95,7 @@ cp topol.top ../4_equilibration/topol.top
 cp conf.gro ../4_equilibration/conf.gro
 cd ../4_equilibration
 # make posre.itp file for position restraints
-apptainer exec $GROMACS_CONTAINER gmx_mpi genrestr -f conf.gro -o posre.itp -fc 1000 1000 1000
+echo 2 | apptainer exec $GROMACS_CONTAINER gmx_mpi genrestr -f conf.gro -o posre.itp -fc 1000 1000 1000
 # Copy posre.itp into topology
 grep -q 'posre.itp' topol.top || cat <<EOF >> topol.top # checks if posre.itp is already included
 
