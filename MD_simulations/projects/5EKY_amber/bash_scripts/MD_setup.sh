@@ -1,15 +1,19 @@
 #!/bin/bash  
 
-#SBATCH --job-name="monomeric 5EKY set up"   
-#SBATCH --time=05:00:00
-#SBATCH --ntasks=1 
-#SBATCH --cpus-per-task=8
-#SBATCH --gpus-per-task=1
-#SBATCH --partition=gpu-a100
-#SBATCH --mem-per-cpu=1GB
-#SBATCH --account=Research-AS-BN
-#SBATCH --output=/scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/5EKY_monomeric/5EKYm_setup%j.out
-#SBATCH --mail-type=ALL ##you can also set BEGIN/END
+#SBATCH -J setup_Ec5EKY_amber_apptainer  
+#SBATCH -t 02:00:00
+#SBATCH -p rome
+#SBATCH -N 1
+#SBATCH -n 1 
+#SBATCH --cpus-per-task 16
+#SBATCH --gpus=0
+#SBATCH --requeue
+#SBATCH --output=./outputs/setup_Ec5EKYm_apptainer_%j.out
+#SBATCH --mail-type=BEGIN,END,FAIL
+#SBATCH --mail-user=blueschmitz@tudelft.nl
+
+export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+export OMP_NUM_TASKS=$SLURM_NTASKS
 
 : '
 Folder structure:
@@ -53,55 +57,35 @@ Run this script from the projects/5EKY_monomeric/ directory, it contains relativ
 '
 # Exit immediately on errors, undefined vars, or failed pipes
 set -euo pipefail
+set -o errtrace
+
+# path to gromacs apptainer container
+export GROMACS_CONTAINER=$HOME/Blue/software/apptainer_2021/gromacs_plumed.sif
 
 # Load modules:  
-module load 2025
-module load openmpi/4.1.7
-module load cuda
-module load gromacs 
-module load python/3.11.9
-module load py-matplotlib/3.9.2
-module load py-numpy/1.26.4
+module load 2023
+module load matplotlib/3.7.2-gfbf-2023a
+
 
 # Print modules 
 module list
 
 # Set paths for mdp_templates, force_fields and pdb file (to change quickly)
-export GMXLIB=../../../../force_fields # make sure this is correct
-mdp=../../../../mdp_templates
-scripts=../../../../scripts
-pdb=../../inputs/5EKY_fill.BL00440001.pdb # Input PDB file (with correct protonation states)
+#export GMXLIB=../../../../force_fields # make sure this is correct
+mdp=$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/mdp_templates
+pdb=$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/5EKY_amber/inputs # Input PDB file (with correct protonation states)
+scripts=$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/scripts
 
+cd $HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/5EKY_amber/outputs
 # mkdir outputs
-mkdir -p ./outputs/2_parametrization ./outputs/3_minimization ./outputs/4_equilibration ./outputs/5_sanity_checks ./outputs/6_HREX
-
-### 2 Parametrize ###
-echo "============= Parametrization with GROMACS =============" 
-cd ./outputs/2_parametrization
-# Generate topology and add hydrogens according to the chosen protonation states
-  # Amber 99SB*-ILDN force field in combination with TIP3P water model
-gmx_mpi pdb2gmx -f $pdb -o processed.gro -p topol.top -ff amber99sb-star-ildnp -water tip3p 
-# Define the unit cell as described in paper: 15 A from protein to box edge = 1.5 nm
-gmx_mpi editconf -f processed.gro -o boxed.gro -c -d 1.5 -bt cubic
-  # -c: center the protein in the box
-  # -d 1.5: minimum 15 Å distance from protein to box edge 
-  # -bt cubic: cubic box 
-# Solvate
-gmx_mpi solvate -cp boxed.gro -cs spc216.gro -o solvated.gro -p topol.top
-# Add counterions (neutralize system)
-gmx_mpi grompp -f $mdp/minim.mdp -c solvated.gro -p topol.top -o ions.tpr -maxwarn 1 # warning ignores net charge 
-echo SOL | gmx_mpi genion -s ions.tpr -o solv_ions.gro -p topol.top -pname NA -neutral
-# -pname NA -neutral: add Na⁺ to neutralize (paper)
-cp solv_ions.gro ../3_minimization/solv_ions.gro
-cp topol.top ../3_minimization/topol.top
-cp posre.itp ../4_equilibration/posre.itp
+mkdir -p ./outputs/3_minimization ./outputs/4_equilibration ./outputs/5_sanity_checks ./outputs/6_HREX
 
 ### 3 Energy minimization ###
 echo "============= Energy minimization with GROMACS ============="
-cd ../3_minimization
-gmx_mpi grompp -f $mdp/minim.mdp -c solv_ions.gro -p topol.top -o em.tpr
-srun gmx_mpi mdrun -deffnm em
-echo 10 0 | gmx_mpi energy -f em.edr -o potential.xvg # choose potential energy (10), 0 terminates input
+cd ./3_minimization
+apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/minim.mdp -c conf.gro -p topol.top -o em.tpr
+mpirun -np 16 apptainer exec $GROMACS_CONTAINER gmx_mpi mdrun -deffnm em
+echo 10 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi energy -f em.edr -o potential.xvg # choose potential energy (10), 0 terminates input
 python $scripts/plot_xvg.py potential.xvg
 
 ### 4 Equilibration ###
@@ -109,11 +93,24 @@ echo "============= Equilibration with GROMACS ============="
 mkdir -p ../4_equilibration
 cp em.gro ../4_equilibration/em.gro
 cp topol.top ../4_equilibration/topol.top
+cp conf.gro ../4_equilibration/conf.gro
 cd ../4_equilibration
+# make posre.itp file for position restraints
+apptainer exec $GROMACS_CONTAINER gmx_mpi genrestr -f conf.gro -o posre.itp -fc 1000 1000 1000
+# Copy posre.itp into topology
+grep -q 'posre.itp' topol.top || cat <<EOF >> topol.top # checks if posre.itp is already included
+
+; Include Position restraint file
+#ifdef POSRES
+#include "posre.itp"
+#endif
+
+EOF
+
 # NVT Equilibration
-gmx_mpi grompp -f $mdp/nvt.mdp -c em.gro -r em.gro -p topol.top -o nvt.tpr
-srun gmx_mpi mdrun -deffnm nvt -cpt 15
-echo 16 0 | gmx_mpi energy -f nvt.edr -o temperature.xvg # choose Temperature (16), 0 terminates input
+apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/nvt.mdp -c em.gro -r em.gro -p topol.top -o nvt.tpr
+mpirun -np 16 apptainer exec $GROMACS_CONTAINER gmx_mpi mdrun -deffnm nvt -cpt 15
+echo 16 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi energy -f nvt.edr -o temperature.xvg # choose Temperature (16), 0 terminates input
 python $scripts/plot_xvg.py temperature.xvg
 # NPT Equilibration
 # Gradually reduce restraints from 1000 to 5 kJ mol−1 nm−2 by running 5 short NPT simulations of 500 ps each (5*500=2.5 ns)
@@ -134,16 +131,16 @@ for i in 1000 500 250 100 5;
 do
   echo "Running NPT equilibration with restraints = ${i}"
 
-  gmx_mpi grompp -f $mdp/npt.mdp \
+  apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/npt.mdp \
              -c ${prev:-nvt.gro} \
              -r ${prev:-nvt.gro} \
              -p topol_${i}.top \
              -o npt_${i}.tpr \
               -maxwarn 1
   # ${prev:-nvt.gro} ensures the first run starts from NVT output, then continues from the last .gro
-  srun gmx_mpi mdrun -deffnm npt_${i} -cpt 15
-  echo 18 0 | gmx_mpi energy -f npt_${i}.edr -o pressure_${i}.xvg # choose Pressure (18), 0 terminates input
-  echo 24 0 | gmx_mpi energy -f npt_${i}.edr -o density_${i}.xvg # choose Density (24), 0 terminates input
+  mpirun -np 16 apptainer exec $GROMACS_CONTAINER gmx_mpi mdrun -deffnm npt_${i} -cpt 15
+  echo 18 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi energy -f npt_${i}.edr -o pressure_${i}.xvg # choose Pressure (18), 0 terminates input
+  echo 24 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi energy -f npt_${i}.edr -o density_${i}.xvg # choose Density (24), 0 terminates input
   prev=npt_${i}.gro
 done
 python $scripts/plot_xvg.py pressure_*.xvg
