@@ -1,14 +1,14 @@
 #!/bin/bash  
 
-#SBATCH --job-name="save 5EKYm trajectory"   
+#SBATCH --job-name="analyse 5EKYm trajectory"   
 #SBATCH --time=01:00:00
 #SBATCH --ntasks=1 
-#SBATCH --cpus-per-task=1
-#SBATCH --gpus-per-task=0
-#SBATCH --partition=compute-p1
+#SBATCH --cpus-per-task=8
+#SBATCH --gpus-per-task=1
+#SBATCH --partition=gpu-a100
 #SBATCH --mem-per-cpu=1GB
 #SBATCH --account=Research-AS-BN
-#SBATCH --output=/scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/5EKY_monomeric/5EKYm_save_trajectory_%j.out
+#SBATCH --output=/scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/5EKY_monomeric/5EKYm_analysis_%j.out
 #SBATCH --mail-type=ALL ##you can also set BEGIN/END
 
 : '
@@ -72,17 +72,26 @@ mdp=../../../../mdp_templates
 scripts=../../../../scripts
 pdb=../../inputs/5EKY_fill.BL00440001.pdb # Input PDB file (with correct protonation states)
 
-# mkdir outputs
+# cd to outputs
 cd ./outputs/7_simple_MD
 
-### Simple MD production run ###
-echo "============= Downsizing and Exporting trajectory ============="
-echo -e "q" | gmx_mpi make_ndx -f md.tpr -o index.ndx # make index file with standard groups
+### Analysis ###
+echo "============= Analysis of trajectory ============="
+# make index file with protein group (1)
+echo -e "q" | gmx_mpi make_ndx -f md.tpr -o index.ndx 
+# center protein and remove jumps, keep whole protein 
+gmx_mpi trjconv -f md.xtc -s md.tpr -o md_nojump.xtc -pbc nojump -center
+# Fit trajectory to reference (usually backbone or Cα)
+gmx_mpi trjconv -s md.tpr -f md_nojump.xtc -o md_fit.xtc -fit rot+trans
+
+
+
+
+
+echo -e "1\nq" | gmx_mpi make_ndx -f md.tpr -o index.ndx # make index file with protein group (1)
 # first checks if atoms jump across the box and then puts them back --> continuous trajectory
 echo -e "1\n1" | gmx_mpi trjconv -f md.xtc -s md.tpr -n index.ndx -o md_protein_pbc.xtc -dt 10 -center -pbc nojump
 # then fit the protein to remove overall rotation and translation
 echo -e "1\n1" | gmx_mpi trjconv -f md_protein_pbc.xtc -s md.tpr -n index.ndx -o md_protein_downsized.xtc -fit rot+trans
 
 echo "Trajectory saved as md_protein_downsized.xtc"
-
-echo -e "2\n2" | gmx_mpi trjconv -f md.xtc -s md.tpr -n index.ndx -o md_protein_downsized.xtc -dt 100 -center -pbc nojump -fit rot+trans

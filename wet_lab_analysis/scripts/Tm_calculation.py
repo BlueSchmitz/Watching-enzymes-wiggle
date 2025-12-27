@@ -68,19 +68,19 @@ for enzyme in sorted(set(col.split("_")[0] for col in enzymes)):
         
         # Initial guess
         p0 = [min(ydata), max(ydata), temperatures[np.argmax(np.gradient(ydata))], 2]
-        max_idx = np.argmax(ydata)
+        max_idx = np.argmax(ydata) # limit fitting to data up to max fluorescence
         x_fit_data = temperatures[:max_idx+1]
         y_fit_data = ydata[:max_idx+1]
         
         try:
             popt, pcov = curve_fit(boltzmann, x_fit_data, y_fit_data, p0=p0, maxfev=5000)
-            perr = np.sqrt(np.diag(pcov))
+            perr = np.sqrt(np.diag(pcov)) # parameter uncertainties
             
             # Derivative-based Tm
-            x_fit = np.linspace(min(x_fit_data), max(x_fit_data), 500)
-            y_fit = boltzmann(x_fit, *popt)
-            dydx = np.gradient(y_fit, x_fit)
-            Tm_derivative = x_fit[np.argmax(dydx)]
+            x_fit = np.linspace(min(x_fit_data), max(x_fit_data), 500) # generate smooth temp values
+            y_fit = boltzmann(x_fit, *popt) # smooth fitted curve
+            dydx = np.gradient(y_fit, x_fit) # numerical derivative
+            Tm_derivative = x_fit[np.argmax(dydx)] # Tm from max derivative
             Tm_values.append(Tm_derivative)
             success_count += 1
             
@@ -140,7 +140,7 @@ for enzyme in sorted(set(col.split("_")[0] for col in enzymes)):
     if Tm_values:
         mean_Tm = np.mean(Tm_values)
         std_Tm = np.std(Tm_values)
-        plt.axvline(mean_Tm, color='red', linestyle='--', label=f'Mean Tm = {mean_Tm:.2f} ± {std_Tm:.2f}')
+        plt.axvline(mean_Tm, color='red', linestyle='--', label=f'Tm = {mean_Tm:.2f} ± {std_Tm:.2f}')
         # Add to panel
         ax_panel.axvline(mean_Tm, color='red', linestyle='--')
     else:
