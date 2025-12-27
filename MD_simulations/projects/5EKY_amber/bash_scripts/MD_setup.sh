@@ -84,7 +84,7 @@ mkdir -p ./outputs/3_minimization ./outputs/4_equilibration ./outputs/5_sanity_c
 echo "============= Energy minimization with GROMACS ============="
 cd ./3_minimization
 apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/minim.mdp -c conf.gro -p topol.top -o em.tpr
-mpirun -np 16 apptainer exec $GROMACS_CONTAINER gmx_mpi mdrun -deffnm em
+apptainer exec $GROMACS_CONTAINER mpirun -np 16 gmx_mpi mdrun -deffnm em
 echo 10 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi energy -f em.edr -o potential.xvg # choose potential energy (10), 0 terminates input
 python $scripts/plot_xvg.py potential.xvg
 
@@ -109,7 +109,7 @@ EOF
 
 # NVT Equilibration
 apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/nvt.mdp -c em.gro -r em.gro -p topol.top -o nvt.tpr
-mpirun -np 16 apptainer exec $GROMACS_CONTAINER gmx_mpi mdrun -deffnm nvt -cpt 15
+apptainer exec $GROMACS_CONTAINER mpirun -np 16 mdrun -deffnm nvt -cpt 15
 echo 16 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi energy -f nvt.edr -o temperature.xvg # choose Temperature (16), 0 terminates input
 python $scripts/plot_xvg.py temperature.xvg
 # NPT Equilibration
@@ -138,7 +138,7 @@ do
              -o npt_${i}.tpr \
               -maxwarn 1
   # ${prev:-nvt.gro} ensures the first run starts from NVT output, then continues from the last .gro
-  mpirun -np 16 apptainer exec $GROMACS_CONTAINER gmx_mpi mdrun -deffnm npt_${i} -cpt 15
+  apptainer exec $GROMACS_CONTAINER mpirun -np 16 gmx_mpi mdrun -deffnm npt_${i} -cpt 15
   echo 18 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi energy -f npt_${i}.edr -o pressure_${i}.xvg # choose Pressure (18), 0 terminates input
   echo 24 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi energy -f npt_${i}.edr -o density_${i}.xvg # choose Density (24), 0 terminates input
   prev=npt_${i}.gro
