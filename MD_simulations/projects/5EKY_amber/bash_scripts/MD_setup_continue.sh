@@ -76,42 +76,9 @@ pdb=$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/5EKY_amber/inputs
 scripts=$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/scripts
 
 cd $HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/5EKY_amber
-# mkdir outputs
-mkdir -p ./outputs/3_minimization ./outputs/4_equilibration ./outputs/5_sanity_checks ./outputs/6_HREX
-
-### 3 Energy minimization ###
-echo "============= Energy minimization with GROMACS ============="
-cd ./outputs/3_minimization
-apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/minim.mdp -c conf.gro -p topol.top -o em.tpr
-apptainer exec $GROMACS_CONTAINER mpirun -np 1 gmx_mpi mdrun -deffnm em
-echo 10 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi energy -f em.edr -o potential.xvg # choose potential energy (10), 0 terminates input
-python $scripts/plot_xvg.py potential.xvg
-
-### 4 Equilibration ###
-echo "============= Equilibration with GROMACS ============="
-mkdir -p ../4_equilibration
-cp em.gro ../4_equilibration/em.gro
-cp topol.top ../4_equilibration/topol.top
-cp conf.gro ../4_equilibration/conf.gro
-cd ../4_equilibration
-# make posre.itp file for position restraints
-echo 2 | apptainer exec $GROMACS_CONTAINER gmx_mpi genrestr -f conf.gro -o posre.itp -fc 1000 1000 1000
-# Copy posre.itp into topology
-awk '
-/^\[ atoms \]/ && !inserted {
-    print
-    in_atoms=1
-    next
-}
-in_atoms && /^\[/ {
-    print "#ifdef POSRES\n#include \"posre.itp\"\n#endif\n"
-    in_atoms=0
-    inserted=1
-}
-{print}
-' topol.top > topol_tmp.top && mv topol_tmp.top topol.top
 
 # NVT Equilibration
+cd ./outputs/4_equilibration
 apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/nvt.mdp -c em.gro -r em.gro -p topol.top -o nvt.tpr
 apptainer exec $GROMACS_CONTAINER mpirun -np 1 gmx_mpi mdrun -deffnm nvt -cpt 15 
 echo 16 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi energy -f nvt.edr -o temperature.xvg # choose Temperature (16), 0 terminates input
