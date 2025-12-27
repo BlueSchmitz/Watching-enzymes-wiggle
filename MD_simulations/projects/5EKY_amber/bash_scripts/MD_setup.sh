@@ -81,7 +81,7 @@ mkdir -p ./outputs/3_minimization ./outputs/4_equilibration ./outputs/5_sanity_c
 
 ### 3 Energy minimization ###
 echo "============= Energy minimization with GROMACS ============="
-cd ./3_minimization
+cd ./outputs/3_minimization
 apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/minim.mdp -c conf.gro -p topol.top -o em.tpr
 apptainer exec $GROMACS_CONTAINER mpirun -np 1 gmx_mpi mdrun -deffnm em
 echo 10 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi energy -f em.edr -o potential.xvg # choose potential energy (10), 0 terminates input
