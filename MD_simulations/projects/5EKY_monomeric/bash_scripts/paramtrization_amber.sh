@@ -36,19 +36,29 @@ pdb2pqr \
     --ff=AMBER \
     --titration-state-method=propka \
     --with-ph=${PH} \
+    --drop-water \
     --keep-chain \
     --pdb-output ${PDB_PH} \
     ${PDB_IN} \
     ${BASENAME}_pH${PH}.pqr
 
-# 2 Parametrization with AMBER
+# 2 Strip hydrogens added by pdb2pqr
+echo "Stripping extra hydrogens from PDB"
+
+pdb4amber \
+  -i ${PDB_PH} \
+  -o ${BASENAME}_pH${PH}_noH.pdb \
+  --nohyd \
+  --dry
+
+# 3 Parametrization with AMBER
 echo "Running tleap (ff19SB + OPC)"
 
 cat > tleap.in <<EOF
 source leaprc.protein.ff19SB
 source leaprc.water.opc
 
-mol = loadpdb ${PDB_PH} 
+mol = loadpdb ${BASENAME}_pH${PH}_noH.pdb
 check mol
 
 solvatebox mol OPCBOX ${BOX_PADDING_A} cubic
@@ -61,7 +71,7 @@ EOF
 
 tleap -f tleap.in > tleap.log
 
-# 3 Convert to GROMACS with parmed
+# 4 Convert to GROMACS with parmed
 echo "Converting to GROMACS with ParmEd"
 
 cat > amber_to_gmx.py <<EOF
