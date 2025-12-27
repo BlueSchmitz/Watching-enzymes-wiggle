@@ -61,7 +61,7 @@ source leaprc.water.opc
 mol = loadpdb ${BASENAME}_pH${PH}_noH.pdb
 check mol
 
-solvatebox mol OPCBOX ${BOX_PADDING_A} cubic
+solvatebox mol OPCBOX ${BOX_PADDING_A} iso
 addions mol Na+ 0
 
 saveamberparm mol ${PRMTOP} ${INPCRD}
