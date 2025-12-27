@@ -8,7 +8,7 @@
 #SBATCH --cpus-per-task 16
 #SBATCH --gpus=0
 #SBATCH --requeue
-#SBATCH --output=./outputs/setup_Ec5EKYm_apptainer_%j.out
+#SBATCH --output=./outputs/setup_Ec5EKY_amber_apptainer_%j.out
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=blueschmitz@tudelft.nl
 
