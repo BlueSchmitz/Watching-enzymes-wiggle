@@ -1,12 +1,12 @@
 #!/bin/bash  
 
 #SBATCH -J setup_Ec5EKY_amber_apptainer  
-#SBATCH -t 02:00:00
-#SBATCH -p gpu_a100
+#SBATCH -t 10:00:00
+#SBATCH -p rome
 #SBATCH -N 1
 #SBATCH -n 1 
-#SBATCH --cpus-per-task 18
-#SBATCH --gpus=1
+#SBATCH --cpus-per-task 16
+#SBATCH --gpus=0
 #SBATCH --requeue
 #SBATCH --output=./outputs/setup_Ec5EKY_amber_apptainer_%j.out
 #SBATCH --mail-type=BEGIN,END,FAIL
@@ -77,27 +77,8 @@ scripts=$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/scripts
 
 cd $HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/5EKY_amber
 
-# NVT Equilibration
+# NPT Equilibration
 cd ./outputs/4_equilibration
-apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/nvt.mdp -c em.gro -r em.gro -p topol.top -o nvt.tpr
-apptainer exec $GROMACS_CONTAINER mpirun -np 1 gmx_mpi mdrun -deffnm nvt -cpt 15 -cpi nvt.cpt -append
-echo 16 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi energy -f nvt.edr -o temperature.xvg # choose Temperature (16), 0 terminates input
-python $scripts/plot_xvg.py temperature.xvg
-# NPT Equilibration
-# Gradually reduce restraints from 1000 to 5 kJ mol−1 nm−2 by running 5 short NPT simulations of 500 ps each (5*500=2.5 ns)
-for i in 1000 500 250 100 5;
-do
-  # Copy posre.itp 5 times and modify the force constant in each file
-  cp posre.itp posre_$i.itp
-  sed -i "s/\b1000\b/$i/g" posre_$i.itp # \b for whole word match
-  echo "Modified posre.itp to posre_$i.itp."
-  # Modify topol.top to include the correct posre file for each run
-  cp topol.top topol_$i.top
-  sed -i "s/posre.itp/posre_$i.itp/g" topol_$i.top
-  echo "Modified topol.top to topol_$i.top."
-done
-
-# NPT Equilibration
 for i in 1000 500 250 100 5;
 do
   echo "Running NPT equilibration with restraints = ${i}"
