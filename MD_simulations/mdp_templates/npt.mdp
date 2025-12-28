@@ -4,8 +4,10 @@ integrator              = md
 dt                      = 0.002
 nsteps                  = 250000               ; 250000 * 0.002 ps = 500 ps for each run --> *5 = 2.5 ns
 ; Output control 
-nstxout                 = 1000                 ; coordinates every 2 ps
-nstvout                 = 1000                 ; velocities every 2 ps
+nstxout                 = 0                    ; no coordinates
+nstvout                 = 0                    ; no velocities
+nstfout                 = 0                    ; no forces 
+nstxout-compressed      = 10000                ; compressed coordinates, velocities and forces every 20 ps
 nstenergy               = 1000                 ; energies every 2 ps
 nstlog                  = 1000                 ; log file output every 2 ps
 ; Bond parameters

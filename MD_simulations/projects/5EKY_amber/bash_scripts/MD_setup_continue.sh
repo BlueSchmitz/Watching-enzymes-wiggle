@@ -2,11 +2,11 @@
 
 #SBATCH -J setup_Ec5EKY_amber_apptainer  
 #SBATCH -t 02:00:00
-#SBATCH -p rome
+#SBATCH -p gpu_a100
 #SBATCH -N 1
 #SBATCH -n 1 
-#SBATCH --cpus-per-task 16
-#SBATCH --gpus=0
+#SBATCH --cpus-per-task 18
+#SBATCH --gpus=1
 #SBATCH --requeue
 #SBATCH --output=./outputs/setup_Ec5EKY_amber_apptainer_%j.out
 #SBATCH --mail-type=BEGIN,END,FAIL
@@ -80,7 +80,7 @@ cd $HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/5EKY_amber
 # NVT Equilibration
 cd ./outputs/4_equilibration
 apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/nvt.mdp -c em.gro -r em.gro -p topol.top -o nvt.tpr
-apptainer exec $GROMACS_CONTAINER mpirun -np 1 gmx_mpi mdrun -deffnm nvt -cpt 15 
+apptainer exec $GROMACS_CONTAINER mpirun -np 1 gmx_mpi mdrun -deffnm nvt -cpt 15 -cpi nvt.cpt -append
 echo 16 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi energy -f nvt.edr -o temperature.xvg # choose Temperature (16), 0 terminates input
 python $scripts/plot_xvg.py temperature.xvg
 # NPT Equilibration
