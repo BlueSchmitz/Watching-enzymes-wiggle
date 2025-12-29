@@ -5,8 +5,8 @@ set -euo pipefail
 PDB_IN="../../inputs/5EKY_fill.BL00440001.pdb"
 PH=7.0
 BOX_PADDING_A=15.0     # Angstrom
-FF="ff19SB"
-WATER="OPC"
+FF="ff14SB"
+WATER="tip3p"
 ######################
 
 # derived variables
@@ -52,11 +52,11 @@ pdb4amber \
   --dry
 
 # 3 Parametrization with AMBER
-echo "Running tleap (ff19SB + OPC)"
+echo "Running tleap (${FF} + ${WATER})"
 
 cat > tleap.in <<EOF
-source leaprc.protein.ff19SB
-source leaprc.water.opc
+source leaprc.protein.${FF}
+source leaprc.water.${WATER}
 
 mol = loadpdb ${BASENAME}_pH${PH}_noH.pdb
 check mol
