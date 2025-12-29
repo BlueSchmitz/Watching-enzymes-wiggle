@@ -75,7 +75,6 @@ mdp=$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/mdp_templates
 pdb=$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/5EKY_amber/inputs # Input PDB file (with correct protonation states)
 scripts=$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/scripts
 
-cd $HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/5EKY_amber
 # mkdir outputs
 mkdir -p ./outputs/3_minimization ./outputs/4_equilibration ./outputs/5_sanity_checks ./outputs/6_HREX
 
@@ -89,7 +88,6 @@ python $scripts/plot_xvg.py potential.xvg
 
 ### 4 Equilibration ###
 echo "============= Equilibration with GROMACS ============="
-mkdir -p ../4_equilibration
 cp em.gro ../4_equilibration/em.gro
 cp topol.top ../4_equilibration/topol.top
 cp conf.gro ../4_equilibration/conf.gro
