@@ -75,8 +75,6 @@ mdp=$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/mdp_templates
 pdb=$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/5EKY_amber/inputs # Input PDB file (with correct protonation states)
 scripts=$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/scripts
 
-cd $HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/5EKY_amber
-
 # NPT Equilibration
 cd ./outputs/4_equilibration
 for i in 1000 500 250 100 5;
