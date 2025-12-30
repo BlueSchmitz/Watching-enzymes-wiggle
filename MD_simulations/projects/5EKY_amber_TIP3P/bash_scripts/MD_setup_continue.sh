@@ -1,7 +1,7 @@
 #!/bin/bash  
 
 #SBATCH -J setup_Ec5EKY_amber_apptainer  
-#SBATCH -t 12:00:00
+#SBATCH -t 20:00:00
 #SBATCH -p rome
 #SBATCH -N 1
 #SBATCH -n 2 
