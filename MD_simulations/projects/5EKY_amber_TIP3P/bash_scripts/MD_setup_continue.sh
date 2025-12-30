@@ -88,7 +88,7 @@ do
              -o npt_${i}.tpr \
               -maxwarn 1
   # ${prev:-nvt.gro} ensures the first run starts from NVT output, then continues from the last .gro
-  apptainer exec $GROMACS_CONTAINER mpirun -np 2 gmx_mpi mdrun -deffnm npt_${i} -cpt 15 -cpi npt_${i}.cpt -append
+  apptainer exec $GROMACS_CONTAINER mpirun -np 2 gmx_mpi mdrun -deffnm npt_${i} -cpt 15
   echo 18 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi energy -f npt_${i}.edr -o pressure_${i}.xvg # choose Pressure (18), 0 terminates input
   echo 24 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi energy -f npt_${i}.edr -o density_${i}.xvg # choose Density (24), 0 terminates input
   prev=npt_${i}.gro
