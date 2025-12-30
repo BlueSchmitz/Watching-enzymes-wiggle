@@ -64,3 +64,80 @@ echo 21 | gmx genrestr -f npt.gro -n index.ndx -o posre_core_CA.itp -fc 10 10 10
 # run steered MD
 gmx_mpi grompp -f $mdp/pull.mdp -c npt.gro -n index.ndx -p topol.top -o pull.tpr
 gmx_mpi mdrun -deffnm pull -pf pullf.xvg -px pullx.xvg -v
+
+# 2 Assemble COM distances indexed by frame number
+echo 0 | gmx_mpi trjconv -s pull.tpr -f pull.xtc -o conf.gro -sep
+# compute distances
+nframes=$(ls conf*.gro | wc -l)
+for (( i=0; i<${nframes}; i++ ))
+do
+    gmx_mpi distance -s pull.tpr \
+        -f conf${i}.gro \
+        -n index.ndx \
+        -select 'distance between com of group "tail_COM" and com of group "active_site_COM"' \
+        -oall dist${i}.xvg 
+done
+# compile summary
+touch summary_distances.dat
+for (( i=0; i<${nframes}; i++ ))
+do
+    d=`tail -n 1 dist${i}.xvg | awk '{print $2}'`
+    echo "${i} ${d}" >> summary_distances.dat
+    rm dist${i}.xvg
+done
+
+# 3 Prepare umbrella sampling windows
+python setupUmbrella.py summary_distances.dat 0.1 umbrella_template.sh &> caught-output.txt #edit!!!
+
+# 4 Run umbrella sampling windows
+# Collect all .sh scripts in COM_* directories
+scripts=()
+for script in COM_*/frame-*_run-umbrella.sh; do
+    if [ -f "$script" ]; then
+        script_dir=$(dirname "$script")
+        fail_file="$script_dir/FAIL"
+        
+        # If --failed-only is set, check for FAIL file
+        if $failed_only && [ ! -f "$fail_file" ]; then
+            continue
+        fi
+        
+        scripts+=("$script")
+    fi
+done
+# If no scripts found, exit
+if [ ${#scripts[@]} -eq 0 ]; then
+    echo "No shell scripts found to execute."
+    exit 1
+fi
+echo "Found ${#scripts[@]} umbrella windows"
+
+for script in "${scripts[@]}"; do
+    script_dir=$(dirname "$script")  # Extract the directory path
+        
+    # Extract the frame number (XXX) from the filename
+    frame_number=$(echo "$script" | grep -oP 'frame-\K[0-9]+')
+    
+    # Define the log file name as frame-XXX.log
+    log_file="$script_dir/frame-${frame_number}.log"
+
+    echo "Running $script... (Logging to $log_file)"
+        
+    # Execute the script and log both stdout and stderr
+    bash "$script" > "$log_file" 2>&1
+
+    # Check for execution success or failure
+    if [ $? -ne 0 ]; then
+        echo "Execution of $script failed. Check $log_file for details."
+    else
+        echo "Execution of $script completed successfully."
+            
+        # Remove the FAIL file if execution was successful
+        fail_file="$script_dir/FAIL"
+        if [ -f "$fail_file" ]; then
+            rm "$fail_file"
+            echo "Removed FAIL file from $script_dir."
+        fi
+    fi
+done
+echo "All scripts executed."

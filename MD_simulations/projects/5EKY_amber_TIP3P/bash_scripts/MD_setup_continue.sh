@@ -77,7 +77,7 @@ scripts=$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/scripts
 
 # NPT Equilibration
 cd ./outputs/4_equilibration
-for i in 250 100 5;
+for i in 1000 500 250 100 5;
 do
   echo "Running NPT equilibration with restraints = ${i}"
 
