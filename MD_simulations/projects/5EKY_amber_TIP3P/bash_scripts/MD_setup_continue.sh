@@ -1,11 +1,11 @@
 #!/bin/bash  
 
 #SBATCH -J setup_Ec5EKY_amber_apptainer  
-#SBATCH -t 10:00:00
+#SBATCH -t 12:00:00
 #SBATCH -p rome
 #SBATCH -N 1
-#SBATCH -n 1 
-#SBATCH --cpus-per-task 16
+#SBATCH -n 2 
+#SBATCH --cpus-per-task 8
 #SBATCH --gpus=0
 #SBATCH --requeue
 #SBATCH --output=./outputs/setup_Ec5EKY_amber_apptainer_%j.out
@@ -77,7 +77,7 @@ scripts=$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/scripts
 
 # NPT Equilibration
 cd ./outputs/4_equilibration
-for i in 1000 500 250 100 5;
+for i in 250 100 5;
 do
   echo "Running NPT equilibration with restraints = ${i}"
 
@@ -88,7 +88,7 @@ do
              -o npt_${i}.tpr \
               -maxwarn 1
   # ${prev:-nvt.gro} ensures the first run starts from NVT output, then continues from the last .gro
-  apptainer exec $GROMACS_CONTAINER mpirun -np 1 gmx_mpi mdrun -deffnm npt_${i} -cpt 15
+  apptainer exec $GROMACS_CONTAINER mpirun -np 2 gmx_mpi mdrun -deffnm npt_${i} -cpt 15 -cpi npt_${i}.cpt -append
   echo 18 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi energy -f npt_${i}.edr -o pressure_${i}.xvg # choose Pressure (18), 0 terminates input
   echo 24 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi energy -f npt_${i}.edr -o density_${i}.xvg # choose Density (24), 0 terminates input
   prev=npt_${i}.gro
