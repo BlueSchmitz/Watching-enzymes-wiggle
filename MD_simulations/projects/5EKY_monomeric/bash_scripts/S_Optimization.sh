@@ -2,7 +2,7 @@
 
 #SBATCH -J optimization_setup_Ec5EKYm_apptainer  
 #SBATCH -t 01:00:00
-#SBATCH -p genoa
+#SBATCH -p rome
 #SBATCH -N 1
 #SBATCH -n 10
 #SBATCH --cpus-per-task 10
