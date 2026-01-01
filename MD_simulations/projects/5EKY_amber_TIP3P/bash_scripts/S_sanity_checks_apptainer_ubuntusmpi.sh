@@ -44,7 +44,7 @@ scripts=$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/scripts
 echo "Sanity checks"
 cp ./outputs/4_equilibration/npt_5.gro ./outputs/6_HREX/npt_5.gro
 cp ./outputs/4_equilibration/topol_5.top ./outputs/6_HREX/topol_5.top
-cd ./6_HREX
+cd ./outputs/6_HREX
 # Files we need: npt_5.gro as the starting structure, topol.top without pointers to posre.itp (no more restraints)
 # 1. Remove constraints from topol.top by commenting out the line that includes posre_5.itp
 cp topol_5.top topol_prod.top
