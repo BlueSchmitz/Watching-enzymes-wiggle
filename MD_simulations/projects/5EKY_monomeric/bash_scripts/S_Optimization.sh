@@ -75,7 +75,7 @@ for np in "${np_list[@]}"; do
             # Run tune_pme or mdrun -tune (short)
             # Use -deffnm temporary output to avoid overwriting
             TMP_PREFIX="tune_np${np}_nt${nt}"
-            apptainer exec $GROMACS_CONTAINER mpirun -np $np gmx_mpi mdrun -ntomp $nt -s scaled_1.00.tpr -dlb no -tune pme -deffnm $TMP_PREFIX 2>&1 | tee ${TMP_PREFIX}.log
+            apptainer exec $GROMACS_CONTAINER mpirun -np $np gmx_mpi tune_pme -ntomp $nt -s scaled_1.00.tpr -dlb no -deffnm $TMP_PREFIX 2>&1 | tee ${TMP_PREFIX}.log
 
             # Extract relevant metrics from log
             step_per_sec=$(grep "Performance:" ${TMP_PREFIX}.log | awk '{print $3}')
