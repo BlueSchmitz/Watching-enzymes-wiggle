@@ -16,16 +16,6 @@
 set -euo pipefail
 set -o errtrace
 
-function copy_back_results {
-    echo "=== Copying results back to home ==="
-    rsync -av \
-          --exclude 'rleveson.*' \
-          --exclude 'sanity_checks_Ec5EKYm*.out' \
-        $TMPDIR/MD_simulations/projects/5EKY_monomeric/outputs/ \
-        $HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/5EKY_monomeric/outputs/
-    echo "=== Copy complete ==="
-}
-
 # Trap errors and print line number + command
 trap 'echo "Error in ${BASH_SOURCE[0]} at line ${LINENO}: ${BASH_COMMAND}"' ERR
 trap copy_back_results EXIT
@@ -35,16 +25,11 @@ export GROMACS_CONTAINER=$HOME/Blue/software/apptainer_2021/gromacs_plumed.sif
 
 # Load modules:  
 module load 2023
-#module load OpenMPI/4.1.5-GCC-12.3.0
-module load mpicopy/4.2-gompi-2024a
 module load matplotlib/3.7.2-gfbf-2023a
 
 # Copy input files to scratch
-mpicopy $HOME/Blue/Watching-enzymes-wiggle/MD_simulations/
-#echo "Contents of $TMPDIR:"
-#tree -a -L 10 $TMPDIR
+cp -r $HOME/Blue/Watching-enzymes-wiggle/MD_simulations/ "$TMPDIR"
 cd $TMPDIR/MD_simulations/projects/5EKY_monomeric/outputs
-#cd $HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/5EKY_monomeric/outputs
 
 # Set paths for mdp_templates, force_fields and pdb file (to change quickly)
 export GMXLIB=$TMPDIR/MD_simulations/force_fields # make sure this is correct
