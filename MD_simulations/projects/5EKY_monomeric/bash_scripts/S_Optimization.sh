@@ -10,7 +10,7 @@
 #SBATCH --requeue
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=blueschmitz@tudelft.nl
-#SBATCH --output=./outputs/optimization%j.out
+#SBATCH --output=./outputs/optimization_%j.out
 
 # Exit immediately on errors, undefined vars, or failed pipes
 set -euo pipefail
