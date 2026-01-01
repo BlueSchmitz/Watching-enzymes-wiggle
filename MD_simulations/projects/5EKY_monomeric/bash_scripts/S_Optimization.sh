@@ -1,14 +1,14 @@
 #!/bin/bash  
 
-#SBATCH -J optimization_setup_Ec5EKYm  
-#SBATCH -t 00:30:00
+#SBATCH -J optimization_setup_Ec5EKYm_apptainer  
+#SBATCH -t 01:00:00
 #SBATCH -p genoa
 #SBATCH -N 1
 #SBATCH -n 10
 #SBATCH --cpus-per-task 10
 #SBATCH --gpus=0
 #SBATCH --requeue
-#SBATCH --mail-type=BEGIN,END
+#SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=blueschmitz@tudelft.nl
 #SBATCH --output=./outputs/optimization%j.out
 
@@ -30,10 +30,13 @@ function copy_back_results {
 trap 'echo "Error in ${BASH_SOURCE[0]} at line ${LINENO}: ${BASH_COMMAND}"' ERR
 trap copy_back_results EXIT
 
+# path to gromacs apptainer container
+export GROMACS_CONTAINER=$HOME/Blue/software/apptainer_2021/gromacs_plumed.sif
+
 # Load modules:  
-module load 2024
-module load mpicopy/4.2-gompi-2024a
-module load Miniconda3/24.7.1-0
+module load 2023
+#module load OpenMPI/4.1.5-GCC-12.3.0
+module load matplotlib/3.7.2-gfbf-2023a
 
 # Copy input files to scratch
 mpicopy $HOME/Blue/Watching-enzymes-wiggle/MD_simulations/
@@ -42,29 +45,33 @@ mpicopy $HOME/Blue/Watching-enzymes-wiggle/MD_simulations/
 cd $TMPDIR/MD_simulations/projects/5EKY_monomeric/outputs
 #cd $HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/5EKY_monomeric/outputs
 
-# activate environment with GROMACS installed
-unset CONDA_SHLVL
-source "$(conda info --base)/etc/profile.d/conda.sh"
-conda activate gromacs2020
-# Force use of Conda MPI
-export PATH=$CONDA_PREFIX/bin:$PATH
-export LD_LIBRARY_PATH=$(echo $LD_LIBRARY_PATH | tr ':' '\n' | grep -v "$CONDA_PREFIX/lib" | paste -sd:)
-
 # Set paths for mdp_templates, force_fields and pdb file (to change quickly)
 export GMXLIB=$TMPDIR/MD_simulations/force_fields # make sure this is correct
-project=$TMPDIR/MD_simulations/projects/5EKY_monomeric/outputs
 mdp=$TMPDIR/MD_simulations/mdp_templates
-pdb=$TMPDIR/MD_simulations/projects/5EKY_monomeric/inputs # Input PDB file (with correct protonation states)
-pyscripts=$TMPDIR/MD_simulations/scripts
+scripts=$TMPDIR/MD_simulations/scripts
 
-# Candidate MPI ranks per replica (np) = max. -n
-np_list=(1 2 4 8 10)
+### Tuning parallelization for HREX MD runs ###
+# one node has 128 cores (rome), we have 12 replicas --> max. 10 cores per replica
+# possible combinations of MPI ranks and OpenMP threads per replica
+# np = MPI ranks  ntomp = OpenMP threads per rank
+# 1                       10
+# 2                        5
+# 3                        3
+# 4                        2
+# 5                        2
+# 6                        1
+# 7                        1
+# 8                        1
+# 9                        1
+# 10                       1
+# Possible MPI ranks per replica (np) = max. -n
+np_list=(1 2 3 4 5 6 7 8 9 10)
 
 # Candidate threads per rank (ntomp) = max. --cpus-per-task
-ntomp_list=(1 2 4 8 10)
+ntomp_list=(1 2 3 4 5 6 7 8 9 10)
 
 # Maximum cores per replica
-max_cores_per_replica=16
+max_cores_per_replica=10
 
 # Temporary file to store results
 cd ./5_sanity_checks
@@ -82,7 +89,7 @@ for np in "${np_list[@]}"; do
             # Run tune_pme or mdrun -tune (short)
             # Use -deffnm temporary output to avoid overwriting
             TMP_PREFIX="tune_np${np}_nt${nt}"
-            mpirun -np $np gmx_mpi mdrun -s scaled_1.00.tpr -dlb no -tune pme -deffnm $TMP_PREFIX 2>&1 | tee ${TMP_PREFIX}.log
+            apptainer exec $GROMACS_CONTAINER mpirun -np $np gmx_mpi mdrun -ntomp $nt -s scaled_1.00.tpr -dlb no -tune pme -deffnm $TMP_PREFIX 2>&1 | tee ${TMP_PREFIX}.log
 
             # Extract relevant metrics from log
             step_per_sec=$(grep "Performance:" ${TMP_PREFIX}.log | awk '{print $3}')
@@ -99,10 +106,10 @@ done
 echo "=== Tuning complete! Results saved in $RESULTS_FILE ==="
 cat $RESULTS_FILE
 
-#echo "=== Copying project outputs back to home ==="
+echo "=== Copying project outputs back to home ==="
 rsync -av \
       --exclude 'rleveson.*' \
       --exclude 'sanity_checks_Ec5EKYm*.out' \
       $TMPDIR/MD_simulations/projects/5EKY_monomeric/outputs/ \
       $HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/5EKY_monomeric/outputs/
-#echo "=== Copy complete ==="
+echo "=== Copy complete ==="
