@@ -19,13 +19,18 @@ set -o errtrace
 echo "After setting errors"
 
 function copy_back_results {
+    set +e # Disable exit on error for this function
     echo "=== Copying results back to home ==="
-    rsync -av \
+    if [[ -d "$SCRATCH_DIR/MD_simulations/projects/5EKY_monomeric/outputs" ]]; then
+        rsync -av \
           --exclude 'rleveson.*' \
           --exclude 'sanity_checks_Ec5EKYm*.out' \
-        $TMPDIR/MD_simulations/projects/5EKY_monomeric/outputs/ \
-        $HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/5EKY_monomeric/outputs/
-    echo "=== Copy complete ==="
+          "$SCRATCH_DIR/MD_simulations/projects/5EKY_monomeric/outputs/" \
+          "$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/5EKY_monomeric/outputs/"
+        echo "=== Copy complete ==="
+    else
+        echo "Nothing to copy back (outputs directory not found)"
+    fi
 }
 
 echo "After function"
@@ -47,6 +52,8 @@ echo "After module load"
 # Copy input files to scratch
 cp -r $HOME/Blue/Watching-enzymes-wiggle/MD_simulations/ "$TMPDIR"
 cd $TMPDIR/MD_simulations/projects/5EKY_monomeric/outputs
+
+echo "After copying to TMPDIR"
 
 # Set paths for mdp_templates, force_fields and pdb file (to change quickly)
 export GMXLIB=$TMPDIR/MD_simulations/force_fields # make sure this is correct
@@ -80,6 +87,8 @@ max_cores_per_replica=10
 cd ./5_sanity_checks
 RESULTS_FILE="tune_summary.csv"
 echo "np,ntomp,total_cores,step_per_sec,ns_per_day,imbalance_percent,opt_npme" > $RESULTS_FILE
+
+echo "After setting results file"
 
 # Loop over candidate combinations
 for np in "${np_list[@]}"; do
