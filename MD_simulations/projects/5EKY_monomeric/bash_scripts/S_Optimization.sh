@@ -49,6 +49,7 @@ trap copy_back_results EXIT
 
 # Load modules:  
 module load 2023
+module load matplotlib/3.7.2-gfbf-2023a
 
 ### Tuning parallelization for HREX MD runs ###
 # one node has 128 cores (rome), we have 12 replicas --> max. 10 cores per replica
@@ -98,6 +99,9 @@ for np in "${np_list[@]}"; do
         fi
     done
 done
+
+# Visualize results
+python $scripts/analyse_optimization.py ./tune_summary.csv
 
 echo "=== Tuning complete! Results saved in $RESULTS_FILE ==="
 cat $RESULTS_FILE
