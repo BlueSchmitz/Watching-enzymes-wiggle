@@ -16,6 +16,8 @@
 set -euo pipefail
 set -o errtrace
 
+echo "After setting errors"
+
 function copy_back_results {
     echo "=== Copying results back to home ==="
     rsync -av \
@@ -26,16 +28,21 @@ function copy_back_results {
     echo "=== Copy complete ==="
 }
 
+echo "After function"
+
 # Trap errors and print line number + command
 trap 'echo "ERROR at line ${LINENO}: ${BASH_COMMAND}" >&2' ERR
 trap copy_back_results EXIT
+
+echo "After trap"
 
 # path to gromacs apptainer container
 export GROMACS_CONTAINER=$HOME/Blue/software/apptainer_2021/gromacs_plumed.sif
 
 # Load modules:  
 module load 2023
-module load matplotlib/3.7.2-gfbf-2023a
+
+echo "After module load"
 
 # Copy input files to scratch
 cp -r $HOME/Blue/Watching-enzymes-wiggle/MD_simulations/ "$TMPDIR"
@@ -85,6 +92,7 @@ for np in "${np_list[@]}"; do
             # Run tune_pme or mdrun -tune (short)
             # Use -deffnm temporary output to avoid overwriting
             TMP_PREFIX="tune_np${np}_nt${nt}"
+            echo "Running tuning with deffnm=$TMP_PREFIX"
             apptainer exec $GROMACS_CONTAINER gmx_mpi tune_pme -ntmpi $np -ntomp $nt -s scaled_1.00.tpr -mdrun "gmx_mpi mdrun" -dlb no -deffnm $TMP_PREFIX 2>&1 | tee ${TMP_PREFIX}.log || true
 
             # Extract relevant metrics from log
