@@ -10,7 +10,7 @@
 #SBATCH --requeue
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=blueschmitz@tudelft.nl
-#SBATCH --output=./outputs/optimization_%j.out
+#SBATCH --output=./optimization_%j.out
 
 # Exit immediately on errors, undefined vars, or failed pipes
 set -euo pipefail
@@ -22,7 +22,7 @@ function copy_back_results {
     if [[ -d "$TMPDIR/MD_simulations/projects/5EKY_monomeric/outputs" ]]; then
         rsync -av \
           --exclude 'rleveson.*' \
-          --exclude 'sanity_checks_Ec5EKYm*.out' \
+          --exclude '*.out' \
           "$TMPDIR/MD_simulations/projects/5EKY_monomeric/outputs/" \
           "$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/5EKY_monomeric/outputs/"
         echo "=== Copy complete ==="
@@ -54,16 +54,6 @@ scripts=$TMPDIR/MD_simulations/scripts
 # one node has 128 cores (rome), we have 12 replicas --> max. 10 cores per replica
 # possible combinations of MPI ranks and OpenMP threads per replica
 # np = MPI ranks  ntomp = OpenMP threads per rank
-# 1                       10
-# 2                        5
-# 3                        3
-# 4                        2
-# 5                        2
-# 6                        1
-# 7                        1
-# 8                        1
-# 9                        1
-# 10                       1
 # Possible MPI ranks per replica (np) = max. -n
 np_list=(1 2 3 4 5 6 7 8 9 10)
 
