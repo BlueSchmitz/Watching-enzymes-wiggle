@@ -19,11 +19,11 @@ set -o errtrace
 function copy_back_results {
     set +e # Disable exit on error for this function
     echo "=== Copying results back to home ==="
-    if [[ -d "$SCRATCH_DIR/MD_simulations/projects/5EKY_monomeric/outputs" ]]; then
+    if [[ -d "$TMPDIR/MD_simulations/projects/5EKY_monomeric/outputs" ]]; then
         rsync -av \
           --exclude 'rleveson.*' \
           --exclude 'sanity_checks_Ec5EKYm*.out' \
-          "$SCRATCH_DIR/MD_simulations/projects/5EKY_monomeric/outputs/" \
+          "$TMPDIR/MD_simulations/projects/5EKY_monomeric/outputs/" \
           "$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/5EKY_monomeric/outputs/"
         echo "=== Copy complete ==="
     else
@@ -90,7 +90,7 @@ for np in "${np_list[@]}"; do
             # Use -deffnm temporary output to avoid overwriting
             TMP_PREFIX="tune_np${np}_nt${nt}"
             echo "Running tuning with deffnm=$TMP_PREFIX"
-            mpirun -np $np apptainer exec $GROMACS_CONTAINER \
+            apptainer exec $GROMACS_CONTAINER mpirun -np $np \
                 gmx_mpi mdrun \
                 -s scaled_1.00.tpr \
                 -ntomp $nt \
