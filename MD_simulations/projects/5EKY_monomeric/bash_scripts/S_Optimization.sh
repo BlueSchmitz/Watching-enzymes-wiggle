@@ -27,7 +27,7 @@ function copy_back_results {
 }
 
 # Trap errors and print line number + command
-trap 'echo "Error in ${BASH_SOURCE[0]} at line ${LINENO}: ${BASH_COMMAND}"' ERR
+trap 'echo "ERROR at line ${LINENO}: ${BASH_COMMAND}" >&2' ERR
 trap copy_back_results EXIT
 
 # path to gromacs apptainer container
@@ -85,7 +85,7 @@ for np in "${np_list[@]}"; do
             # Run tune_pme or mdrun -tune (short)
             # Use -deffnm temporary output to avoid overwriting
             TMP_PREFIX="tune_np${np}_nt${nt}"
-            apptainer exec $GROMACS_CONTAINER gmx_mpi tune_pme -ntmpi $np -ntomp $nt -s scaled_1.00.tpr -mdrun "gmx_mpi mdrun" -dlb no -deffnm $TMP_PREFIX 2>&1 | tee ${TMP_PREFIX}.log
+            apptainer exec $GROMACS_CONTAINER gmx_mpi tune_pme -ntmpi $np -ntomp $nt -s scaled_1.00.tpr -mdrun "gmx_mpi mdrun" -dlb no -deffnm $TMP_PREFIX 2>&1 | tee ${TMP_PREFIX}.log || true
 
             # Extract relevant metrics from log
             step_per_sec=$(grep "Performance:" ${TMP_PREFIX}.log | awk '{print $3}')
