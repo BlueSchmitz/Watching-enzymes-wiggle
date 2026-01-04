@@ -85,7 +85,7 @@ for cfg in "${configs[@]}"; do
         echo "Running tuning with deffnm=$TMP_PREFIX"
         # Run HREX MD for a short duration to measure performance
         apptainer exec $GROMACS_CONTAINER mpirun -np $totalranks \
-            gmx_mpi mdrun multidir rep* \
+            gmx_mpi mdrun -multidir rep* \
             -replex 1000 \
             -ntomp $nt \
             -f $mdp/optimization.mdp \
