@@ -88,7 +88,6 @@ for cfg in "${configs[@]}"; do
             gmx_mpi mdrun -multidir rep* \
             -replex 1000 \
             -ntomp $nt \
-            -f $mdp/optimization.mdp \
             -plumed ../plumed.dat \
             -cpt 15 \
             -deffnm $TMP_PREFIX 2>&1 | tee ${TMP_PREFIX}.log || true
