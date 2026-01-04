@@ -62,6 +62,7 @@ configs=(
   "4  2"
   "3  3"
 )
+max_cores_per_replica=10
 
 mkdir -p ./6_HREX
 cd ./6_HREX
