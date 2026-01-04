@@ -90,7 +90,7 @@ for cfg in "${configs[@]}"; do
             -ntomp $nt \
             -plumed ../plumed.dat \
             -cpt 15 \
-            -deffnm $TMP_PREFIX 2>&1 | tee ${TMP_PREFIX}.log || true
+            2>&1 | tee ${TMP_PREFIX}.log || true
 
         # Extract relevant metrics from log
         ns_per_day=$(grep "Performance:" ${TMP_PREFIX}.log | awk '{print $2}' || echo "NA")
