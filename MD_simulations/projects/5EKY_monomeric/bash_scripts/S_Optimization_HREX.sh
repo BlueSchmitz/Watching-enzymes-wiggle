@@ -10,7 +10,7 @@
 #SBATCH --requeue
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=blueschmitz@tudelft.nl
-#SBATCH --output=./optimization_%j.out
+#SBATCH --output=./optimization_HREX_%j.out
 
 # Exit immediately on errors, undefined vars, or failed pipes
 set -euo pipefail
@@ -70,7 +70,7 @@ cd ./6_HREX
 for i in 1.00 0.95 0.91 0.87 0.83 0.79 0.76 0.72 0.69 0.66 0.63 0.60;
 do 
   cd ./rep${i}
-  apptainer exec $GROMACS_CONTAINER mpirun gmx_mpi grompp -f $mdp/optimization.mdp -c ../npt_5.gro -p scaled_${i}.top -o topol.tpr -maxwarn 1
+  apptainer exec $GROMACS_CONTAINER mpirun -np 1 gmx_mpi grompp -f $mdp/optimization.mdp -c ../npt_5.gro -p scaled_${i}.top -o topol.tpr -maxwarn 1
   echo "Generated topol.tpr from scaled_${i}.top in ./rep${i}."
   cd ..
 done 
