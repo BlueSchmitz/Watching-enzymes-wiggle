@@ -68,7 +68,7 @@ mkdir -p ./6_HREX
 cd ./6_HREX
 # Temporary file to store results
 RESULTS_FILE="tune_summary_HREX.csv"
-echo "MPI ranks (np),OpenMP threads per rank (ntomp),Cores per replica,Performance (ns/day),Performance (h/ns),Speed per core (ns/day/core)" > $RESULTS_FILE
+echo "MPI ranks per replica (np),OpenMP threads per rank (ntomp),Cores per replica,Performance (ns/day),Performance (h/ns),Speed per core (ns/day/core)" > $RESULTS_FILE
 
 # Loop over candidate combinations
 for cfg in "${configs[@]}"; do
@@ -94,7 +94,7 @@ for cfg in "${configs[@]}"; do
         # Extract relevant metrics from log
         ns_per_day=$(grep "Performance:" rep1.00/md.log | awk '{print $2}' || echo "NA")
         hours_per_ns=$(grep "Performance:" rep1.00/md.log | awk '{print $3}' || echo "NA")
-        speed_per_core=$(echo "$ns_per_day / $total_cores" | bc -l || echo "NA")
+        speed_per_core=$(echo "$ns_per_day / $cores_per_replica" | bc -l || echo "NA")
         #copy md.log to avoid overwriting
         cp rep1.00/md.log ${TMP_PREFIX}_rep1.00_md.log
         cp rep0.95/md.log ${TMP_PREFIX}_rep0.95_md.log

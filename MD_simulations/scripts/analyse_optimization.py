@@ -2,8 +2,6 @@
 # usage: python analyse_optimization.py path/to/tune_summary.csv
 
 import sys
-import os
-import math
 from pathlib import Path
 import numpy as np
 import pandas as pd
@@ -34,34 +32,57 @@ df_sorted = df_sorted.round({
 print(tabulate(df_sorted, headers='keys', tablefmt='fancy_grid', showindex=False))
 
 # Save sorted table to CSV
-output_csv = "tune_summary_sorted.csv"
+if "HREX" in file_path:
+    output_csv = "tune_summary_HREX_sorted.csv"
+else:
+    output_csv = "tune_summary_sorted.csv"
 df_sorted.to_csv(output_csv, index=False)
 print(f"\nSorted table saved to: {output_csv}")
 
 # Scatter plot
 plt.figure(figsize=(10, 6))
-sc = plt.scatter(
-    df_sorted["Total cores"],
-    df_sorted["Performance (ns/day)"],
-    c=df_sorted["Speed per core (ns/day/core)"],  # color by speed per core
-    s=df_sorted["Speed per core (ns/day/core)"] * 100,  # size proportional to speed per core
-    cmap='viridis',
-    alpha=0.8,
-    edgecolors='k'
-)
+if "HREX" in file_path:
+    sc = plt.scatter(
+        df_sorted["Total cores"],
+        df_sorted["Performance (ns/day)"],
+        c=df_sorted["MPI ranks per replica (np)"],  # color by ranks per replica
+        s=df_sorted["MPI ranks per replica (np)"] * 100,  # size proportional to ranks per replica
+        cmap='viridis',
+        alpha=0.8,
+        edgecolors='k'
+    )
+else:
+    sc = plt.scatter(
+        df_sorted["Total cores"],
+        df_sorted["Performance (ns/day)"],
+        c=df_sorted["MPI ranks (np)"],  # color by ranks 
+        s=df_sorted["MPI ranks (np)"] * 100,  # size proportional to ranks 
+        cmap='viridis',
+        alpha=0.8,
+        edgecolors='k'
+    )    
 
 # Colorbar
 cbar = plt.colorbar(sc)
-cbar.set_label("Speed per core (ns/day/core)")
+if "HREX" in file_path:
+    cbar.set_label("MPI ranks per replica (np)")
+else:
+    cbar.set_label("MPI ranks (np)")
 
 # Labels and title
 plt.xlabel("Total cores")
 plt.ylabel("Performance (ns/day)")
-plt.title("GROMACS Tuning Performance")
+if "HREX" in file_path:
+    plt.title("GROMACS HREX Tuning Performance for HREX with 4 Replicas")
+else:
+    plt.title("GROMACS Tuning Performance")
 plt.grid(True, linestyle='--', alpha=0.5)
 plt.tight_layout()
 
 # Save plot to PNG
-output_plot = "tune_summary_scatter.png"
+if "HREX" in file_path:
+    output_plot = "tune_summary_HREX_scatter.png"
+else:
+    output_plot = "tune_summary_scatter.png"
 plt.savefig(output_plot, dpi=300)
 print(f"Scatter plot saved to: {output_plot}")
