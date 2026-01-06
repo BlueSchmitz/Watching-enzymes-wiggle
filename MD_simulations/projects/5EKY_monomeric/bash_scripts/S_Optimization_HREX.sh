@@ -67,7 +67,7 @@ max_cores_per_replica=10
 mkdir -p ./6_HREX
 cd ./6_HREX
 # Temporary file to store results
-RESULTS_FILE="tune_summary.csv"
+RESULTS_FILE="tune_summary_HREX.csv"
 echo "MPI ranks (np),OpenMP threads per rank (ntomp),Cores per replica,Performance (ns/day),Performance (h/ns),Speed per core (ns/day/core)" > $RESULTS_FILE
 
 # Loop over candidate combinations
@@ -80,7 +80,6 @@ for cfg in "${configs[@]}"; do
         totalranks=$((np * 4)) # 4 replicas
         export OMP_NUM_THREADS=$nt
 
-        # Use -deffnm temporary output to avoid overwriting
         TMP_PREFIX="tune_np${np}_nt${nt}"
         echo "Running tuning with deffnm=$TMP_PREFIX"
         # Run HREX MD for a short duration to measure performance
@@ -88,6 +87,7 @@ for cfg in "${configs[@]}"; do
             gmx_mpi mdrun -multidir rep* \
             -replex 1000 \
             -ntomp $nt \
+            -hrex \
             -plumed ../plumed.dat \
             -cpt 15 \
             2>&1 | tee ${TMP_PREFIX}.log || true
@@ -103,7 +103,7 @@ for cfg in "${configs[@]}"; do
 done
 
 # Visualize results
-python $scripts/analyse_optimization.py ./tune_summary.csv
+python $scripts/analyse_optimization.py ./tune_summary_HREX.csv
 
 echo "=== Tuning complete! Results saved in $RESULTS_FILE ==="
 cat $RESULTS_FILE
