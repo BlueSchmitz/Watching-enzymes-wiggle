@@ -43,7 +43,7 @@ print(f"\nSorted table saved to: {output_csv}")
 plt.figure(figsize=(10, 6))
 if "HREX" in file_path:
     sc = plt.scatter(
-        df_sorted["Total cores"],
+        df_sorted["Cores per replica"],
         df_sorted["Performance (ns/day)"],
         c=df_sorted["MPI ranks per replica (np)"],  # color by ranks per replica
         s=df_sorted["MPI ranks per replica (np)"] * 100,  # size proportional to ranks per replica
