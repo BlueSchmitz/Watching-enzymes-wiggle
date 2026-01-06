@@ -1,7 +1,7 @@
 #!/bin/bash  
 
 #SBATCH -J optimization_setup_Ec5EKYm_apptainer  
-#SBATCH -t 02:00:00
+#SBATCH -t 00:10:00
 #SBATCH -p rome
 #SBATCH -N 1
 #SBATCH -n 40
@@ -90,12 +90,16 @@ for cfg in "${configs[@]}"; do
             -hrex \
             -plumed ../plumed.dat \
             -cpt 15 \
-            2>&1 | tee ${TMP_PREFIX}.log || true
 
         # Extract relevant metrics from log
-        ns_per_day=$(grep "Performance:" ${TMP_PREFIX}.log | awk '{print $2}' || echo "NA")
-        hours_per_ns=$(grep "Performance:" ${TMP_PREFIX}.log | awk '{print $3}' || echo "NA")
+        ns_per_day=$(grep "Performance:" rep1.00/md.log | awk '{print $2}' || echo "NA")
+        hours_per_ns=$(grep "Performance:" rep1.00/md.log | awk '{print $3}' || echo "NA")
         speed_per_core=$(echo "$ns_per_day / $total_cores" | bc -l || echo "NA")
+        #copy md.log to avoid overwriting
+        cp rep1.00/md.log ${TMP_PREFIX}_rep1.00_md.log
+        cp rep0.95/md.log ${TMP_PREFIX}_rep0.95_md.log
+        cp rep0.91/md.log ${TMP_PREFIX}_rep0.91_md.log
+        cp rep0.87/md.log ${TMP_PREFIX}_rep0.87_md.log
 
         # Append to results CSV
         echo "$np,$nt,$cores_per_replica,$ns_per_day,$hours_per_ns,$speed_per_core" >> $RESULTS_FILE
