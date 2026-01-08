@@ -1,6 +1,6 @@
 #!/bin/bash  
 
-#SBATCH --job-name="analyse 5EKYm trajectory"   
+#SBATCH --job-name="analyse 5EKYm RMSF"   
 #SBATCH --time=01:00:00
 #SBATCH --ntasks=1 
 #SBATCH --cpus-per-task=8
@@ -8,7 +8,7 @@
 #SBATCH --partition=gpu-a100
 #SBATCH --mem-per-cpu=1GB
 #SBATCH --account=Research-AS-BN
-#SBATCH --output=/scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/5EKY_monomeric/5EKYm_analysis_%j.out
+#SBATCH --output=./5EKYm_save_RMSF_%j.out
 #SBATCH --mail-type=ALL ##you can also set BEGIN/END
 
 : '
@@ -76,24 +76,6 @@ pdb=../../inputs/5EKY_fill.BL00440001.pdb # Input PDB file (with correct protona
 cd ./outputs/7_simple_MD
 
 ### Analysis ###
-echo "============= Analysis of trajectory ============="
-# make index file with default + custom groups
-gmx_mpi make_ndx -f md.tpr -o index.ndx << EOF
-r 1-248
-name 17 TIM_barrel
-r 1-248 & a CA
-name 18 CA_TIM
-r 249-259
-name 19 tail
-r 249-259 & a CA
-name 20 CA_loop
-r 167 & a NZ
-name 21 Lys167_NZ
-r 259 & a OH
-name 22 Tyr259_OH
-
-q
-EOF
 # center protein and remove jumps, keep whole protein 
 echo -e "1\n1" | gmx_mpi trjconv -f md.xtc -s md.tpr -n index.ndx -o md_nojump.xtc -pbc nojump -center -fit rot+trans
 echo -e "3\n3" | gmx_mpi rmsf -f md_nojump.xtc -s md.tpr -o rmsf.xvg -n index.ndx
