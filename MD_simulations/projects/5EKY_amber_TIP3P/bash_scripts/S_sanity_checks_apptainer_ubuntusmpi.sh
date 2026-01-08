@@ -51,6 +51,7 @@ cp topol_5.top topol_prod.top
 sed -i '/#ifdef POSRES/,/#endif/d' topol_prod.top # Remove the protein restraint block (POSRES)
 echo "Removed position restraints from topol_prod.top."
 # 2. Re-name topology file (already self-cotained)
+#gmx_mpi grompp -f tempering.mdp -c npt_5.gro -p topol_prod.top -pp processed.top -o dummy.tpr -r npt_5.gro -maxwarn 2
 mv topol_prod.top processed.top
 echo "processed.top is self-contained."
 # 3. Edit the processed.top file to indicate which atoms we want to scale (marked with an _ after the residue name)
