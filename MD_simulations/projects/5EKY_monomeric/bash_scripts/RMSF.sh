@@ -1,14 +1,14 @@
 #!/bin/bash  
 
-#SBATCH --job-name="save 5EKYm trajectory"   
+#SBATCH --job-name="analyse 5EKYm trajectory"   
 #SBATCH --time=01:00:00
 #SBATCH --ntasks=1 
-#SBATCH --cpus-per-task=1
-#SBATCH --gpus-per-task=0
-#SBATCH --partition=compute-p1
+#SBATCH --cpus-per-task=8
+#SBATCH --gpus-per-task=1
+#SBATCH --partition=gpu-a100
 #SBATCH --mem-per-cpu=1GB
 #SBATCH --account=Research-AS-BN
-#SBATCH --output=/scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/5EKY_monomeric/5EKYm_save_trajectory_%j.out
+#SBATCH --output=/scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/5EKY_monomeric/5EKYm_analysis_%j.out
 #SBATCH --mail-type=ALL ##you can also set BEGIN/END
 
 : '
@@ -72,12 +72,30 @@ mdp=../../../../mdp_templates
 scripts=../../../../scripts
 pdb=../../inputs/5EKY_fill.BL00440001.pdb # Input PDB file (with correct protonation states)
 
-# mkdir outputs
+# cd to outputs
 cd ./outputs/7_simple_MD
 
-### Simple MD production run ###
-echo "============= Downsizing and Exporting trajectory ============="
-echo -e "q" | gmx_mpi make_ndx -f md.tpr -o index.ndx # make index file with standard groups
-# first checks if atoms jump across the box and then puts them back --> continuous trajectory
-echo -e "2\n2" | gmx_mpi trjconv -f md.xtc -s md.tpr -n index.ndx -o md_protein-h_pbc_100.xtc -dt 100 -center -pbc nojump
-echo "Trajectory saved as md_protein-h_pbc_100.xtc"
+### Analysis ###
+echo "============= Analysis of trajectory ============="
+# make index file with default + custom groups
+gmx_mpi make_ndx -f md.tpr -o index.ndx << EOF
+r 1-248
+name 17 TIM_barrel
+r 1-248 & a CA
+name 18 CA_TIM
+r 249-259
+name 19 tail
+r 249-259 & a CA
+name 20 CA_loop
+r 167 & a NZ
+name 21 Lys167_NZ
+r 259 & a OH
+name 22 Tyr259_OH
+
+q
+EOF
+# center protein and remove jumps, keep whole protein 
+echo -e "1\n1" | gmx_mpi trjconv -f md.xtc -s md.tpr -n index.ndx -o md_nojump.xtc -pbc nojump -center -fit rot+trans
+echo -e "3\n3" | gmx_mpi rmsf -f md_nojump.xtc -s md.tpr -o rmsf.xvg -n index.ndx
+# python to analyse
+python $scripts/plot_RMSF.py rmsf.xvg

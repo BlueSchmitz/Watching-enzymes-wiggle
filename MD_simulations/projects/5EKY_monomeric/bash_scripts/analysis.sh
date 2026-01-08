@@ -77,21 +77,23 @@ cd ./outputs/7_simple_MD
 
 ### Analysis ###
 echo "============= Analysis of trajectory ============="
-# make index file with protein group (1)
-echo -e "q" | gmx_mpi make_ndx -f md.tpr -o index.ndx 
+# make index file with default + custom groups
+gmx_mpi make_ndx -f md.tpr -o index.ndx << EOF
+r 1-248
+name 17 TIM_barrel
+r 1-248 & a CA
+name 18 CA_TIM
+r 249-259
+name 19 tail
+r 249-259 & a CA
+name 20 CA_loop
+r 167 & a NZ
+name 21 Lys167_NZ
+r 259 & a OH
+name 22 Tyr259_OH
+q
+EOF
 # center protein and remove jumps, keep whole protein 
 gmx_mpi trjconv -f md.xtc -s md.tpr -o md_nojump.xtc -pbc nojump -center
 # Fit trajectory to reference (usually backbone or Cα)
 gmx_mpi trjconv -s md.tpr -f md_nojump.xtc -o md_fit.xtc -fit rot+trans
-
-
-
-
-
-echo -e "1\nq" | gmx_mpi make_ndx -f md.tpr -o index.ndx # make index file with protein group (1)
-# first checks if atoms jump across the box and then puts them back --> continuous trajectory
-echo -e "1\n1" | gmx_mpi trjconv -f md.xtc -s md.tpr -n index.ndx -o md_protein_pbc.xtc -dt 10 -center -pbc nojump
-# then fit the protein to remove overall rotation and translation
-echo -e "1\n1" | gmx_mpi trjconv -f md_protein_pbc.xtc -s md.tpr -n index.ndx -o md_protein_downsized.xtc -fit rot+trans
-
-echo "Trajectory saved as md_protein_downsized.xtc"
