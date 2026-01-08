@@ -77,12 +77,19 @@ cd ./outputs/7_simple_MD
 
 ### Simple MD production run ###
 echo "============= Downsizing and Exporting trajectory ============="
+<<<<<<< HEAD
 echo -e "q" | gmx_mpi make_ndx -f md.tpr -o index.ndx # make index file with standard groups
+=======
+echo -e "q" | gmx_mpi make_ndx -f md.tpr -o index.ndx # make index file with default groups
+>>>>>>> f17c23c (save traj)
 # first checks if atoms jump across the box and then puts them back --> continuous trajectory
-echo -e "1\n1" | gmx_mpi trjconv -f md.xtc -s md.tpr -n index.ndx -o md_protein_pbc.xtc -dt 10 -center -pbc nojump
+echo -e "2\n2\n" | gmx_mpi trjconv -f md.xtc -s md.tpr -n index.ndx -o md_protein-h_pbc_100.xtc -dt 100 -center -pbc nojump
 # then fit the protein to remove overall rotation and translation
-echo -e "1\n1" | gmx_mpi trjconv -f md_protein_pbc.xtc -s md.tpr -n index.ndx -o md_protein_downsized.xtc -fit rot+trans
+echo -e "2\n2\n" | gmx_mpi trjconv -f md_protein-h_pbc_100.xtc -s md.tpr -n index.ndx -o md_protein-h_downsized_100.xtc -fit rot+trans
 
 echo "Trajectory saved as md_protein_downsized.xtc"
+<<<<<<< HEAD
 
 echo -e "2\n2" | gmx_mpi trjconv -f md.xtc -s md.tpr -n index.ndx -o md_protein_downsized.xtc -dt 100 -center -pbc nojump -fit rot+trans
+=======
+>>>>>>> f17c23c (save traj)

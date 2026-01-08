@@ -1,0 +1,1573 @@
+
+Currently Loaded Modules:
+  1) slurm/current                   17) libpng/1.6.39
+  2) DefaultModules                  18) python-venv/1.0
+  3) 2025                            19) py-pybind11/2.13.5
+  4) openmpi/4.1.7                   20) py-contourpy/1.3.0
+  5) cuda/11.6                       21) py-cycler/0.11.0
+  6) fftw/3.3.10_openmp_True         22) py-fonttools/4.39.4
+  7) gcc-runtime/13.3.0              23) py-kiwisolver/1.4.5
+  8) glibc/2.28                      24) py-packaging/24.1
+  9) hwloc/2.11.1                    25) libjpeg-turbo/3.0.3
+ 10) openblas/0.3.28_threads_openmp  26) py-pillow/11.0.0
+ 11) gsl/2.8                         27) py-pyparsing/3.1.2
+ 12) zlib/1.2.13                     28) py-six/1.16.0
+ 13) plumed/2.9.3                    29) py-python-dateutil/2.8.2
+ 14) gromacs/2024.3                  30) qhull/2020.2
+ 15) python/3.11.9                   31) py-matplotlib/3.9.2
+ 16) freetype/2.13.2                 32) py-numpy/1.26.4
+
+ 
+
+============= Parametrization with GROMACS =============
+               :-) GROMACS - gmx pdb2gmx, 2024.3-plumed_2.9.3 (-:
+
+Executable:   /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr/bin/gmx_mpi
+Data prefix:  /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr
+Working dir:  /scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/1JCLm/outputs/2_parametrization
+Command line:
+  gmx_mpi pdb2gmx -f ../../inputs/1JCLm_fill.BL00010001.pdb -o processed.gro -p topol.top -ff amber99sb-star-ildnp -water tip3p
+
+Opening force field file ../../../../force_fields/amber99sb-star-ildnp.ff/aminoacids.r2b
+Opening force field file ../../../../force_fields/amber99sb-star-ildnp.ff/dna.r2b
+Opening force field file ../../../../force_fields/amber99sb-star-ildnp.ff/rna.r2b
+there were 0 atoms with zero occupancy and 6 atoms with          occupancy unequal to one (out of 1945 atoms). Check your pdb file.
+Opening force field file ../../../../force_fields/amber99sb-star-ildnp.ff/atomtypes.atp
+Opening force field file ../../../../force_fields/amber99sb-star-ildnp.ff/aminoacids.rtp
+Opening force field file ../../../../force_fields/amber99sb-star-ildnp.ff/dna.rtp
+Opening force field file ../../../../force_fields/amber99sb-star-ildnp.ff/rna.rtp
+Opening force field file ../../../../force_fields/amber99sb-star-ildnp.ff/aminoacids.hdb
+Opening force field file ../../../../force_fields/amber99sb-star-ildnp.ff/dna.hdb
+Opening force field file ../../../../force_fields/amber99sb-star-ildnp.ff/rna.hdb
+Opening force field file ../../../../force_fields/amber99sb-star-ildnp.ff/aminoacids.n.tdb
+Opening force field file ../../../../force_fields/amber99sb-star-ildnp.ff/aminoacids.c.tdb
+Analysing hydrogen-bonding network for automated assignment of histidine
+ protonation. 369 donors and 377 acceptors were found.
+There are 543 hydrogen bonds
+Will use HISE for residue 34
+Will use HISE for residue 78
+Will use HISD for residue 232
+Will use HISE for residue 250
+9 out of 9 lines of specbond.dat converted successfully
+Special Atom Distance matrix:
+                    MET1   MET15   CYS33   HIS34   CYS47   HIS78  MET111
+                     SD5   SD111   SG249  NE2257   SG346  NE2599   SD849
+   MET15   SD111   1.698
+   CYS33   SG249   2.861   1.451
+   HIS34  NE2257   2.984   1.760   0.677
+   CYS47   SG346   2.858   1.268   1.186   1.809
+   HIS78  NE2599   4.212   2.606   2.480   2.982   1.580
+  MET111   SD849   4.096   2.899   3.424   3.987   2.262   1.546
+  CYS125   SG950   3.910   2.595   2.419   3.086   1.472   1.605   1.940
+  CYS129   SG979   3.541   2.320   2.044   2.716   1.302   2.020   2.429
+  MET185  SD1387   2.755   1.818   2.684   3.253   1.604   2.089   1.431
+  MET186  SD1395   2.164   1.699   2.756   3.282   1.894   2.781   2.192
+  MET192  SD1446   3.285   2.682   3.334   3.964   2.317   2.790   1.980
+  HIS232 NE21746   2.273   1.970   2.632   3.184   2.009   3.175   2.868
+  HIS250 NE21880   1.179   1.493   2.224   2.106   2.655   4.048   4.350
+                  CYS125  CYS129  MET185  MET186  MET192  HIS232
+                   SG950   SG979  SD1387  SD1395  SD1446 NE21746
+  CYS129   SG979   0.650
+  MET185  SD1387   1.789   1.888
+  MET186  SD1395   2.236   2.124   0.780
+  MET192  SD1446   1.800   1.862   1.172   1.204
+  HIS232 NE21746   2.144   1.788   1.555   1.030   1.321
+  HIS250 NE21880   3.972   3.570   3.166   2.787   3.876   2.839
+Opening force field file ../../../../force_fields/amber99sb-star-ildnp.ff/aminoacids.arn
+Opening force field file ../../../../force_fields/amber99sb-star-ildnp.ff/dna.arn
+Opening force field file ../../../../force_fields/amber99sb-star-ildnp.ff/rna.arn
+Before cleaning: 10364 pairs
+Before cleaning: 10862 dihedrals
+
+GROMACS reminds you: "Your assumptions are your windows on the world. Scrub them off every once in a while, or the light won't come in." (Isaac Asimov)
+
+Using the Amber99sb-star-ildnp force field in directory ../../../../force_fields/amber99sb-star-ildnp.ff
+
+going to rename ../../../../force_fields/amber99sb-star-ildnp.ff/aminoacids.r2b
+
+going to rename ../../../../force_fields/amber99sb-star-ildnp.ff/dna.r2b
+
+going to rename ../../../../force_fields/amber99sb-star-ildnp.ff/rna.r2b
+Reading ../../inputs/1JCLm_fill.BL00010001.pdb...
+Read '', 1945 atoms
+
+Analyzing pdb file
+Splitting chemical chains based on TER records or chain id changing.
+
+There are 1 chains and 0 blocks of water and 259 residues with 1945 atoms
+
+  chain  #res #atoms
+
+  1 'A'   259   1945  
+
+there were 0 atoms with zero occupancy and 6 atoms with          occupancy unequal to one (out of 1945 atoms). Check your pdb file.
+
+Reading residue database... (Amber99sb-star-ildnp)
+
+Processing chain 1 'A' (1945 atoms, 259 residues)
+
+Identified residue MET1 as a starting terminus.
+
+Identified residue TYR259 as a ending terminus.
+
+Checking for duplicate atoms....
+
+Generating any missing hydrogen atoms and/or adding termini.
+
+Now there are 259 residues with 3922 atoms
+
+Making bonds...
+
+Number of bonds was 3950, now 3949
+
+Generating angles, dihedrals and pairs...
+
+Making cmap torsions...
+
+There are 10862 dihedrals,  962 impropers, 7171 angles
+          10319 pairs,     3949 bonds and     0 virtual sites
+
+Total mass 27728.986 a.m.u.
+
+Total charge -5.000 e
+
+Writing topology
+
+Writing coordinate file...
+
+		--------- PLEASE NOTE ------------
+
+You have successfully generated a topology from: ../../inputs/1JCLm_fill.BL00010001.pdb.
+
+The Amber99sb-star-ildnp force field and the tip3p water model are used.
+
+		--------- ETON ESAELP ------------
+              :-) GROMACS - gmx editconf, 2024.3-plumed_2.9.3 (-:
+
+Executable:   /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr/bin/gmx_mpi
+Data prefix:  /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr
+Working dir:  /scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/1JCLm/outputs/2_parametrization
+Command line:
+  gmx_mpi editconf -f processed.gro -o boxed.gro -c -d 1.5 -bt cubic
+
+
+GROMACS reminds you: "Ramones For Ever" (P.J. Van Maaren)
+
+Note that major changes are planned in future for editconf, to improve usability and utility.
+Read 3922 atoms
+Volume: 99.5601 nm^3, corresponds to roughly 44800 electrons
+No velocities found
+    system size :  4.926  4.497  4.494 (nm)
+    diameter    :  5.521               (nm)
+    center      :  2.931  0.389  1.711 (nm)
+    box vectors :  4.926  4.497  4.494 (nm)
+    box angles  :  90.00  90.00  90.00 (degrees)
+    box volume  :  99.56               (nm^3)
+    shift       :  1.330  3.871  2.549 (nm)
+new center      :  4.260  4.260  4.260 (nm)
+new box vectors :  8.521  8.521  8.521 (nm)
+new box angles  :  90.00  90.00  90.00 (degrees)
+new box volume  : 618.63               (nm^3)
+               :-) GROMACS - gmx solvate, 2024.3-plumed_2.9.3 (-:
+
+Executable:   /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr/bin/gmx_mpi
+Data prefix:  /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr
+Working dir:  /scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/1JCLm/outputs/2_parametrization
+Command line:
+  gmx_mpi solvate -cp boxed.gro -cs spc216.gro -o solvated.gro -p topol.top
+
+Reading solute configuration
+Reading solvent configuration
+
+Initialising inter-atomic distances...
+
+WARNING: Masses and atomic (Van der Waals) radii will be guessed
+         based on residue and atom names, since they could not be
+         definitively assigned from the information in your input
+         files. These guessed numbers might deviate from the mass
+         and radius of the atom type. Please check the output
+         files if necessary. Note, that this functionality may
+         be removed in a future GROMACS version. Please, consider
+         using another file format for your input.
+
+NOTE: From version 5.0 gmx solvate uses the Van der Waals radii
+from the source below. This means the results may be different
+compared to previous GROMACS versions.
+
+++++ PLEASE READ AND CITE THE FOLLOWING REFERENCE ++++
+A. Bondi
+van der Waals Volumes and Radii
+J. Phys. Chem. 68 (1964) pp. 441-451
+-------- -------- --- Thank You --- -------- --------
+
+Generating solvent configuration
+Will generate new solvent configuration of 5x5x5 boxes
+Solvent box contains 68616 atoms in 22872 residues
+Removed 7560 solvent atoms due to solvent-solvent overlap
+Removed 3528 solvent atoms due to solute-solvent overlap
+Sorting configuration
+Found 1 molecule type:
+    SOL (   3 atoms): 19176 residues
+Generated solvent containing 57528 atoms in 19176 residues
+Writing generated configuration to solvated.gro
+
+Output configuration contains 61450 atoms in 19435 residues
+Volume                 :     618.631 (nm^3)
+Density                :     1006.98 (g/l)
+Number of solvent molecules:  19176   
+
+Processing topology
+
+Back Off! I just backed up topol.top to ./#topol.top.1#
+
+GROMACS reminds you: "Science is the record of dead religions." (Oscar Wilde)
+
+Adding line for 19176 solvent molecules with resname (SOL) to topology file (topol.top)
+               :-) GROMACS - gmx grompp, 2024.3-plumed_2.9.3 (-:
+
+Executable:   /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr/bin/gmx_mpi
+Data prefix:  /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr
+Working dir:  /scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/1JCLm/outputs/2_parametrization
+Command line:
+  gmx_mpi grompp -f ../../../../mdp_templates/minim.mdp -c solvated.gro -p topol.top -o ions.tpr -maxwarn 1
+
+Ignoring obsolete mdp entry 'ns_type'
+Generating 1-4 interactions: fudge = 0.5
+
+NOTE 1 [file topol.top, line 37514]:
+  System has non-zero total charge: -5.000000
+  Total charge should normally be an integer. See
+  https://manual.gromacs.org/current/user-guide/floating-point.html
+  for discussion on how close it should be to an integer.
+
+
+
+
+WARNING 1 [file topol.top, line 37514]:
+  You are using Ewald electrostatics in a system with net charge. This can
+  lead to severe artifacts, such as ions moving into regions with low
+  dielectric, due to the uniform background charge. We suggest to
+  neutralize your system with counter ions, possibly in combination with a
+  physiological salt concentration.
+
+Setting the LD random seed to 2143206619
+
+Generated 2211 of the 2211 non-bonded parameter combinations
+
+Generated 2211 of the 2211 1-4 parameter combinations
+
+Excluding 3 bonded neighbours molecule type 'Protein_chain_A'
+
+turning H bonds into constraints...
+
+Excluding 2 bonded neighbours molecule type 'SOL'
+
+turning H bonds into constraints...
+
+++++ PLEASE READ AND CITE THE FOLLOWING REFERENCE ++++
+J. S. Hub, B. L. de Groot, H. Grubmueller, G. Groenhof
+Quantifying Artifacts in Ewald Simulations of Inhomogeneous Systems with a Net
+Charge
+J. Chem. Theory Comput. 10 (2014) pp. 381-393
+-------- -------- --- Thank You --- -------- --------
+
+Number of degrees of freedom in T-Coupling group rest is 124842.00
+The integrator does not provide a ensemble temperature, there is no system ensemble temperature
+
+There was 1 NOTE
+
+There was 1 WARNING
+
+GROMACS reminds you: "I Should Be the Pimp Of the Year" (Urban Dance Squad)
+
+Analysing residue names:
+There are:   259    Protein residues
+There are: 19176      Water residues
+Analysing Protein...
+
+The largest distance between excluded atoms is 0.423 nm between atom 2811 and 2819
+Calculating fourier grid dimensions for X Y Z
+Using a fourier grid of 72x72x72, spacing 0.118 0.118 0.118
+
+Estimate for the relative computational load of the PME mesh part: 0.24
+
+This run will generate roughly 5 Mb of data
+               :-) GROMACS - gmx genion, 2024.3-plumed_2.9.3 (-:
+
+Executable:   /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr/bin/gmx_mpi
+Data prefix:  /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr
+Working dir:  /scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/1JCLm/outputs/2_parametrization
+Command line:
+  gmx_mpi genion -s ions.tpr -o solv_ions.gro -p topol.top -pname NA -neutral
+
+Reading file ions.tpr, VERSION 2024.3-plumed_2.9.3 (single precision)
+Reading file ions.tpr, VERSION 2024.3-plumed_2.9.3 (single precision)
+Group     0 (         System) has 61450 elements
+Group     1 (        Protein) has  3922 elements
+Group     2 (      Protein-H) has  1945 elements
+Group     3 (        C-alpha) has   259 elements
+Group     4 (       Backbone) has   777 elements
+Group     5 (      MainChain) has  1037 elements
+Group     6 (   MainChain+Cb) has  1278 elements
+Group     7 (    MainChain+H) has  1290 elements
+Group     8 (      SideChain) has  2632 elements
+Group     9 (    SideChain-H) has   908 elements
+Group    10 (    Prot-Masses) has  3922 elements
+Group    11 (    non-Protein) has 57528 elements
+Group    12 (          Water) has 57528 elements
+Group    13 (            SOL) has 57528 elements
+Group    14 (      non-Water) has  3922 elements
+Select a group: Number of (3-atomic) solvent molecules: 19176
+
+Back Off! I just backed up topol.top to ./#topol.top.2#
+Using random seed 1879005149.
+Replacing solvent molecule 4624 (atom 17794) with NA
+Replacing solvent molecule 5073 (atom 19141) with NA
+Replacing solvent molecule 4112 (atom 16258) with NA
+Replacing solvent molecule 13831 (atom 45415) with NA
+Replacing solvent molecule 14148 (atom 46366) with NA
+
+
+GROMACS reminds you: "Sir, spare your threats: The bug which you would fright me with I seek." (Hermione, Act III, scene II of Shakespeare's Winter's Tale)
+
+Will try to add 5 NA ions and 0 CL ions.
+Select a continuous group of solvent molecules
+Selected 13: 'SOL'
+
+Processing topology
+Replacing 5 solute molecules in topology file (topol.top)  by 5 NA and 0 CL ions.
+============= Energy minimization with GROMACS =============
+               :-) GROMACS - gmx grompp, 2024.3-plumed_2.9.3 (-:
+
+Executable:   /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr/bin/gmx_mpi
+Data prefix:  /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr
+Working dir:  /scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/1JCLm/outputs/3_minimization
+Command line:
+  gmx_mpi grompp -f ../../../../mdp_templates/minim.mdp -c solv_ions.gro -p topol.top -o em.tpr
+
+Ignoring obsolete mdp entry 'ns_type'
+Generating 1-4 interactions: fudge = 0.5
+Number of degrees of freedom in T-Coupling group rest is 124827.00
+The integrator does not provide a ensemble temperature, there is no system ensemble temperature
+
+GROMACS reminds you: "The farther the experiment is from theory, the closer it is to the Nobel Prize." (Irene Joliot-Curie)
+
+Setting the LD random seed to -27316231
+
+Generated 2211 of the 2211 non-bonded parameter combinations
+
+Generated 2211 of the 2211 1-4 parameter combinations
+
+Excluding 3 bonded neighbours molecule type 'Protein_chain_A'
+
+turning H bonds into constraints...
+
+Excluding 2 bonded neighbours molecule type 'SOL'
+
+turning H bonds into constraints...
+
+Excluding 1 bonded neighbours molecule type 'NA'
+
+turning H bonds into constraints...
+Analysing residue names:
+There are:   259    Protein residues
+There are: 19171      Water residues
+There are:     5        Ion residues
+Analysing Protein...
+
+The largest distance between excluded atoms is 0.423 nm between atom 2811 and 2819
+Calculating fourier grid dimensions for X Y Z
+Using a fourier grid of 72x72x72, spacing 0.118 0.118 0.118
+
+Estimate for the relative computational load of the PME mesh part: 0.24
+
+This run will generate roughly 5 Mb of data
+                :-) GROMACS - gmx mdrun, 2024.3-plumed_2.9.3 (-:
+
+Executable:   /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr/bin/gmx_mpi
+Data prefix:  /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr
+Working dir:  /scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/1JCLm/outputs/3_minimization
+Command line:
+  gmx_mpi mdrun -deffnm em
+
+Compiled SIMD is AVX2_256, but CPU also supports AVX_512 (see log).
+Reading file em.tpr, VERSION 2024.3-plumed_2.9.3 (single precision)
+GPU-aware MPI detected, but by default GROMACS will not make use the direct GPU communication capabilities of MPI. For improved performance try enabling the feature by setting the GMX_ENABLE_DIRECT_GPU_COMM environment variable.
+
+1 GPU selected for this run.
+Mapping of GPU IDs to the 1 GPU task in the 1 rank on this node:
+  PP:0
+PP tasks will do (non-perturbed) short-ranged interactions on the GPU
+PP task will update and constrain coordinates on the CPU
+Using 1 MPI process
+
+Non-default thread affinity set, disabling internal thread affinity
+
+Using 8 OpenMP threads 
+
+
+Steepest Descents:
+   Tolerance (Fmax)   =  5.00000e+02
+   Number of steps    =        50000
+
+writing lowest energy coordinates.
+
+Steepest Descents converged to Fmax < 500 in 2335 steps
+Potential Energy  = -9.6603075e+05
+Maximum force     =  4.4309253e+02 on atom 1833
+Norm of force     =  9.5911988e+00
+
+GROMACS reminds you: "As an adolescent I aspired to lasting fame, I craved factual certainty, and I thirsted for a meaningful vision of human life -- so I became a scientist. This is like becoming an archbishop so you can meet girls." (Matt Cartmill)
+
+               :-) GROMACS - gmx energy, 2024.3-plumed_2.9.3 (-:
+
+Executable:   /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr/bin/gmx_mpi
+Data prefix:  /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr
+Working dir:  /scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/1JCLm/outputs/3_minimization
+Command line:
+  gmx_mpi energy -f em.edr -o potential.xvg
+
+Opened em.edr as single precision energy file
+
+Select the terms you want from the following list by
+selecting either (part of) the name or the number or a combination.
+End your selection with an empty line or a zero.
+-------------------------------------------------------------------
+  1  Bond             2  Angle            3  Proper-Dih.      4  Per.-Imp.-Dih.
+  5  LJ-14            6  Coulomb-14       7  LJ-(SR)          8  Coulomb-(SR)  
+  9  Coul.-recip.    10  Potential       11  Pressure        12  Constr.-rmsd  
+ 13  Vir-XX          14  Vir-XY          15  Vir-XZ          16  Vir-YX        
+ 17  Vir-YY          18  Vir-YZ          19  Vir-ZX          20  Vir-ZY        
+ 21  Vir-ZZ          22  Pres-XX         23  Pres-XY         24  Pres-XZ       
+ 25  Pres-YX         26  Pres-YY         27  Pres-YZ         28  Pres-ZX       
+ 29  Pres-ZY         30  Pres-ZZ         31  #Surf*SurfTen   32  T-rest        
+
+Reading energy frame      0 time    0.000         Reading energy frame      1 time    1.000         Reading energy frame      2 time    2.000         Reading energy frame      3 time    3.000         Reading energy frame      4 time    4.000         Reading energy frame      5 time    5.000         Reading energy frame      6 time    6.000         Reading energy frame      7 time    7.000         Reading energy frame      8 time    8.000         Reading energy frame      9 time    9.000         Reading energy frame     10 time   10.000         Reading energy frame     11 time   11.000         Reading energy frame     12 time   13.000         Reading energy frame     13 time   14.000         Reading energy frame     14 time   15.000         Reading energy frame     15 time   17.000         Reading energy frame     16 time   18.000         Reading energy frame     17 time   19.000         Reading energy frame     18 time   21.000         Reading energy frame     19 time   22.000         Reading energy frame     20 time   23.000         Reading energy frame     30 time   36.000         Reading energy frame     40 time   49.000         Reading energy frame     50 time   62.000         Reading energy frame     60 time   75.000         Reading energy frame     70 time   87.000         Reading energy frame     80 time  100.000         Reading energy frame     90 time  113.000         Reading energy frame    100 time  125.000         Reading energy frame    110 time  138.000         Reading energy frame    120 time  151.000         Reading energy frame    130 time  163.000         Reading energy frame    140 time  176.000         Reading energy frame    150 time  189.000         Reading energy frame    160 time  201.000         Reading energy frame    170 time  214.000         Reading energy frame    180 time  227.000         Reading energy frame    190 time  239.000         Reading energy frame    200 time  252.000         Reading energy frame    300 time  378.000         Reading energy frame    400 time  505.000         Reading energy frame    500 time  631.000         Reading energy frame    600 time  758.000         Reading energy frame    700 time  884.000         Reading energy frame    800 time 1010.000         Reading energy frame    900 time 1137.000         Reading energy frame   1000 time 1263.000         Reading energy frame   1100 time 1389.000         Reading energy frame   1200 time 1516.000         Reading energy frame   1300 time 1642.000         Reading energy frame   1400 time 1769.000         Reading energy frame   1500 time 1895.000         Reading energy frame   1600 time 2021.000         Reading energy frame   1700 time 2148.000         Reading energy frame   1800 time 2275.000         Last energy frame read 1847 time 2334.000         
+
+GROMACS reminds you: "Everybody Wants to Be Naked and Famous" (Tricky)
+
+
+Statistics over 2335 steps [ 0.0000 through 2334.0000 ps ], 1 data sets
+All statistics are over 1848 points (frames)
+
+Energy                      Average   Err.Est.       RMSD  Tot-Drift
+-------------------------------------------------------------------------------
+Potential                   -939926      14000    37811.2   -90297.3  (kJ/mol)
+potential           : mean = -939925.688, std =  37811.167
+Saved plot: potential.png
+============= Equilibration with GROMACS =============
+               :-) GROMACS - gmx grompp, 2024.3-plumed_2.9.3 (-:
+
+Executable:   /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr/bin/gmx_mpi
+Data prefix:  /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr
+Working dir:  /scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/1JCLm/outputs/4_equilibration
+Command line:
+  gmx_mpi grompp -f ../../../../mdp_templates/nvt.mdp -c em.gro -r em.gro -p topol.top -o nvt.tpr
+
+Ignoring obsolete mdp entry 'ns_type'
+Generating 1-4 interactions: fudge = 0.5
+Number of degrees of freedom in T-Coupling group Protein is 9788.76
+Number of degrees of freedom in T-Coupling group non-Protein is 115038.23
+
+NOTE 1 [file ../../../../mdp_templates/nvt.mdp]:
+  Removing center of mass motion in the presence of position restraints
+  might cause artifacts. When you are using position restraints to
+  equilibrate a macro-molecule, the artifacts are usually negligible.
+
+
+There was 1 NOTE
+
+GROMACS reminds you: "Shit Happens" (Pulp Fiction)
+
+Setting the LD random seed to 1199570102
+
+Generated 2211 of the 2211 non-bonded parameter combinations
+
+Generated 2211 of the 2211 1-4 parameter combinations
+
+Excluding 3 bonded neighbours molecule type 'Protein_chain_A'
+
+turning H bonds into constraints...
+
+Excluding 2 bonded neighbours molecule type 'SOL'
+
+turning H bonds into constraints...
+
+Excluding 1 bonded neighbours molecule type 'NA'
+
+turning H bonds into constraints...
+
+Setting gen_seed to -1208254635
+
+Velocities were taken from a Maxwell distribution at 298 K
+Analysing residue names:
+There are:   259    Protein residues
+There are: 19171      Water residues
+There are:     5        Ion residues
+Analysing Protein...
+
+The largest distance between excluded atoms is 0.424 nm between atom 5 and 13
+
+Determining Verlet buffer for a tolerance of 0.005 kJ/mol/ps at 298 K
+
+Calculated rlist for 1x1 atom pair-list as 1.034 nm, buffer size 0.034 nm
+
+Set rlist, assuming 4x4 atom pair-list, to 1.000 nm, buffer size 0.000 nm
+
+Note that mdrun will redetermine rlist based on the actual pair-list setup
+Calculating fourier grid dimensions for X Y Z
+Using a fourier grid of 56x56x56, spacing 0.152 0.152 0.152
+
+Estimate for the relative computational load of the PME mesh part: 0.22
+
+This run will generate roughly 147 Mb of data
+                :-) GROMACS - gmx mdrun, 2024.3-plumed_2.9.3 (-:
+
+Executable:   /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr/bin/gmx_mpi
+Data prefix:  /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr
+Working dir:  /scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/1JCLm/outputs/4_equilibration
+Command line:
+  gmx_mpi mdrun -deffnm nvt -cpt 15
+
+Compiled SIMD is AVX2_256, but CPU also supports AVX_512 (see log).
+Reading file nvt.tpr, VERSION 2024.3-plumed_2.9.3 (single precision)
+GPU-aware MPI detected, but by default GROMACS will not make use the direct GPU communication capabilities of MPI. For improved performance try enabling the feature by setting the GMX_ENABLE_DIRECT_GPU_COMM environment variable.
+Changing nstlist from 10 to 100, rlist from 1 to 1.168
+
+
+1 GPU selected for this run.
+Mapping of GPU IDs to the 2 GPU tasks in the 1 rank on this node:
+  PP:0,PME:0
+PP tasks will do (non-perturbed) short-ranged interactions on the GPU
+PP task will update and constrain coordinates on the GPU
+PME tasks will do all aspects on the GPU
+Using 1 MPI process
+
+Non-default thread affinity set, disabling internal thread affinity
+
+Using 8 OpenMP threads 
+
+starting mdrun 'Protein in water'
+100000 steps,    200.0 ps.
+
+Writing final coordinates.
+
+               Core t (s)   Wall t (s)        (%)
+       Time:      330.575       41.333      799.8
+                 (ns/day)    (hour/ns)
+Performance:      418.070        0.057
+
+GROMACS reminds you: "Everything Must Go" (Red Hot Chili Peppers)
+
+               :-) GROMACS - gmx energy, 2024.3-plumed_2.9.3 (-:
+
+Executable:   /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr/bin/gmx_mpi
+Data prefix:  /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr
+Working dir:  /scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/1JCLm/outputs/4_equilibration
+Command line:
+  gmx_mpi energy -f nvt.edr -o temperature.xvg
+
+Opened nvt.edr as single precision energy file
+
+Select the terms you want from the following list by
+selecting either (part of) the name or the number or a combination.
+End your selection with an empty line or a zero.
+-------------------------------------------------------------------
+  1  Bond             2  Angle            3  Proper-Dih.      4  Per.-Imp.-Dih.
+  5  LJ-14            6  Coulomb-14       7  LJ-(SR)          8  Disper.-corr. 
+  9  Coulomb-(SR)    10  Coul.-recip.    11  Position-Rest.  12  Potential     
+ 13  Kinetic-En.     14  Total-Energy    15  Conserved-En.   16  Temperature   
+ 17  Pres.-DC        18  Pressure        19  Constr.-rmsd    20  Vir-XX        
+ 21  Vir-XY          22  Vir-XZ          23  Vir-YX          24  Vir-YY        
+ 25  Vir-YZ          26  Vir-ZX          27  Vir-ZY          28  Vir-ZZ        
+ 29  Pres-XX         30  Pres-XY         31  Pres-XZ         32  Pres-YX       
+ 33  Pres-YY         34  Pres-YZ         35  Pres-ZX         36  Pres-ZY       
+ 37  Pres-ZZ         38  #Surf*SurfTen   39  T-Protein       40  T-non-Protein 
+ 41  Lamb-Protein                        42  Lamb-non-Protein                  
+
+Reading energy frame      0 time    0.000         Reading energy frame      1 time    2.000         Reading energy frame      2 time    4.000         Reading energy frame      3 time    6.000         Reading energy frame      4 time    8.000         Reading energy frame      5 time   10.000         Reading energy frame      6 time   12.000         Reading energy frame      7 time   14.000         Reading energy frame      8 time   16.000         Reading energy frame      9 time   18.000         Reading energy frame     10 time   20.000         Reading energy frame     11 time   22.000         Reading energy frame     12 time   24.000         Reading energy frame     13 time   26.000         Reading energy frame     14 time   28.000         Reading energy frame     15 time   30.000         Reading energy frame     16 time   32.000         Reading energy frame     17 time   34.000         Reading energy frame     18 time   36.000         Reading energy frame     19 time   38.000         Reading energy frame     20 time   40.000         Reading energy frame     30 time   60.000         Reading energy frame     40 time   80.000         Reading energy frame     50 time  100.000         Reading energy frame     60 time  120.000         Reading energy frame     70 time  140.000         Reading energy frame     80 time  160.000         Reading energy frame     90 time  180.000         Reading energy frame    100 time  200.000         Last energy frame read 100 time  200.000         
+
+GROMACS reminds you: "I'm Only Faking When I Get It Right" (Soundgarden)
+
+
+Statistics over 100001 steps [ 0.0000 through 200.0000 ps ], 1 data sets
+All statistics are over 1001 points
+
+Energy                      Average   Err.Est.       RMSD  Tot-Drift
+-------------------------------------------------------------------------------
+Temperature                 297.902      0.089    2.79075   0.470376  (K)
+temperature         : mean =    298.058, std =      1.353
+Saved plot: temperature.png
+Modified posre.itp to posre_1000.itp.
+Modified topol.top to topol_1000.top.
+Modified posre.itp to posre_500.itp.
+Modified topol.top to topol_500.top.
+Modified posre.itp to posre_250.itp.
+Modified topol.top to topol_250.top.
+Modified posre.itp to posre_100.itp.
+Modified topol.top to topol_100.top.
+Modified posre.itp to posre_5.itp.
+Modified topol.top to topol_5.top.
+Running NPT equilibration with restraints = 1000
+               :-) GROMACS - gmx grompp, 2024.3-plumed_2.9.3 (-:
+
+Executable:   /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr/bin/gmx_mpi
+Data prefix:  /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr
+Working dir:  /scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/1JCLm/outputs/4_equilibration
+Command line:
+  gmx_mpi grompp -f ../../../../mdp_templates/npt.mdp -c nvt.gro -r nvt.gro -p topol_1000.top -o npt_1000.tpr -maxwarn 1
+
+Ignoring obsolete mdp entry 'ns_type'
+
+WARNING 1 [file ../../../../mdp_templates/npt.mdp]:
+  The Berendsen barostat does not generate any strictly correct ensemble,
+  and should not be used for new production simulations (in our opinion).
+  We recommend using the C-rescale barostat instead.
+
+Generating 1-4 interactions: fudge = 0.5
+Number of degrees of freedom in T-Coupling group Protein is 9788.76
+Number of degrees of freedom in T-Coupling group non-Protein is 115038.23
+
+NOTE 1 [file ../../../../mdp_templates/npt.mdp]:
+  Removing center of mass motion in the presence of position restraints
+  might cause artifacts. When you are using position restraints to
+  equilibrate a macro-molecule, the artifacts are usually negligible.
+
+
+There was 1 NOTE
+
+There was 1 WARNING
+
+GROMACS reminds you: "They don't have half hours in the north" (Carl Caleman)
+
+Setting the LD random seed to 1064828857
+
+Generated 2211 of the 2211 non-bonded parameter combinations
+
+Generated 2211 of the 2211 1-4 parameter combinations
+
+Excluding 3 bonded neighbours molecule type 'Protein_chain_A'
+
+turning H bonds into constraints...
+
+Excluding 2 bonded neighbours molecule type 'SOL'
+
+turning H bonds into constraints...
+
+Excluding 1 bonded neighbours molecule type 'NA'
+
+turning H bonds into constraints...
+
+The center of mass of the position restraint coord's is  4.257  4.260  4.265
+
+The center of mass of the position restraint coord's is  4.257  4.260  4.265
+Analysing residue names:
+There are:   259    Protein residues
+There are: 19171      Water residues
+There are:     5        Ion residues
+Analysing Protein...
+
+The largest distance between excluded atoms is 0.421 nm between atom 234 and 242
+
+Determining Verlet buffer for a tolerance of 0.005 kJ/mol/ps at 298 K
+
+Calculated rlist for 1x1 atom pair-list as 1.034 nm, buffer size 0.034 nm
+
+Set rlist, assuming 4x4 atom pair-list, to 1.000 nm, buffer size 0.000 nm
+
+Note that mdrun will redetermine rlist based on the actual pair-list setup
+Calculating fourier grid dimensions for X Y Z
+Using a fourier grid of 56x56x56, spacing 0.152 0.152 0.152
+
+Estimate for the relative computational load of the PME mesh part: 0.22
+
+This run will generate roughly 359 Mb of data
+                :-) GROMACS - gmx mdrun, 2024.3-plumed_2.9.3 (-:
+
+Executable:   /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr/bin/gmx_mpi
+Data prefix:  /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr
+Working dir:  /scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/1JCLm/outputs/4_equilibration
+Command line:
+  gmx_mpi mdrun -deffnm npt_1000 -cpt 15
+
+Compiled SIMD is AVX2_256, but CPU also supports AVX_512 (see log).
+Reading file npt_1000.tpr, VERSION 2024.3-plumed_2.9.3 (single precision)
+GPU-aware MPI detected, but by default GROMACS will not make use the direct GPU communication capabilities of MPI. For improved performance try enabling the feature by setting the GMX_ENABLE_DIRECT_GPU_COMM environment variable.
+Changing nstlist from 10 to 100, rlist from 1 to 1.168
+
+
+1 GPU selected for this run.
+Mapping of GPU IDs to the 2 GPU tasks in the 1 rank on this node:
+  PP:0,PME:0
+PP tasks will do (non-perturbed) short-ranged interactions on the GPU
+PP task will update and constrain coordinates on the GPU
+PME tasks will do all aspects on the GPU
+Using 1 MPI process
+
+Non-default thread affinity set, disabling internal thread affinity
+
+Using 8 OpenMP threads 
+
+starting mdrun 'Protein in water'
+250000 steps,    500.0 ps.
+
+Writing final coordinates.
+
+               Core t (s)   Wall t (s)        (%)
+       Time:     2739.423      342.434      800.0
+                 (ns/day)    (hour/ns)
+Performance:      126.156        0.190
+
+GROMACS reminds you: "Not to get technical... but according to chemistry, alcohol is a solution." (Anonymous)
+
+               :-) GROMACS - gmx energy, 2024.3-plumed_2.9.3 (-:
+
+Executable:   /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr/bin/gmx_mpi
+Data prefix:  /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr
+Working dir:  /scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/1JCLm/outputs/4_equilibration
+Command line:
+  gmx_mpi energy -f npt_1000.edr -o pressure_1000.xvg
+
+Opened npt_1000.edr as single precision energy file
+
+Select the terms you want from the following list by
+selecting either (part of) the name or the number or a combination.
+End your selection with an empty line or a zero.
+-------------------------------------------------------------------
+  1  Bond             2  Angle            3  Proper-Dih.      4  Per.-Imp.-Dih.
+  5  LJ-14            6  Coulomb-14       7  LJ-(SR)          8  Disper.-corr. 
+  9  Coulomb-(SR)    10  Coul.-recip.    11  Position-Rest.  12  Potential     
+ 13  Kinetic-En.     14  Total-Energy    15  Conserved-En.   16  Temperature   
+ 17  Pres.-DC        18  Pressure        19  Constr.-rmsd    20  Box-X         
+ 21  Box-Y           22  Box-Z           23  Volume          24  Density       
+ 25  pV              26  Enthalpy        27  Vir-XX          28  Vir-XY        
+ 29  Vir-XZ          30  Vir-YX          31  Vir-YY          32  Vir-YZ        
+ 33  Vir-ZX          34  Vir-ZY          35  Vir-ZZ          36  Pres-XX       
+ 37  Pres-XY         38  Pres-XZ         39  Pres-YX         40  Pres-YY       
+ 41  Pres-YZ         42  Pres-ZX         43  Pres-ZY         44  Pres-ZZ       
+ 45  #Surf*SurfTen   46  T-Protein       47  T-non-Protein   48  Lamb-Protein  
+ 49  Lamb-non-Protein                  
+
+Reading energy frame      0 time    0.000         Reading energy frame      1 time    2.000         Reading energy frame      2 time    4.000         Reading energy frame      3 time    6.000         Reading energy frame      4 time    8.000         Reading energy frame      5 time   10.000         Reading energy frame      6 time   12.000         Reading energy frame      7 time   14.000         Reading energy frame      8 time   16.000         Reading energy frame      9 time   18.000         Reading energy frame     10 time   20.000         Reading energy frame     11 time   22.000         Reading energy frame     12 time   24.000         Reading energy frame     13 time   26.000         Reading energy frame     14 time   28.000         Reading energy frame     15 time   30.000         Reading energy frame     16 time   32.000         Reading energy frame     17 time   34.000         Reading energy frame     18 time   36.000         Reading energy frame     19 time   38.000         Reading energy frame     20 time   40.000         Reading energy frame     30 time   60.000         Reading energy frame     40 time   80.000         Reading energy frame     50 time  100.000         Reading energy frame     60 time  120.000         Reading energy frame     70 time  140.000         Reading energy frame     80 time  160.000         Reading energy frame     90 time  180.000         Reading energy frame    100 time  200.000         Reading energy frame    110 time  220.000         Reading energy frame    120 time  240.000         Reading energy frame    130 time  260.000         Reading energy frame    140 time  280.000         Reading energy frame    150 time  300.000         Reading energy frame    160 time  320.000         Reading energy frame    170 time  340.000         Reading energy frame    180 time  360.000         Reading energy frame    190 time  380.000         Reading energy frame    200 time  400.000         Last energy frame read 250 time  500.000         
+
+GROMACS reminds you: "Quite frankly, even if the choice of C were to do *nothing* but keep the C++ programmers out, that in itself would be a huge reason to use C." (Linus Torvalds)
+
+
+Statistics over 250001 steps [ 0.0000 through 500.0000 ps ], 1 data sets
+All statistics are over 2501 points
+
+Energy                      Average   Err.Est.       RMSD  Tot-Drift
+-------------------------------------------------------------------------------
+Pressure                   0.502356       0.63    102.912     3.6471  (bar)
+               :-) GROMACS - gmx energy, 2024.3-plumed_2.9.3 (-:
+
+Executable:   /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr/bin/gmx_mpi
+Data prefix:  /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr
+Working dir:  /scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/1JCLm/outputs/4_equilibration
+Command line:
+  gmx_mpi energy -f npt_1000.edr -o density_1000.xvg
+
+Opened npt_1000.edr as single precision energy file
+
+Select the terms you want from the following list by
+selecting either (part of) the name or the number or a combination.
+End your selection with an empty line or a zero.
+-------------------------------------------------------------------
+  1  Bond             2  Angle            3  Proper-Dih.      4  Per.-Imp.-Dih.
+  5  LJ-14            6  Coulomb-14       7  LJ-(SR)          8  Disper.-corr. 
+  9  Coulomb-(SR)    10  Coul.-recip.    11  Position-Rest.  12  Potential     
+ 13  Kinetic-En.     14  Total-Energy    15  Conserved-En.   16  Temperature   
+ 17  Pres.-DC        18  Pressure        19  Constr.-rmsd    20  Box-X         
+ 21  Box-Y           22  Box-Z           23  Volume          24  Density       
+ 25  pV              26  Enthalpy        27  Vir-XX          28  Vir-XY        
+ 29  Vir-XZ          30  Vir-YX          31  Vir-YY          32  Vir-YZ        
+ 33  Vir-ZX          34  Vir-ZY          35  Vir-ZZ          36  Pres-XX       
+ 37  Pres-XY         38  Pres-XZ         39  Pres-YX         40  Pres-YY       
+ 41  Pres-YZ         42  Pres-ZX         43  Pres-ZY         44  Pres-ZZ       
+ 45  #Surf*SurfTen   46  T-Protein       47  T-non-Protein   48  Lamb-Protein  
+ 49  Lamb-non-Protein                  
+
+Reading energy frame      0 time    0.000         Reading energy frame      1 time    2.000         Reading energy frame      2 time    4.000         Reading energy frame      3 time    6.000         Reading energy frame      4 time    8.000         Reading energy frame      5 time   10.000         Reading energy frame      6 time   12.000         Reading energy frame      7 time   14.000         Reading energy frame      8 time   16.000         Reading energy frame      9 time   18.000         Reading energy frame     10 time   20.000         Reading energy frame     11 time   22.000         Reading energy frame     12 time   24.000         Reading energy frame     13 time   26.000         Reading energy frame     14 time   28.000         Reading energy frame     15 time   30.000         Reading energy frame     16 time   32.000         Reading energy frame     17 time   34.000         Reading energy frame     18 time   36.000         Reading energy frame     19 time   38.000         Reading energy frame     20 time   40.000         Reading energy frame     30 time   60.000         Reading energy frame     40 time   80.000         Reading energy frame     50 time  100.000         Reading energy frame     60 time  120.000         Reading energy frame     70 time  140.000         Reading energy frame     80 time  160.000         Reading energy frame     90 time  180.000         Reading energy frame    100 time  200.000         Reading energy frame    110 time  220.000         Reading energy frame    120 time  240.000         Reading energy frame    130 time  260.000         Reading energy frame    140 time  280.000         Reading energy frame    150 time  300.000         Reading energy frame    160 time  320.000         Reading energy frame    170 time  340.000         Reading energy frame    180 time  360.000         Reading energy frame    190 time  380.000         Reading energy frame    200 time  400.000         Last energy frame read 250 time  500.000         
+
+GROMACS reminds you: "Water is just water" (Berk Hess)
+
+
+Statistics over 250001 steps [ 0.0000 through 500.0000 ps ], 1 data sets
+All statistics are over 2501 points
+
+Energy                      Average   Err.Est.       RMSD  Tot-Drift
+-------------------------------------------------------------------------------
+Density                      1008.1       0.12    1.14906   0.650439  (kg/m^3)
+Running NPT equilibration with restraints = 500
+               :-) GROMACS - gmx grompp, 2024.3-plumed_2.9.3 (-:
+
+Executable:   /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr/bin/gmx_mpi
+Data prefix:  /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr
+Working dir:  /scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/1JCLm/outputs/4_equilibration
+Command line:
+  gmx_mpi grompp -f ../../../../mdp_templates/npt.mdp -c npt_1000.gro -r npt_1000.gro -p topol_500.top -o npt_500.tpr -maxwarn 1
+
+Ignoring obsolete mdp entry 'ns_type'
+
+WARNING 1 [file ../../../../mdp_templates/npt.mdp]:
+  The Berendsen barostat does not generate any strictly correct ensemble,
+  and should not be used for new production simulations (in our opinion).
+  We recommend using the C-rescale barostat instead.
+
+Generating 1-4 interactions: fudge = 0.5
+Number of degrees of freedom in T-Coupling group Protein is 9788.76
+Number of degrees of freedom in T-Coupling group non-Protein is 115038.23
+
+NOTE 1 [file ../../../../mdp_templates/npt.mdp]:
+  Removing center of mass motion in the presence of position restraints
+  might cause artifacts. When you are using position restraints to
+  equilibrate a macro-molecule, the artifacts are usually negligible.
+
+
+There was 1 NOTE
+
+There was 1 WARNING
+
+GROMACS reminds you: "Some of these pro-drug messages come from popular culture." (John Walters)
+
+Setting the LD random seed to -1140998337
+
+Generated 2211 of the 2211 non-bonded parameter combinations
+
+Generated 2211 of the 2211 1-4 parameter combinations
+
+Excluding 3 bonded neighbours molecule type 'Protein_chain_A'
+
+turning H bonds into constraints...
+
+Excluding 2 bonded neighbours molecule type 'SOL'
+
+turning H bonds into constraints...
+
+Excluding 1 bonded neighbours molecule type 'NA'
+
+turning H bonds into constraints...
+
+The center of mass of the position restraint coord's is  4.247  4.249  4.258
+
+The center of mass of the position restraint coord's is  4.247  4.249  4.258
+Analysing residue names:
+There are:   259    Protein residues
+There are: 19171      Water residues
+There are:     5        Ion residues
+Analysing Protein...
+
+The largest distance between excluded atoms is 0.431 nm between atom 1705 and 1713
+
+Determining Verlet buffer for a tolerance of 0.005 kJ/mol/ps at 298 K
+
+Calculated rlist for 1x1 atom pair-list as 1.034 nm, buffer size 0.034 nm
+
+Set rlist, assuming 4x4 atom pair-list, to 1.000 nm, buffer size 0.000 nm
+
+Note that mdrun will redetermine rlist based on the actual pair-list setup
+Calculating fourier grid dimensions for X Y Z
+Using a fourier grid of 56x56x56, spacing 0.152 0.152 0.152
+
+Estimate for the relative computational load of the PME mesh part: 0.22
+
+This run will generate roughly 359 Mb of data
+                :-) GROMACS - gmx mdrun, 2024.3-plumed_2.9.3 (-:
+
+Executable:   /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr/bin/gmx_mpi
+Data prefix:  /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr
+Working dir:  /scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/1JCLm/outputs/4_equilibration
+Command line:
+  gmx_mpi mdrun -deffnm npt_500 -cpt 15
+
+Compiled SIMD is AVX2_256, but CPU also supports AVX_512 (see log).
+Reading file npt_500.tpr, VERSION 2024.3-plumed_2.9.3 (single precision)
+GPU-aware MPI detected, but by default GROMACS will not make use the direct GPU communication capabilities of MPI. For improved performance try enabling the feature by setting the GMX_ENABLE_DIRECT_GPU_COMM environment variable.
+Changing nstlist from 10 to 100, rlist from 1 to 1.169
+
+
+1 GPU selected for this run.
+Mapping of GPU IDs to the 2 GPU tasks in the 1 rank on this node:
+  PP:0,PME:0
+PP tasks will do (non-perturbed) short-ranged interactions on the GPU
+PP task will update and constrain coordinates on the GPU
+PME tasks will do all aspects on the GPU
+Using 1 MPI process
+
+Non-default thread affinity set, disabling internal thread affinity
+
+Using 8 OpenMP threads 
+
+starting mdrun 'Protein in water'
+250000 steps,    500.0 ps.
+
+Writing final coordinates.
+
+               Core t (s)   Wall t (s)        (%)
+       Time:     2485.704      310.746      799.9
+                 (ns/day)    (hour/ns)
+Performance:      139.021        0.173
+
+GROMACS reminds you: "This simulation is not as the former." (Malvolio, Act II, scene V of Shaphespeare's Twelfth Night)
+
+               :-) GROMACS - gmx energy, 2024.3-plumed_2.9.3 (-:
+
+Executable:   /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr/bin/gmx_mpi
+Data prefix:  /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr
+Working dir:  /scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/1JCLm/outputs/4_equilibration
+Command line:
+  gmx_mpi energy -f npt_500.edr -o pressure_500.xvg
+
+Opened npt_500.edr as single precision energy file
+
+Select the terms you want from the following list by
+selecting either (part of) the name or the number or a combination.
+End your selection with an empty line or a zero.
+-------------------------------------------------------------------
+  1  Bond             2  Angle            3  Proper-Dih.      4  Per.-Imp.-Dih.
+  5  LJ-14            6  Coulomb-14       7  LJ-(SR)          8  Disper.-corr. 
+  9  Coulomb-(SR)    10  Coul.-recip.    11  Position-Rest.  12  Potential     
+ 13  Kinetic-En.     14  Total-Energy    15  Conserved-En.   16  Temperature   
+ 17  Pres.-DC        18  Pressure        19  Constr.-rmsd    20  Box-X         
+ 21  Box-Y           22  Box-Z           23  Volume          24  Density       
+ 25  pV              26  Enthalpy        27  Vir-XX          28  Vir-XY        
+ 29  Vir-XZ          30  Vir-YX          31  Vir-YY          32  Vir-YZ        
+ 33  Vir-ZX          34  Vir-ZY          35  Vir-ZZ          36  Pres-XX       
+ 37  Pres-XY         38  Pres-XZ         39  Pres-YX         40  Pres-YY       
+ 41  Pres-YZ         42  Pres-ZX         43  Pres-ZY         44  Pres-ZZ       
+ 45  #Surf*SurfTen   46  T-Protein       47  T-non-Protein   48  Lamb-Protein  
+ 49  Lamb-non-Protein                  
+
+Reading energy frame      0 time    0.000         Reading energy frame      1 time    2.000         Reading energy frame      2 time    4.000         Reading energy frame      3 time    6.000         Reading energy frame      4 time    8.000         Reading energy frame      5 time   10.000         Reading energy frame      6 time   12.000         Reading energy frame      7 time   14.000         Reading energy frame      8 time   16.000         Reading energy frame      9 time   18.000         Reading energy frame     10 time   20.000         Reading energy frame     11 time   22.000         Reading energy frame     12 time   24.000         Reading energy frame     13 time   26.000         Reading energy frame     14 time   28.000         Reading energy frame     15 time   30.000         Reading energy frame     16 time   32.000         Reading energy frame     17 time   34.000         Reading energy frame     18 time   36.000         Reading energy frame     19 time   38.000         Reading energy frame     20 time   40.000         Reading energy frame     30 time   60.000         Reading energy frame     40 time   80.000         Reading energy frame     50 time  100.000         Reading energy frame     60 time  120.000         Reading energy frame     70 time  140.000         Reading energy frame     80 time  160.000         Reading energy frame     90 time  180.000         Reading energy frame    100 time  200.000         Reading energy frame    110 time  220.000         Reading energy frame    120 time  240.000         Reading energy frame    130 time  260.000         Reading energy frame    140 time  280.000         Reading energy frame    150 time  300.000         Reading energy frame    160 time  320.000         Reading energy frame    170 time  340.000         Reading energy frame    180 time  360.000         Reading energy frame    190 time  380.000         Reading energy frame    200 time  400.000         Last energy frame read 250 time  500.000         
+
+GROMACS reminds you: "Right Between the Eyes" (F. Zappa)
+
+
+Statistics over 250001 steps [ 0.0000 through 500.0000 ps ], 1 data sets
+All statistics are over 2501 points
+
+Energy                      Average   Err.Est.       RMSD  Tot-Drift
+-------------------------------------------------------------------------------
+Pressure                   0.962088       0.25    100.697   0.391801  (bar)
+               :-) GROMACS - gmx energy, 2024.3-plumed_2.9.3 (-:
+
+Executable:   /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr/bin/gmx_mpi
+Data prefix:  /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr
+Working dir:  /scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/1JCLm/outputs/4_equilibration
+Command line:
+  gmx_mpi energy -f npt_500.edr -o density_500.xvg
+
+Opened npt_500.edr as single precision energy file
+
+Select the terms you want from the following list by
+selecting either (part of) the name or the number or a combination.
+End your selection with an empty line or a zero.
+-------------------------------------------------------------------
+  1  Bond             2  Angle            3  Proper-Dih.      4  Per.-Imp.-Dih.
+  5  LJ-14            6  Coulomb-14       7  LJ-(SR)          8  Disper.-corr. 
+  9  Coulomb-(SR)    10  Coul.-recip.    11  Position-Rest.  12  Potential     
+ 13  Kinetic-En.     14  Total-Energy    15  Conserved-En.   16  Temperature   
+ 17  Pres.-DC        18  Pressure        19  Constr.-rmsd    20  Box-X         
+ 21  Box-Y           22  Box-Z           23  Volume          24  Density       
+ 25  pV              26  Enthalpy        27  Vir-XX          28  Vir-XY        
+ 29  Vir-XZ          30  Vir-YX          31  Vir-YY          32  Vir-YZ        
+ 33  Vir-ZX          34  Vir-ZY          35  Vir-ZZ          36  Pres-XX       
+ 37  Pres-XY         38  Pres-XZ         39  Pres-YX         40  Pres-YY       
+ 41  Pres-YZ         42  Pres-ZX         43  Pres-ZY         44  Pres-ZZ       
+ 45  #Surf*SurfTen   46  T-Protein       47  T-non-Protein   48  Lamb-Protein  
+ 49  Lamb-non-Protein                  
+
+Reading energy frame      0 time    0.000         Reading energy frame      1 time    2.000         Reading energy frame      2 time    4.000         Reading energy frame      3 time    6.000         Reading energy frame      4 time    8.000         Reading energy frame      5 time   10.000         Reading energy frame      6 time   12.000         Reading energy frame      7 time   14.000         Reading energy frame      8 time   16.000         Reading energy frame      9 time   18.000         Reading energy frame     10 time   20.000         Reading energy frame     11 time   22.000         Reading energy frame     12 time   24.000         Reading energy frame     13 time   26.000         Reading energy frame     14 time   28.000         Reading energy frame     15 time   30.000         Reading energy frame     16 time   32.000         Reading energy frame     17 time   34.000         Reading energy frame     18 time   36.000         Reading energy frame     19 time   38.000         Reading energy frame     20 time   40.000         Reading energy frame     30 time   60.000         Reading energy frame     40 time   80.000         Reading energy frame     50 time  100.000         Reading energy frame     60 time  120.000         Reading energy frame     70 time  140.000         Reading energy frame     80 time  160.000         Reading energy frame     90 time  180.000         Reading energy frame    100 time  200.000         Reading energy frame    110 time  220.000         Reading energy frame    120 time  240.000         Reading energy frame    130 time  260.000         Reading energy frame    140 time  280.000         Reading energy frame    150 time  300.000         Reading energy frame    160 time  320.000         Reading energy frame    170 time  340.000         Reading energy frame    180 time  360.000         Reading energy frame    190 time  380.000         Reading energy frame    200 time  400.000         Last energy frame read 250 time  500.000         
+
+GROMACS reminds you: "Never measure the height of a mountain until you have reached the top. Then you will see how low it was." (Dag Hammarskjold)
+
+
+Statistics over 250001 steps [ 0.0000 through 500.0000 ps ], 1 data sets
+All statistics are over 2501 points
+
+Energy                      Average   Err.Est.       RMSD  Tot-Drift
+-------------------------------------------------------------------------------
+Density                     1007.86      0.094    1.15201  0.0717092  (kg/m^3)
+Running NPT equilibration with restraints = 250
+               :-) GROMACS - gmx grompp, 2024.3-plumed_2.9.3 (-:
+
+Executable:   /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr/bin/gmx_mpi
+Data prefix:  /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr
+Working dir:  /scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/1JCLm/outputs/4_equilibration
+Command line:
+  gmx_mpi grompp -f ../../../../mdp_templates/npt.mdp -c npt_500.gro -r npt_500.gro -p topol_250.top -o npt_250.tpr -maxwarn 1
+
+Ignoring obsolete mdp entry 'ns_type'
+
+WARNING 1 [file ../../../../mdp_templates/npt.mdp]:
+  The Berendsen barostat does not generate any strictly correct ensemble,
+  and should not be used for new production simulations (in our opinion).
+  We recommend using the C-rescale barostat instead.
+
+Generating 1-4 interactions: fudge = 0.5
+Number of degrees of freedom in T-Coupling group Protein is 9788.76
+Number of degrees of freedom in T-Coupling group non-Protein is 115038.23
+
+NOTE 1 [file ../../../../mdp_templates/npt.mdp]:
+  Removing center of mass motion in the presence of position restraints
+  might cause artifacts. When you are using position restraints to
+  equilibrate a macro-molecule, the artifacts are usually negligible.
+
+
+There was 1 NOTE
+
+There was 1 WARNING
+
+GROMACS reminds you: "Cowardly refusing to create an empty archive" (GNU tar)
+
+Setting the LD random seed to -151410692
+
+Generated 2211 of the 2211 non-bonded parameter combinations
+
+Generated 2211 of the 2211 1-4 parameter combinations
+
+Excluding 3 bonded neighbours molecule type 'Protein_chain_A'
+
+turning H bonds into constraints...
+
+Excluding 2 bonded neighbours molecule type 'SOL'
+
+turning H bonds into constraints...
+
+Excluding 1 bonded neighbours molecule type 'NA'
+
+turning H bonds into constraints...
+
+The center of mass of the position restraint coord's is  4.244  4.246  4.254
+
+The center of mass of the position restraint coord's is  4.244  4.246  4.254
+Analysing residue names:
+There are:   259    Protein residues
+There are: 19171      Water residues
+There are:     5        Ion residues
+Analysing Protein...
+
+The largest distance between excluded atoms is 0.428 nm between atom 2811 and 2819
+
+Determining Verlet buffer for a tolerance of 0.005 kJ/mol/ps at 298 K
+
+Calculated rlist for 1x1 atom pair-list as 1.034 nm, buffer size 0.034 nm
+
+Set rlist, assuming 4x4 atom pair-list, to 1.000 nm, buffer size 0.000 nm
+
+Note that mdrun will redetermine rlist based on the actual pair-list setup
+Calculating fourier grid dimensions for X Y Z
+Using a fourier grid of 56x56x56, spacing 0.152 0.152 0.152
+
+Estimate for the relative computational load of the PME mesh part: 0.22
+
+This run will generate roughly 359 Mb of data
+                :-) GROMACS - gmx mdrun, 2024.3-plumed_2.9.3 (-:
+
+Executable:   /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr/bin/gmx_mpi
+Data prefix:  /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr
+Working dir:  /scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/1JCLm/outputs/4_equilibration
+Command line:
+  gmx_mpi mdrun -deffnm npt_250 -cpt 15
+
+Compiled SIMD is AVX2_256, but CPU also supports AVX_512 (see log).
+Reading file npt_250.tpr, VERSION 2024.3-plumed_2.9.3 (single precision)
+GPU-aware MPI detected, but by default GROMACS will not make use the direct GPU communication capabilities of MPI. For improved performance try enabling the feature by setting the GMX_ENABLE_DIRECT_GPU_COMM environment variable.
+Changing nstlist from 10 to 100, rlist from 1 to 1.169
+
+
+1 GPU selected for this run.
+Mapping of GPU IDs to the 2 GPU tasks in the 1 rank on this node:
+  PP:0,PME:0
+PP tasks will do (non-perturbed) short-ranged interactions on the GPU
+PP task will update and constrain coordinates on the GPU
+PME tasks will do all aspects on the GPU
+Using 1 MPI process
+
+Non-default thread affinity set, disabling internal thread affinity
+
+Using 8 OpenMP threads 
+
+starting mdrun 'Protein in water'
+250000 steps,    500.0 ps.
+
+Writing final coordinates.
+
+               Core t (s)   Wall t (s)        (%)
+       Time:     1868.916      233.793      799.4
+                 (ns/day)    (hour/ns)
+Performance:      184.780        0.130
+
+GROMACS reminds you: "If at first you don't succeed, try two more times so that your failure is statistically significant." (Dallas Warren)
+
+               :-) GROMACS - gmx energy, 2024.3-plumed_2.9.3 (-:
+
+Executable:   /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr/bin/gmx_mpi
+Data prefix:  /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr
+Working dir:  /scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/1JCLm/outputs/4_equilibration
+Command line:
+  gmx_mpi energy -f npt_250.edr -o pressure_250.xvg
+
+Opened npt_250.edr as single precision energy file
+
+Select the terms you want from the following list by
+selecting either (part of) the name or the number or a combination.
+End your selection with an empty line or a zero.
+-------------------------------------------------------------------
+  1  Bond             2  Angle            3  Proper-Dih.      4  Per.-Imp.-Dih.
+  5  LJ-14            6  Coulomb-14       7  LJ-(SR)          8  Disper.-corr. 
+  9  Coulomb-(SR)    10  Coul.-recip.    11  Position-Rest.  12  Potential     
+ 13  Kinetic-En.     14  Total-Energy    15  Conserved-En.   16  Temperature   
+ 17  Pres.-DC        18  Pressure        19  Constr.-rmsd    20  Box-X         
+ 21  Box-Y           22  Box-Z           23  Volume          24  Density       
+ 25  pV              26  Enthalpy        27  Vir-XX          28  Vir-XY        
+ 29  Vir-XZ          30  Vir-YX          31  Vir-YY          32  Vir-YZ        
+ 33  Vir-ZX          34  Vir-ZY          35  Vir-ZZ          36  Pres-XX       
+ 37  Pres-XY         38  Pres-XZ         39  Pres-YX         40  Pres-YY       
+ 41  Pres-YZ         42  Pres-ZX         43  Pres-ZY         44  Pres-ZZ       
+ 45  #Surf*SurfTen   46  T-Protein       47  T-non-Protein   48  Lamb-Protein  
+ 49  Lamb-non-Protein                  
+
+Reading energy frame      0 time    0.000         Reading energy frame      1 time    2.000         Reading energy frame      2 time    4.000         Reading energy frame      3 time    6.000         Reading energy frame      4 time    8.000         Reading energy frame      5 time   10.000         Reading energy frame      6 time   12.000         Reading energy frame      7 time   14.000         Reading energy frame      8 time   16.000         Reading energy frame      9 time   18.000         Reading energy frame     10 time   20.000         Reading energy frame     11 time   22.000         Reading energy frame     12 time   24.000         Reading energy frame     13 time   26.000         Reading energy frame     14 time   28.000         Reading energy frame     15 time   30.000         Reading energy frame     16 time   32.000         Reading energy frame     17 time   34.000         Reading energy frame     18 time   36.000         Reading energy frame     19 time   38.000         Reading energy frame     20 time   40.000         Reading energy frame     30 time   60.000         Reading energy frame     40 time   80.000         Reading energy frame     50 time  100.000         Reading energy frame     60 time  120.000         Reading energy frame     70 time  140.000         Reading energy frame     80 time  160.000         Reading energy frame     90 time  180.000         Reading energy frame    100 time  200.000         Reading energy frame    110 time  220.000         Reading energy frame    120 time  240.000         Reading energy frame    130 time  260.000         Reading energy frame    140 time  280.000         Reading energy frame    150 time  300.000         Reading energy frame    160 time  320.000         Reading energy frame    170 time  340.000         Reading energy frame    180 time  360.000         Reading energy frame    190 time  380.000         Reading energy frame    200 time  400.000         Last energy frame read 250 time  500.000         
+
+GROMACS reminds you: "How Do You Like Your Vacation So Far ?" (Speed 2 - Cruise Control)
+
+
+Statistics over 250001 steps [ 0.0000 through 500.0000 ps ], 1 data sets
+All statistics are over 2501 points
+
+Energy                      Average   Err.Est.       RMSD  Tot-Drift
+-------------------------------------------------------------------------------
+Pressure                    1.06409       0.23    98.1588  -0.816363  (bar)
+               :-) GROMACS - gmx energy, 2024.3-plumed_2.9.3 (-:
+
+Executable:   /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr/bin/gmx_mpi
+Data prefix:  /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr
+Working dir:  /scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/1JCLm/outputs/4_equilibration
+Command line:
+  gmx_mpi energy -f npt_250.edr -o density_250.xvg
+
+Opened npt_250.edr as single precision energy file
+
+Select the terms you want from the following list by
+selecting either (part of) the name or the number or a combination.
+End your selection with an empty line or a zero.
+-------------------------------------------------------------------
+  1  Bond             2  Angle            3  Proper-Dih.      4  Per.-Imp.-Dih.
+  5  LJ-14            6  Coulomb-14       7  LJ-(SR)          8  Disper.-corr. 
+  9  Coulomb-(SR)    10  Coul.-recip.    11  Position-Rest.  12  Potential     
+ 13  Kinetic-En.     14  Total-Energy    15  Conserved-En.   16  Temperature   
+ 17  Pres.-DC        18  Pressure        19  Constr.-rmsd    20  Box-X         
+ 21  Box-Y           22  Box-Z           23  Volume          24  Density       
+ 25  pV              26  Enthalpy        27  Vir-XX          28  Vir-XY        
+ 29  Vir-XZ          30  Vir-YX          31  Vir-YY          32  Vir-YZ        
+ 33  Vir-ZX          34  Vir-ZY          35  Vir-ZZ          36  Pres-XX       
+ 37  Pres-XY         38  Pres-XZ         39  Pres-YX         40  Pres-YY       
+ 41  Pres-YZ         42  Pres-ZX         43  Pres-ZY         44  Pres-ZZ       
+ 45  #Surf*SurfTen   46  T-Protein       47  T-non-Protein   48  Lamb-Protein  
+ 49  Lamb-non-Protein                  
+
+Reading energy frame      0 time    0.000         Reading energy frame      1 time    2.000         Reading energy frame      2 time    4.000         Reading energy frame      3 time    6.000         Reading energy frame      4 time    8.000         Reading energy frame      5 time   10.000         Reading energy frame      6 time   12.000         Reading energy frame      7 time   14.000         Reading energy frame      8 time   16.000         Reading energy frame      9 time   18.000         Reading energy frame     10 time   20.000         Reading energy frame     11 time   22.000         Reading energy frame     12 time   24.000         Reading energy frame     13 time   26.000         Reading energy frame     14 time   28.000         Reading energy frame     15 time   30.000         Reading energy frame     16 time   32.000         Reading energy frame     17 time   34.000         Reading energy frame     18 time   36.000         Reading energy frame     19 time   38.000         Reading energy frame     20 time   40.000         Reading energy frame     30 time   60.000         Reading energy frame     40 time   80.000         Reading energy frame     50 time  100.000         Reading energy frame     60 time  120.000         Reading energy frame     70 time  140.000         Reading energy frame     80 time  160.000         Reading energy frame     90 time  180.000         Reading energy frame    100 time  200.000         Reading energy frame    110 time  220.000         Reading energy frame    120 time  240.000         Reading energy frame    130 time  260.000         Reading energy frame    140 time  280.000         Reading energy frame    150 time  300.000         Reading energy frame    160 time  320.000         Reading energy frame    170 time  340.000         Reading energy frame    180 time  360.000         Reading energy frame    190 time  380.000         Reading energy frame    200 time  400.000         Last energy frame read 250 time  500.000         
+
+GROMACS reminds you: "You should never bet against anything in science at odds of more than about 10^12 to 1." (Ernest Rutherford)
+
+
+Statistics over 250001 steps [ 0.0000 through 500.0000 ps ], 1 data sets
+All statistics are over 2501 points
+
+Energy                      Average   Err.Est.       RMSD  Tot-Drift
+-------------------------------------------------------------------------------
+Density                     1007.66      0.069    1.08683  -0.243989  (kg/m^3)
+Running NPT equilibration with restraints = 100
+               :-) GROMACS - gmx grompp, 2024.3-plumed_2.9.3 (-:
+
+Executable:   /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr/bin/gmx_mpi
+Data prefix:  /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr
+Working dir:  /scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/1JCLm/outputs/4_equilibration
+Command line:
+  gmx_mpi grompp -f ../../../../mdp_templates/npt.mdp -c npt_250.gro -r npt_250.gro -p topol_100.top -o npt_100.tpr -maxwarn 1
+
+Ignoring obsolete mdp entry 'ns_type'
+
+WARNING 1 [file ../../../../mdp_templates/npt.mdp]:
+  The Berendsen barostat does not generate any strictly correct ensemble,
+  and should not be used for new production simulations (in our opinion).
+  We recommend using the C-rescale barostat instead.
+
+Generating 1-4 interactions: fudge = 0.5
+Number of degrees of freedom in T-Coupling group Protein is 9788.76
+Number of degrees of freedom in T-Coupling group non-Protein is 115038.23
+
+NOTE 1 [file ../../../../mdp_templates/npt.mdp]:
+  Removing center of mass motion in the presence of position restraints
+  might cause artifacts. When you are using position restraints to
+  equilibrate a macro-molecule, the artifacts are usually negligible.
+
+
+There was 1 NOTE
+
+There was 1 WARNING
+
+GROMACS reminds you: "It is not clear that intelligence has any long-term survival value." (Stephen Hawking)
+
+Setting the LD random seed to -1948524609
+
+Generated 2211 of the 2211 non-bonded parameter combinations
+
+Generated 2211 of the 2211 1-4 parameter combinations
+
+Excluding 3 bonded neighbours molecule type 'Protein_chain_A'
+
+turning H bonds into constraints...
+
+Excluding 2 bonded neighbours molecule type 'SOL'
+
+turning H bonds into constraints...
+
+Excluding 1 bonded neighbours molecule type 'NA'
+
+turning H bonds into constraints...
+
+The center of mass of the position restraint coord's is  4.245  4.245  4.255
+
+The center of mass of the position restraint coord's is  4.245  4.245  4.255
+Analysing residue names:
+There are:   259    Protein residues
+There are: 19171      Water residues
+There are:     5        Ion residues
+Analysing Protein...
+
+The largest distance between excluded atoms is 0.435 nm between atom 1705 and 1713
+
+Determining Verlet buffer for a tolerance of 0.005 kJ/mol/ps at 298 K
+
+Calculated rlist for 1x1 atom pair-list as 1.034 nm, buffer size 0.034 nm
+
+Set rlist, assuming 4x4 atom pair-list, to 1.000 nm, buffer size 0.000 nm
+
+Note that mdrun will redetermine rlist based on the actual pair-list setup
+Calculating fourier grid dimensions for X Y Z
+Using a fourier grid of 56x56x56, spacing 0.152 0.152 0.152
+
+Estimate for the relative computational load of the PME mesh part: 0.22
+
+This run will generate roughly 359 Mb of data
+                :-) GROMACS - gmx mdrun, 2024.3-plumed_2.9.3 (-:
+
+Executable:   /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr/bin/gmx_mpi
+Data prefix:  /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr
+Working dir:  /scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/1JCLm/outputs/4_equilibration
+Command line:
+  gmx_mpi mdrun -deffnm npt_100 -cpt 15
+
+Compiled SIMD is AVX2_256, but CPU also supports AVX_512 (see log).
+Reading file npt_100.tpr, VERSION 2024.3-plumed_2.9.3 (single precision)
+GPU-aware MPI detected, but by default GROMACS will not make use the direct GPU communication capabilities of MPI. For improved performance try enabling the feature by setting the GMX_ENABLE_DIRECT_GPU_COMM environment variable.
+Changing nstlist from 10 to 100, rlist from 1 to 1.169
+
+
+1 GPU selected for this run.
+Mapping of GPU IDs to the 2 GPU tasks in the 1 rank on this node:
+  PP:0,PME:0
+PP tasks will do (non-perturbed) short-ranged interactions on the GPU
+PP task will update and constrain coordinates on the GPU
+PME tasks will do all aspects on the GPU
+Using 1 MPI process
+
+Non-default thread affinity set, disabling internal thread affinity
+
+Using 8 OpenMP threads 
+
+starting mdrun 'Protein in water'
+250000 steps,    500.0 ps.
+
+Writing final coordinates.
+
+               Core t (s)   Wall t (s)        (%)
+       Time:      805.381      100.690      799.9
+                 (ns/day)    (hour/ns)
+Performance:      429.041        0.056
+
+GROMACS reminds you: "Nobody Never Learnt No-Nothing from No History" (Gogol Bordello)
+
+               :-) GROMACS - gmx energy, 2024.3-plumed_2.9.3 (-:
+
+Executable:   /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr/bin/gmx_mpi
+Data prefix:  /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr
+Working dir:  /scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/1JCLm/outputs/4_equilibration
+Command line:
+  gmx_mpi energy -f npt_100.edr -o pressure_100.xvg
+
+Opened npt_100.edr as single precision energy file
+
+Select the terms you want from the following list by
+selecting either (part of) the name or the number or a combination.
+End your selection with an empty line or a zero.
+-------------------------------------------------------------------
+  1  Bond             2  Angle            3  Proper-Dih.      4  Per.-Imp.-Dih.
+  5  LJ-14            6  Coulomb-14       7  LJ-(SR)          8  Disper.-corr. 
+  9  Coulomb-(SR)    10  Coul.-recip.    11  Position-Rest.  12  Potential     
+ 13  Kinetic-En.     14  Total-Energy    15  Conserved-En.   16  Temperature   
+ 17  Pres.-DC        18  Pressure        19  Constr.-rmsd    20  Box-X         
+ 21  Box-Y           22  Box-Z           23  Volume          24  Density       
+ 25  pV              26  Enthalpy        27  Vir-XX          28  Vir-XY        
+ 29  Vir-XZ          30  Vir-YX          31  Vir-YY          32  Vir-YZ        
+ 33  Vir-ZX          34  Vir-ZY          35  Vir-ZZ          36  Pres-XX       
+ 37  Pres-XY         38  Pres-XZ         39  Pres-YX         40  Pres-YY       
+ 41  Pres-YZ         42  Pres-ZX         43  Pres-ZY         44  Pres-ZZ       
+ 45  #Surf*SurfTen   46  T-Protein       47  T-non-Protein   48  Lamb-Protein  
+ 49  Lamb-non-Protein                  
+
+Reading energy frame      0 time    0.000         Reading energy frame      1 time    2.000         Reading energy frame      2 time    4.000         Reading energy frame      3 time    6.000         Reading energy frame      4 time    8.000         Reading energy frame      5 time   10.000         Reading energy frame      6 time   12.000         Reading energy frame      7 time   14.000         Reading energy frame      8 time   16.000         Reading energy frame      9 time   18.000         Reading energy frame     10 time   20.000         Reading energy frame     11 time   22.000         Reading energy frame     12 time   24.000         Reading energy frame     13 time   26.000         Reading energy frame     14 time   28.000         Reading energy frame     15 time   30.000         Reading energy frame     16 time   32.000         Reading energy frame     17 time   34.000         Reading energy frame     18 time   36.000         Reading energy frame     19 time   38.000         Reading energy frame     20 time   40.000         Reading energy frame     30 time   60.000         Reading energy frame     40 time   80.000         Reading energy frame     50 time  100.000         Reading energy frame     60 time  120.000         Reading energy frame     70 time  140.000         Reading energy frame     80 time  160.000         Reading energy frame     90 time  180.000         Reading energy frame    100 time  200.000         Reading energy frame    110 time  220.000         Reading energy frame    120 time  240.000         Reading energy frame    130 time  260.000         Reading energy frame    140 time  280.000         Reading energy frame    150 time  300.000         Reading energy frame    160 time  320.000         Reading energy frame    170 time  340.000         Reading energy frame    180 time  360.000         Reading energy frame    190 time  380.000         Reading energy frame    200 time  400.000         Last energy frame read 250 time  500.000         
+
+GROMACS reminds you: "Perfect is the enemy of good." (Voltaire)
+
+
+Statistics over 250001 steps [ 0.0000 through 500.0000 ps ], 1 data sets
+All statistics are over 2501 points
+
+Energy                      Average   Err.Est.       RMSD  Tot-Drift
+-------------------------------------------------------------------------------
+Pressure                     1.0838        0.3    99.5543  -0.442029  (bar)
+               :-) GROMACS - gmx energy, 2024.3-plumed_2.9.3 (-:
+
+Executable:   /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr/bin/gmx_mpi
+Data prefix:  /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr
+Working dir:  /scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/1JCLm/outputs/4_equilibration
+Command line:
+  gmx_mpi energy -f npt_100.edr -o density_100.xvg
+
+Opened npt_100.edr as single precision energy file
+
+Select the terms you want from the following list by
+selecting either (part of) the name or the number or a combination.
+End your selection with an empty line or a zero.
+-------------------------------------------------------------------
+  1  Bond             2  Angle            3  Proper-Dih.      4  Per.-Imp.-Dih.
+  5  LJ-14            6  Coulomb-14       7  LJ-(SR)          8  Disper.-corr. 
+  9  Coulomb-(SR)    10  Coul.-recip.    11  Position-Rest.  12  Potential     
+ 13  Kinetic-En.     14  Total-Energy    15  Conserved-En.   16  Temperature   
+ 17  Pres.-DC        18  Pressure        19  Constr.-rmsd    20  Box-X         
+ 21  Box-Y           22  Box-Z           23  Volume          24  Density       
+ 25  pV              26  Enthalpy        27  Vir-XX          28  Vir-XY        
+ 29  Vir-XZ          30  Vir-YX          31  Vir-YY          32  Vir-YZ        
+ 33  Vir-ZX          34  Vir-ZY          35  Vir-ZZ          36  Pres-XX       
+ 37  Pres-XY         38  Pres-XZ         39  Pres-YX         40  Pres-YY       
+ 41  Pres-YZ         42  Pres-ZX         43  Pres-ZY         44  Pres-ZZ       
+ 45  #Surf*SurfTen   46  T-Protein       47  T-non-Protein   48  Lamb-Protein  
+ 49  Lamb-non-Protein                  
+
+Reading energy frame      0 time    0.000         Reading energy frame      1 time    2.000         Reading energy frame      2 time    4.000         Reading energy frame      3 time    6.000         Reading energy frame      4 time    8.000         Reading energy frame      5 time   10.000         Reading energy frame      6 time   12.000         Reading energy frame      7 time   14.000         Reading energy frame      8 time   16.000         Reading energy frame      9 time   18.000         Reading energy frame     10 time   20.000         Reading energy frame     11 time   22.000         Reading energy frame     12 time   24.000         Reading energy frame     13 time   26.000         Reading energy frame     14 time   28.000         Reading energy frame     15 time   30.000         Reading energy frame     16 time   32.000         Reading energy frame     17 time   34.000         Reading energy frame     18 time   36.000         Reading energy frame     19 time   38.000         Reading energy frame     20 time   40.000         Reading energy frame     30 time   60.000         Reading energy frame     40 time   80.000         Reading energy frame     50 time  100.000         Reading energy frame     60 time  120.000         Reading energy frame     70 time  140.000         Reading energy frame     80 time  160.000         Reading energy frame     90 time  180.000         Reading energy frame    100 time  200.000         Reading energy frame    110 time  220.000         Reading energy frame    120 time  240.000         Reading energy frame    130 time  260.000         Reading energy frame    140 time  280.000         Reading energy frame    150 time  300.000         Reading energy frame    160 time  320.000         Reading energy frame    170 time  340.000         Reading energy frame    180 time  360.000         Reading energy frame    190 time  380.000         Reading energy frame    200 time  400.000         Last energy frame read 250 time  500.000         
+
+GROMACS reminds you: "Heavier-than-air flying machines are impossible." (Lord Kelvin, President of Royal Society, 1895.)
+
+
+Statistics over 250001 steps [ 0.0000 through 500.0000 ps ], 1 data sets
+All statistics are over 2501 points
+
+Energy                      Average   Err.Est.       RMSD  Tot-Drift
+-------------------------------------------------------------------------------
+Density                     1007.57      0.063    1.18168    0.13262  (kg/m^3)
+Running NPT equilibration with restraints = 5
+               :-) GROMACS - gmx grompp, 2024.3-plumed_2.9.3 (-:
+
+Executable:   /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr/bin/gmx_mpi
+Data prefix:  /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr
+Working dir:  /scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/1JCLm/outputs/4_equilibration
+Command line:
+  gmx_mpi grompp -f ../../../../mdp_templates/npt.mdp -c npt_100.gro -r npt_100.gro -p topol_5.top -o npt_5.tpr -maxwarn 1
+
+Ignoring obsolete mdp entry 'ns_type'
+
+WARNING 1 [file ../../../../mdp_templates/npt.mdp]:
+  The Berendsen barostat does not generate any strictly correct ensemble,
+  and should not be used for new production simulations (in our opinion).
+  We recommend using the C-rescale barostat instead.
+
+Generating 1-4 interactions: fudge = 0.5
+Number of degrees of freedom in T-Coupling group Protein is 9788.76
+Number of degrees of freedom in T-Coupling group non-Protein is 115038.23
+
+NOTE 1 [file ../../../../mdp_templates/npt.mdp]:
+  Removing center of mass motion in the presence of position restraints
+  might cause artifacts. When you are using position restraints to
+  equilibrate a macro-molecule, the artifacts are usually negligible.
+
+
+There was 1 NOTE
+
+There was 1 WARNING
+
+GROMACS reminds you: "Breaking the Law, Breaking the Law" (Judas Priest)
+
+Setting the LD random seed to -541614150
+
+Generated 2211 of the 2211 non-bonded parameter combinations
+
+Generated 2211 of the 2211 1-4 parameter combinations
+
+Excluding 3 bonded neighbours molecule type 'Protein_chain_A'
+
+turning H bonds into constraints...
+
+Excluding 2 bonded neighbours molecule type 'SOL'
+
+turning H bonds into constraints...
+
+Excluding 1 bonded neighbours molecule type 'NA'
+
+turning H bonds into constraints...
+
+The center of mass of the position restraint coord's is  4.246  4.244  4.253
+
+The center of mass of the position restraint coord's is  4.246  4.244  4.253
+Analysing residue names:
+There are:   259    Protein residues
+There are: 19171      Water residues
+There are:     5        Ion residues
+Analysing Protein...
+
+The largest distance between excluded atoms is 0.432 nm between atom 2931 and 2939
+
+Determining Verlet buffer for a tolerance of 0.005 kJ/mol/ps at 298 K
+
+Calculated rlist for 1x1 atom pair-list as 1.034 nm, buffer size 0.034 nm
+
+Set rlist, assuming 4x4 atom pair-list, to 1.000 nm, buffer size 0.000 nm
+
+Note that mdrun will redetermine rlist based on the actual pair-list setup
+Calculating fourier grid dimensions for X Y Z
+Using a fourier grid of 56x56x56, spacing 0.152 0.152 0.152
+
+Estimate for the relative computational load of the PME mesh part: 0.22
+
+This run will generate roughly 359 Mb of data
+                :-) GROMACS - gmx mdrun, 2024.3-plumed_2.9.3 (-:
+
+Executable:   /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr/bin/gmx_mpi
+Data prefix:  /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr
+Working dir:  /scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/1JCLm/outputs/4_equilibration
+Command line:
+  gmx_mpi mdrun -deffnm npt_5 -cpt 15
+
+Compiled SIMD is AVX2_256, but CPU also supports AVX_512 (see log).
+Reading file npt_5.tpr, VERSION 2024.3-plumed_2.9.3 (single precision)
+GPU-aware MPI detected, but by default GROMACS will not make use the direct GPU communication capabilities of MPI. For improved performance try enabling the feature by setting the GMX_ENABLE_DIRECT_GPU_COMM environment variable.
+Changing nstlist from 10 to 100, rlist from 1 to 1.169
+
+
+1 GPU selected for this run.
+Mapping of GPU IDs to the 2 GPU tasks in the 1 rank on this node:
+  PP:0,PME:0
+PP tasks will do (non-perturbed) short-ranged interactions on the GPU
+PP task will update and constrain coordinates on the GPU
+PME tasks will do all aspects on the GPU
+Using 1 MPI process
+
+Non-default thread affinity set, disabling internal thread affinity
+
+Using 8 OpenMP threads 
+
+starting mdrun 'Protein in water'
+250000 steps,    500.0 ps.
+
+Writing final coordinates.
+
+               Core t (s)   Wall t (s)        (%)
+       Time:     1826.652      228.345      800.0
+                 (ns/day)    (hour/ns)
+Performance:      189.188        0.127
+
+GROMACS reminds you: "The physical chemists never use their eyes and are most lamentably lacking in chemical culture. It is essential to cast out from our midst, root and branch, this physical element and return to our laboratories." (Henry Edward Armstrong)
+
+               :-) GROMACS - gmx energy, 2024.3-plumed_2.9.3 (-:
+
+Executable:   /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr/bin/gmx_mpi
+Data prefix:  /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr
+Working dir:  /scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/1JCLm/outputs/4_equilibration
+Command line:
+  gmx_mpi energy -f npt_5.edr -o pressure_5.xvg
+
+Opened npt_5.edr as single precision energy file
+
+Select the terms you want from the following list by
+selecting either (part of) the name or the number or a combination.
+End your selection with an empty line or a zero.
+-------------------------------------------------------------------
+  1  Bond             2  Angle            3  Proper-Dih.      4  Per.-Imp.-Dih.
+  5  LJ-14            6  Coulomb-14       7  LJ-(SR)          8  Disper.-corr. 
+  9  Coulomb-(SR)    10  Coul.-recip.    11  Position-Rest.  12  Potential     
+ 13  Kinetic-En.     14  Total-Energy    15  Conserved-En.   16  Temperature   
+ 17  Pres.-DC        18  Pressure        19  Constr.-rmsd    20  Box-X         
+ 21  Box-Y           22  Box-Z           23  Volume          24  Density       
+ 25  pV              26  Enthalpy        27  Vir-XX          28  Vir-XY        
+ 29  Vir-XZ          30  Vir-YX          31  Vir-YY          32  Vir-YZ        
+ 33  Vir-ZX          34  Vir-ZY          35  Vir-ZZ          36  Pres-XX       
+ 37  Pres-XY         38  Pres-XZ         39  Pres-YX         40  Pres-YY       
+ 41  Pres-YZ         42  Pres-ZX         43  Pres-ZY         44  Pres-ZZ       
+ 45  #Surf*SurfTen   46  T-Protein       47  T-non-Protein   48  Lamb-Protein  
+ 49  Lamb-non-Protein                  
+
+Reading energy frame      0 time    0.000         Reading energy frame      1 time    2.000         Reading energy frame      2 time    4.000         Reading energy frame      3 time    6.000         Reading energy frame      4 time    8.000         Reading energy frame      5 time   10.000         Reading energy frame      6 time   12.000         Reading energy frame      7 time   14.000         Reading energy frame      8 time   16.000         Reading energy frame      9 time   18.000         Reading energy frame     10 time   20.000         Reading energy frame     11 time   22.000         Reading energy frame     12 time   24.000         Reading energy frame     13 time   26.000         Reading energy frame     14 time   28.000         Reading energy frame     15 time   30.000         Reading energy frame     16 time   32.000         Reading energy frame     17 time   34.000         Reading energy frame     18 time   36.000         Reading energy frame     19 time   38.000         Reading energy frame     20 time   40.000         Reading energy frame     30 time   60.000         Reading energy frame     40 time   80.000         Reading energy frame     50 time  100.000         Reading energy frame     60 time  120.000         Reading energy frame     70 time  140.000         Reading energy frame     80 time  160.000         Reading energy frame     90 time  180.000         Reading energy frame    100 time  200.000         Reading energy frame    110 time  220.000         Reading energy frame    120 time  240.000         Reading energy frame    130 time  260.000         Reading energy frame    140 time  280.000         Reading energy frame    150 time  300.000         Reading energy frame    160 time  320.000         Reading energy frame    170 time  340.000         Reading energy frame    180 time  360.000         Reading energy frame    190 time  380.000         Reading energy frame    200 time  400.000         Last energy frame read 250 time  500.000         
+
+GROMACS reminds you: "These Gromacs Guys Really Rock" (P.J. Meulenhoff)
+
+
+Statistics over 250001 steps [ 0.0000 through 500.0000 ps ], 1 data sets
+All statistics are over 2501 points
+
+Energy                      Average   Err.Est.       RMSD  Tot-Drift
+-------------------------------------------------------------------------------
+Pressure                    1.22329       0.35    97.9692    1.08391  (bar)
+               :-) GROMACS - gmx energy, 2024.3-plumed_2.9.3 (-:
+
+Executable:   /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr/bin/gmx_mpi
+Data prefix:  /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr
+Working dir:  /scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/1JCLm/outputs/4_equilibration
+Command line:
+  gmx_mpi energy -f npt_5.edr -o density_5.xvg
+
+Opened npt_5.edr as single precision energy file
+
+Select the terms you want from the following list by
+selecting either (part of) the name or the number or a combination.
+End your selection with an empty line or a zero.
+-------------------------------------------------------------------
+  1  Bond             2  Angle            3  Proper-Dih.      4  Per.-Imp.-Dih.
+  5  LJ-14            6  Coulomb-14       7  LJ-(SR)          8  Disper.-corr. 
+  9  Coulomb-(SR)    10  Coul.-recip.    11  Position-Rest.  12  Potential     
+ 13  Kinetic-En.     14  Total-Energy    15  Conserved-En.   16  Temperature   
+ 17  Pres.-DC        18  Pressure        19  Constr.-rmsd    20  Box-X         
+ 21  Box-Y           22  Box-Z           23  Volume          24  Density       
+ 25  pV              26  Enthalpy        27  Vir-XX          28  Vir-XY        
+ 29  Vir-XZ          30  Vir-YX          31  Vir-YY          32  Vir-YZ        
+ 33  Vir-ZX          34  Vir-ZY          35  Vir-ZZ          36  Pres-XX       
+ 37  Pres-XY         38  Pres-XZ         39  Pres-YX         40  Pres-YY       
+ 41  Pres-YZ         42  Pres-ZX         43  Pres-ZY         44  Pres-ZZ       
+ 45  #Surf*SurfTen   46  T-Protein       47  T-non-Protein   48  Lamb-Protein  
+ 49  Lamb-non-Protein                  
+
+Reading energy frame      0 time    0.000         Reading energy frame      1 time    2.000         Reading energy frame      2 time    4.000         Reading energy frame      3 time    6.000         Reading energy frame      4 time    8.000         Reading energy frame      5 time   10.000         Reading energy frame      6 time   12.000         Reading energy frame      7 time   14.000         Reading energy frame      8 time   16.000         Reading energy frame      9 time   18.000         Reading energy frame     10 time   20.000         Reading energy frame     11 time   22.000         Reading energy frame     12 time   24.000         Reading energy frame     13 time   26.000         Reading energy frame     14 time   28.000         Reading energy frame     15 time   30.000         Reading energy frame     16 time   32.000         Reading energy frame     17 time   34.000         Reading energy frame     18 time   36.000         Reading energy frame     19 time   38.000         Reading energy frame     20 time   40.000         Reading energy frame     30 time   60.000         Reading energy frame     40 time   80.000         Reading energy frame     50 time  100.000         Reading energy frame     60 time  120.000         Reading energy frame     70 time  140.000         Reading energy frame     80 time  160.000         Reading energy frame     90 time  180.000         Reading energy frame    100 time  200.000         Reading energy frame    110 time  220.000         Reading energy frame    120 time  240.000         Reading energy frame    130 time  260.000         Reading energy frame    140 time  280.000         Reading energy frame    150 time  300.000         Reading energy frame    160 time  320.000         Reading energy frame    170 time  340.000         Reading energy frame    180 time  360.000         Reading energy frame    190 time  380.000         Reading energy frame    200 time  400.000         Last energy frame read 250 time  500.000         
+
+GROMACS reminds you: "The Wheels On the Bus Go Round and Round" (J. Richman)
+
+
+Statistics over 250001 steps [ 0.0000 through 500.0000 ps ], 1 data sets
+All statistics are over 2501 points
+
+Energy                      Average   Err.Est.       RMSD  Tot-Drift
+-------------------------------------------------------------------------------
+Density                      1007.6      0.079    1.13828  0.0107006  (kg/m^3)
+pressure_100        : mean =     -4.463, std =    106.094
+pressure_1000       : mean =    -10.744, std =    107.048
+pressure_250        : mean =     -0.430, std =     94.052
+pressure_5          : mean =     -1.186, std =     93.436
+pressure_500        : mean =     -3.726, std =     99.443
+Saved plot: pressure.png
+density_100         : mean =   1007.567, std =      1.171
+density_1000        : mean =   1008.060, std =      1.252
+density_250         : mean =   1007.654, std =      1.108
+density_5           : mean =   1007.610, std =      1.142
+density_500         : mean =   1007.870, std =      1.133
+Saved plot: density.png
+Setup completed successfully.

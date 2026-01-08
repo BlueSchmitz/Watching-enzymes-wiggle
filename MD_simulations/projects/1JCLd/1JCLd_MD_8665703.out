@@ -1,0 +1,52 @@
+
+Currently Loaded Modules:
+  1) slurm/current                   17) libpng/1.6.39
+  2) DefaultModules                  18) python-venv/1.0
+  3) 2025                            19) py-pybind11/2.13.5
+  4) openmpi/4.1.7                   20) py-contourpy/1.3.0
+  5) cuda/11.6                       21) py-cycler/0.11.0
+  6) fftw/3.3.10_openmp_True         22) py-fonttools/4.39.4
+  7) gcc-runtime/13.3.0              23) py-kiwisolver/1.4.5
+  8) glibc/2.28                      24) py-packaging/24.1
+  9) hwloc/2.11.1                    25) libjpeg-turbo/3.0.3
+ 10) openblas/0.3.28_threads_openmp  26) py-pillow/11.0.0
+ 11) gsl/2.8                         27) py-pyparsing/3.1.2
+ 12) zlib/1.2.13                     28) py-six/1.16.0
+ 13) plumed/2.9.3                    29) py-python-dateutil/2.8.2
+ 14) gromacs/2024.3                  30) qhull/2020.2
+ 15) python/3.11.9                   31) py-matplotlib/3.9.2
+ 16) freetype/2.13.2                 32) py-numpy/1.26.4
+
+ 
+
+============= Simple MD production run with GROMACS =============
+               :-) GROMACS - gmx grompp, 2024.3-plumed_2.9.3 (-:
+
+Executable:   /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr/bin/gmx_mpi
+Data prefix:  /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr
+Working dir:  /scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/1JCLd/outputs/7_simple_MD
+Command line:
+  gmx_mpi grompp -f ../../../../mdp_templates/simple_MD.mdp -c npt_pro.gro -t npt_pro.cpt -p topol_pro.top -o md.tpr
+
+Ignoring obsolete mdp entry 'title'
+Ignoring obsolete mdp entry 'ns_type'
+
+-------------------------------------------------------
+Program:     gmx grompp, version 2024.3-plumed_2.9.3
+Source file: src/gromacs/gmxpreprocess/gmxcpp.cpp (line 295)
+
+Fatal error:
+Topology include file "topol_Protein_chain_A_5.itp" not found
+
+For more information and tips for troubleshooting, please check the GROMACS
+website at https://manual.gromacs.org/current/user-guide/run-time-errors.html
+-------------------------------------------------------
+Setting the LD random seed to -436371730
+--------------------------------------------------------------------------
+MPI_ABORT was invoked on rank 0 in communicator MPI_COMM_WORLD
+with errorcode 1.
+
+NOTE: invoking MPI_ABORT causes Open MPI to kill all MPI processes.
+You may or may not see output from other processes, depending on
+exactly when Open MPI kills them.
+--------------------------------------------------------------------------

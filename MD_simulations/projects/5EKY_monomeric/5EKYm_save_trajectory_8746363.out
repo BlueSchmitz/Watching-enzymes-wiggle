@@ -1,0 +1,206 @@
+
+Currently Loaded Modules:
+  1) slurm/current                   17) libpng/1.6.39
+  2) DefaultModules                  18) python-venv/1.0
+  3) 2025                            19) py-pybind11/2.13.5
+  4) openmpi/4.1.7                   20) py-contourpy/1.3.0
+  5) cuda/11.6                       21) py-cycler/0.11.0
+  6) fftw/3.3.10_openmp_True         22) py-fonttools/4.39.4
+  7) gcc-runtime/13.3.0              23) py-kiwisolver/1.4.5
+  8) glibc/2.28                      24) py-packaging/24.1
+  9) hwloc/2.11.1                    25) libjpeg-turbo/3.0.3
+ 10) openblas/0.3.28_threads_openmp  26) py-pillow/11.0.0
+ 11) gsl/2.8                         27) py-pyparsing/3.1.2
+ 12) zlib/1.2.13                     28) py-six/1.16.0
+ 13) plumed/2.9.3                    29) py-python-dateutil/2.8.2
+ 14) gromacs/2024.3                  30) qhull/2020.2
+ 15) python/3.11.9                   31) py-matplotlib/3.9.2
+ 16) freetype/2.13.2                 32) py-numpy/1.26.4
+
+ 
+
+============= Downsizing and Exporting trajectory =============
+              :-) GROMACS - gmx make_ndx, 2024.3-PLUMED_spack (-:
+
+Executable:   /apps/arch/2025/software/linux-rhel8-cascadelake/gcc-13.3.0/gromacs-2024.3-smpwhfqn3ae4xqs3fx7w6ktpvolaerm6/bin/gmx_mpi
+Data prefix:  /apps/arch/2025/software/linux-rhel8-cascadelake/gcc-13.3.0/gromacs-2024.3-smpwhfqn3ae4xqs3fx7w6ktpvolaerm6
+Working dir:  /scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/5EKY_monomeric/outputs/7_simple_MD
+Command line:
+  gmx_mpi make_ndx -f md.tpr -o index.ndx
+
+
+Reading structure file
+Reading file md.tpr, VERSION 2024.3-plumed_2.9.3 (single precision)
+Reading file md.tpr, VERSION 2024.3-plumed_2.9.3 (single precision)
+
+Back Off! I just backed up index.ndx to ./#index.ndx.1#
+
+GROMACS reminds you: "A computer would deserve to be called intelligent if it could deceive a human into believing that it was human." (Alan Turing)
+
+Going to read 0 old index file(s)
+Analysing residue names:
+There are:   259    Protein residues
+There are: 20337      Water residues
+There are:     7        Ion residues
+Analysing Protein...
+
+  0 System              : 64936 atoms
+  1 Protein             :  3918 atoms
+  2 Protein-H           :  1947 atoms
+  3 C-alpha             :   259 atoms
+  4 Backbone            :   777 atoms
+  5 MainChain           :  1037 atoms
+  6 MainChain+Cb        :  1278 atoms
+  7 MainChain+H         :  1290 atoms
+  8 SideChain           :  2628 atoms
+  9 SideChain-H         :   910 atoms
+ 10 Prot-Masses         :  3918 atoms
+ 11 non-Protein         : 61018 atoms
+ 12 Water               : 61011 atoms
+ 13 SOL                 : 61011 atoms
+ 14 non-Water           :  3925 atoms
+ 15 Ion                 :     7 atoms
+ 16 Water_and_ions      : 61018 atoms
+
+ nr : group      '!': not  'name' nr name   'splitch' nr    Enter: list groups
+ 'a': atom       '&': and  'del' nr         'splitres' nr   'l': list residues
+ 't': atom type  '|': or   'keep' nr        'splitat' nr    'h': help
+ 'r': residue              'res' nr         'chain' char
+ "name": group             'case': case sensitive           'q': save and quit
+ 'ri': residue index
+
+> 
+               :-) GROMACS - gmx trjconv, 2024.3-PLUMED_spack (-:
+
+Executable:   /apps/arch/2025/software/linux-rhel8-cascadelake/gcc-13.3.0/gromacs-2024.3-smpwhfqn3ae4xqs3fx7w6ktpvolaerm6/bin/gmx_mpi
+Data prefix:  /apps/arch/2025/software/linux-rhel8-cascadelake/gcc-13.3.0/gromacs-2024.3-smpwhfqn3ae4xqs3fx7w6ktpvolaerm6
+Working dir:  /scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/5EKY_monomeric/outputs/7_simple_MD
+Command line:
+  gmx_mpi trjconv -f md.xtc -s md.tpr -n index.ndx -o md_protein-h_pbc_100.xtc -dt 100 -center -pbc nojump
+
+Will write xtc: Compressed trajectory (portable xdr format): xtc
+Reading file md.tpr, VERSION 2024.3-plumed_2.9.3 (single precision)
+Reading file md.tpr, VERSION 2024.3-plumed_2.9.3 (single precision)
+Group     0 (         System) has 64936 elements
+Group     1 (        Protein) has  3918 elements
+Group     2 (      Protein-H) has  1947 elements
+Group     3 (        C-alpha) has   259 elements
+Group     4 (       Backbone) has   777 elements
+Group     5 (      MainChain) has  1037 elements
+Group     6 (   MainChain+Cb) has  1278 elements
+Group     7 (    MainChain+H) has  1290 elements
+Group     8 (      SideChain) has  2628 elements
+Group     9 (    SideChain-H) has   910 elements
+Group    10 (    Prot-Masses) has  3918 elements
+Group    11 (    non-Protein) has 61018 elements
+Group    12 (          Water) has 61011 elements
+Group    13 (            SOL) has 61011 elements
+Group    14 (      non-Water) has  3925 elements
+Group    15 (            Ion) has     7 elements
+Group    16 ( Water_and_ions) has 61018 elements
+Select a group: Group     0 (         System) has 64936 elements
+Group     1 (        Protein) has  3918 elements
+Group     2 (      Protein-H) has  1947 elements
+Group     3 (        C-alpha) has   259 elements
+Group     4 (       Backbone) has   777 elements
+Group     5 (      MainChain) has  1037 elements
+Group     6 (   MainChain+Cb) has  1278 elements
+Group     7 (    MainChain+H) has  1290 elements
+Group     8 (      SideChain) has  2628 elements
+Group     9 (    SideChain-H) has   910 elements
+Group    10 (    Prot-Masses) has  3918 elements
+Group    11 (    non-Protein) has 61018 elements
+Group    12 (          Water) has 61011 elements
+Group    13 (            SOL) has 61011 elements
+Group    14 (      non-Water) has  3925 elements
+Group    15 (            Ion) has     7 elements
+Group    16 ( Water_and_ions) has 61018 elements
+Select a group: Reading frame       0 time    0.000   
+Precision of md.xtc is 0.001 (nm)
+Using output precision of 0.001 (nm)
+Reading frame       1 time   10.000    ->  frame      0 time    0.000      Reading frame       2 time   20.000   Reading frame       3 time   30.000   Reading frame       4 time   40.000   Reading frame       5 time   50.000   Reading frame       6 time   60.000   Reading frame       7 time   70.000   Reading frame       8 time   80.000   Reading frame       9 time   90.000   Reading frame      10 time  100.000   Reading frame      11 time  110.000    ->  frame      1 time  100.000      Reading frame      12 time  120.000   Reading frame      13 time  130.000   Reading frame      14 time  140.000   Reading frame      15 time  150.000   Reading frame      16 time  160.000   Reading frame      17 time  170.000   Reading frame      18 time  180.000   Reading frame      19 time  190.000   Reading frame      20 time  200.000    ->  frame      2 time  200.000      Reading frame      30 time  300.000    ->  frame      3 time  300.000      Reading frame      40 time  400.000    ->  frame      4 time  400.000      Reading frame      50 time  500.000    ->  frame      5 time  500.000      Reading frame      60 time  600.000    ->  frame      6 time  600.000      Reading frame      70 time  700.000    ->  frame      7 time  700.000      Reading frame      80 time  800.000    ->  frame      8 time  800.000      Reading frame      90 time  900.000    ->  frame      9 time  900.000      Reading frame     100 time 1000.000    ->  frame     10 time 1000.000      Reading frame     110 time 1100.000    ->  frame     11 time 1100.000      Reading frame     120 time 1200.000    ->  frame     12 time 1200.000      Reading frame     130 time 1300.000    ->  frame     13 time 1300.000      Reading frame     140 time 1400.000    ->  frame     14 time 1400.000      Reading frame     150 time 1500.000    ->  frame     15 time 1500.000      Reading frame     160 time 1600.000    ->  frame     16 time 1600.000      Reading frame     170 time 1700.000    ->  frame     17 time 1700.000      Reading frame     180 time 1800.000    ->  frame     18 time 1800.000      Reading frame     190 time 1900.000    ->  frame     19 time 1900.000      Reading frame     200 time 2000.000    ->  frame     20 time 2000.000      Reading frame     300 time 3000.000    ->  frame     30 time 3000.000      Reading frame     400 time 4000.000    ->  frame     40 time 4000.000      Reading frame     500 time 5000.000    ->  frame     50 time 5000.000      Reading frame     600 time 6000.000    ->  frame     60 time 6000.000      Reading frame     700 time 7000.000    ->  frame     70 time 7000.000      Reading frame     800 time 8000.000    ->  frame     80 time 8000.000      Reading frame     900 time 9000.000    ->  frame     90 time 9000.000      Reading frame    1000 time 10000.000    ->  frame    100 time 10000.000      Reading frame    1100 time 11000.000    ->  frame    110 time 11000.000      Reading frame    1200 time 12000.000    ->  frame    120 time 12000.000      Reading frame    1300 time 13000.000    ->  frame    130 time 13000.000      Reading frame    1400 time 14000.000    ->  frame    140 time 14000.000      Reading frame    1500 time 15000.000    ->  frame    150 time 15000.000      Reading frame    1600 time 16000.000    ->  frame    160 time 16000.000      Reading frame    1700 time 17000.000    ->  frame    170 time 17000.000      Reading frame    1800 time 18000.000    ->  frame    180 time 18000.000      Reading frame    1900 time 19000.000    ->  frame    190 time 19000.000      Reading frame    2000 time 20000.000    ->  frame    200 time 20000.000      Reading frame    3000 time 30000.000    ->  frame    300 time 30000.000      Reading frame    4000 time 40000.000    ->  frame    400 time 40000.000      Reading frame    5000 time 50000.000    ->  frame    500 time 50000.000      Reading frame    6000 time 60000.000    ->  frame    600 time 60000.000      Reading frame    7000 time 70000.000    ->  frame    700 time 70000.000      Reading frame    8000 time 80000.000    ->  frame    800 time 80000.000      Reading frame    9000 time 90000.000    ->  frame    900 time 90000.000      Reading frame   10000 time 100000.000    ->  frame   1000 time 100000.000      Reading frame   11000 time 110000.000    ->  frame   1100 time 110000.000      Reading frame   12000 time 120000.000    ->  frame   1200 time 120000.000      Reading frame   13000 time 130000.000    ->  frame   1300 time 130000.000      Reading frame   14000 time 140000.000    ->  frame   1400 time 140000.000      Reading frame   15000 time 150000.000    ->  frame   1500 time 150000.000      Reading frame   16000 time 160000.000    ->  frame   1600 time 160000.000      Reading frame   17000 time 170000.000    ->  frame   1700 time 170000.000      Reading frame   18000 time 180000.000    ->  frame   1800 time 180000.000      Reading frame   19000 time 190000.000    ->  frame   1900 time 190000.000      Reading frame   20000 time 200000.000    ->  frame   2000 time 200000.000      Reading frame   21000 time 210000.000    ->  frame   2100 time 210000.000      Reading frame   22000 time 220000.000    ->  frame   2200 time 220000.000      Reading frame   23000 time 230000.000    ->  frame   2300 time 230000.000      Reading frame   24000 time 240000.000    ->  frame   2400 time 240000.000      Reading frame   25000 time 250000.000    ->  frame   2500 time 250000.000      Reading frame   26000 time 260000.000    ->  frame   2600 time 260000.000      Reading frame   27000 time 270000.000    ->  frame   2700 time 270000.000      Reading frame   28000 time 280000.000    ->  frame   2800 time 280000.000      Reading frame   29000 time 290000.000    ->  frame   2900 time 290000.000      Reading frame   30000 time 300000.000    ->  frame   3000 time 300000.000      Reading frame   31000 time 310000.000    ->  frame   3100 time 310000.000      Reading frame   32000 time 320000.000    ->  frame   3200 time 320000.000      Reading frame   33000 time 330000.000    ->  frame   3300 time 330000.000      Reading frame   34000 time 340000.000    ->  frame   3400 time 340000.000      Reading frame   35000 time 350000.000    ->  frame   3500 time 350000.000      Reading frame   36000 time 360000.000    ->  frame   3600 time 360000.000      Reading frame   37000 time 370000.000    ->  frame   3700 time 370000.000      Reading frame   38000 time 380000.000    ->  frame   3800 time 380000.000      Reading frame   39000 time 390000.000    ->  frame   3900 time 390000.000      Reading frame   40000 time 400000.000    ->  frame   4000 time 400000.000      Reading frame   41000 time 410000.000    ->  frame   4100 time 410000.000      Reading frame   42000 time 420000.000    ->  frame   4200 time 420000.000      Reading frame   43000 time 430000.000    ->  frame   4300 time 430000.000      Reading frame   44000 time 440000.000    ->  frame   4400 time 440000.000      Reading frame   45000 time 450000.000    ->  frame   4500 time 450000.000      Reading frame   46000 time 460000.000    ->  frame   4600 time 460000.000      Reading frame   47000 time 470000.000    ->  frame   4700 time 470000.000      Reading frame   48000 time 480000.000    ->  frame   4800 time 480000.000      Reading frame   49000 time 490000.000    ->  frame   4900 time 490000.000      Reading frame   50000 time 500000.000    ->  frame   5000 time 500000.000      Reading frame   51000 time 510000.000    ->  frame   5100 time 510000.000      Reading frame   52000 time 520000.000    ->  frame   5200 time 520000.000      Reading frame   53000 time 530000.000    ->  frame   5300 time 530000.000      Reading frame   54000 time 540000.000    ->  frame   5400 time 540000.000      Reading frame   55000 time 550000.000    ->  frame   5500 time 550000.000      Reading frame   56000 time 560000.000    ->  frame   5600 time 560000.000      Reading frame   57000 time 570000.000    ->  frame   5700 time 570000.000      Reading frame   58000 time 580000.000    ->  frame   5800 time 580000.000      Reading frame   59000 time 590000.000    ->  frame   5900 time 590000.000      Reading frame   60000 time 600000.000    ->  frame   6000 time 600000.000      Reading frame   61000 time 610000.000    ->  frame   6100 time 610000.000      Reading frame   62000 time 620000.000    ->  frame   6200 time 620000.000      Reading frame   63000 time 630000.000    ->  frame   6300 time 630000.000      Reading frame   64000 time 640000.000    ->  frame   6400 time 640000.000      Reading frame   65000 time 650000.000    ->  frame   6500 time 650000.000      Reading frame   66000 time 660000.000    ->  frame   6600 time 660000.000      Reading frame   67000 time 670000.000    ->  frame   6700 time 670000.000      Reading frame   68000 time 680000.000    ->  frame   6800 time 680000.000      Reading frame   69000 time 690000.000    ->  frame   6900 time 690000.000      Reading frame   70000 time 700000.000    ->  frame   7000 time 700000.000      Reading frame   71000 time 710000.000    ->  frame   7100 time 710000.000      Reading frame   72000 time 720000.000    ->  frame   7200 time 720000.000      Reading frame   73000 time 730000.000    ->  frame   7300 time 730000.000      Reading frame   74000 time 740000.000    ->  frame   7400 time 740000.000      Reading frame   75000 time 750000.000    ->  frame   7500 time 750000.000      Reading frame   76000 time 760000.000    ->  frame   7600 time 760000.000      Reading frame   77000 time 770000.000    ->  frame   7700 time 770000.000      Reading frame   78000 time 780000.000    ->  frame   7800 time 780000.000      Reading frame   79000 time 790000.000    ->  frame   7900 time 790000.000      Reading frame   80000 time 800000.000    ->  frame   8000 time 800000.000      Reading frame   81000 time 810000.000    ->  frame   8100 time 810000.000      Reading frame   82000 time 820000.000    ->  frame   8200 time 820000.000      Reading frame   83000 time 830000.000    ->  frame   8300 time 830000.000      Reading frame   84000 time 840000.000    ->  frame   8400 time 840000.000      Reading frame   85000 time 850000.000    ->  frame   8500 time 850000.000      Reading frame   86000 time 860000.000    ->  frame   8600 time 860000.000      Reading frame   87000 time 870000.000    ->  frame   8700 time 870000.000      Reading frame   88000 time 880000.000    ->  frame   8800 time 880000.000      Reading frame   89000 time 890000.000    ->  frame   8900 time 890000.000      Reading frame   90000 time 900000.000    ->  frame   9000 time 900000.000      Reading frame   91000 time 910000.000    ->  frame   9100 time 910000.000      Reading frame   92000 time 920000.000    ->  frame   9200 time 920000.000      Reading frame   93000 time 930000.000    ->  frame   9300 time 930000.000      Reading frame   94000 time 940000.000    ->  frame   9400 time 940000.000      Reading frame   95000 time 950000.000    ->  frame   9500 time 950000.000      Reading frame   96000 time 960000.000    ->  frame   9600 time 960000.000      Reading frame   97000 time 970000.000    ->  frame   9700 time 970000.000      Reading frame   98000 time 980000.000    ->  frame   9800 time 980000.000      Reading frame   99000 time 990000.000    ->  frame   9900 time 990000.000      Reading frame  100000 time 1000000.000    ->  frame  10000 time 1000000.000      Reading frame  101000 time 1010000.000    ->  frame  10100 time 1010000.000      Reading frame  102000 time 1020000.000    ->  frame  10200 time 1020000.000      Reading frame  103000 time 1030000.000    ->  frame  10300 time 1030000.000      Reading frame  104000 time 1040000.000    ->  frame  10400 time 1040000.000      Reading frame  105000 time 1050000.000    ->  frame  10500 time 1050000.000      Reading frame  106000 time 1060000.000    ->  frame  10600 time 1060000.000      Reading frame  107000 time 1070000.000    ->  frame  10700 time 1070000.000      Reading frame  108000 time 1080000.000    ->  frame  10800 time 1080000.000      Reading frame  109000 time 1090000.000    ->  frame  10900 time 1090000.000      Reading frame  110000 time 1100000.000    ->  frame  11000 time 1100000.000      Reading frame  111000 time 1110000.000    ->  frame  11100 time 1110000.000      Reading frame  112000 time 1120000.000    ->  frame  11200 time 1120000.000      Reading frame  113000 time 1130000.000    ->  frame  11300 time 1130000.000      Reading frame  114000 time 1140000.000    ->  frame  11400 time 1140000.000      Reading frame  115000 time 1150000.000    ->  frame  11500 time 1150000.000      Reading frame  116000 time 1160000.000    ->  frame  11600 time 1160000.000      Reading frame  117000 time 1170000.000    ->  frame  11700 time 1170000.000      Reading frame  118000 time 1180000.000    ->  frame  11800 time 1180000.000      Reading frame  119000 time 1190000.000    ->  frame  11900 time 1190000.000      Reading frame  120000 time 1200000.000    ->  frame  12000 time 1200000.000      Reading frame  121000 time 1210000.000    ->  frame  12100 time 1210000.000      Reading frame  122000 time 1220000.000    ->  frame  12200 time 1220000.000      Reading frame  123000 time 1230000.000    ->  frame  12300 time 1230000.000      Reading frame  124000 time 1240000.000    ->  frame  12400 time 1240000.000      Reading frame  125000 time 1250000.000    ->  frame  12500 time 1250000.000      Reading frame  126000 time 1260000.000    ->  frame  12600 time 1260000.000      Reading frame  127000 time 1270000.000    ->  frame  12700 time 1270000.000      Reading frame  128000 time 1280000.000    ->  frame  12800 time 1280000.000      Reading frame  129000 time 1290000.000    ->  frame  12900 time 1290000.000      Reading frame  130000 time 1300000.000    ->  frame  13000 time 1300000.000      Reading frame  131000 time 1310000.000    ->  frame  13100 time 1310000.000      Reading frame  132000 time 1320000.000    ->  frame  13200 time 1320000.000      Reading frame  133000 time 1330000.000    ->  frame  13300 time 1330000.000      Reading frame  134000 time 1340000.000    ->  frame  13400 time 1340000.000      Reading frame  135000 time 1350000.000    ->  frame  13500 time 1350000.000      Reading frame  136000 time 1360000.000    ->  frame  13600 time 1360000.000      Reading frame  137000 time 1370000.000    ->  frame  13700 time 1370000.000      Reading frame  138000 time 1380000.000    ->  frame  13800 time 1380000.000      Reading frame  139000 time 1390000.000    ->  frame  13900 time 1390000.000      Reading frame  140000 time 1400000.000    ->  frame  14000 time 1400000.000      Reading frame  141000 time 1410000.000    ->  frame  14100 time 1410000.000      Reading frame  142000 time 1420000.000    ->  frame  14200 time 1420000.000      Reading frame  143000 time 1430000.000    ->  frame  14300 time 1430000.000      Reading frame  144000 time 1440000.000    ->  frame  14400 time 1440000.000      Reading frame  145000 time 1450000.000    ->  frame  14500 time 1450000.000      Reading frame  146000 time 1460000.000    ->  frame  14600 time 1460000.000      Reading frame  147000 time 1470000.000    ->  frame  14700 time 1470000.000      Reading frame  148000 time 1480000.000    ->  frame  14800 time 1480000.000      Reading frame  149000 time 1490000.000    ->  frame  14900 time 1490000.000      Reading frame  150000 time 1500000.000    ->  frame  15000 time 1500000.000      Reading frame  151000 time 1510000.000    ->  frame  15100 time 1510000.000      Reading frame  152000 time 1520000.000    ->  frame  15200 time 1520000.000      Reading frame  153000 time 1530000.000    ->  frame  15300 time 1530000.000      Reading frame  154000 time 1540000.000    ->  frame  15400 time 1540000.000      Reading frame  155000 time 1550000.000    ->  frame  15500 time 1550000.000      Reading frame  156000 time 1560000.000    ->  frame  15600 time 1560000.000      Reading frame  157000 time 1570000.000    ->  frame  15700 time 1570000.000      Reading frame  158000 time 1580000.000    ->  frame  15800 time 1580000.000      Reading frame  159000 time 1590000.000    ->  frame  15900 time 1590000.000      Reading frame  160000 time 1600000.000    ->  frame  16000 time 1600000.000      Reading frame  161000 time 1610000.000    ->  frame  16100 time 1610000.000      Reading frame  162000 time 1620000.000    ->  frame  16200 time 1620000.000      Reading frame  163000 time 1630000.000    ->  frame  16300 time 1630000.000      Reading frame  164000 time 1640000.000    ->  frame  16400 time 1640000.000      Reading frame  165000 time 1650000.000    ->  frame  16500 time 1650000.000      Reading frame  166000 time 1660000.000    ->  frame  16600 time 1660000.000      Reading frame  167000 time 1670000.000    ->  frame  16700 time 1670000.000      Reading frame  168000 time 1680000.000    ->  frame  16800 time 1680000.000      Reading frame  169000 time 1690000.000    ->  frame  16900 time 1690000.000      Reading frame  170000 time 1700000.000    ->  frame  17000 time 1700000.000      Reading frame  171000 time 1710000.000    ->  frame  17100 time 1710000.000      Reading frame  172000 time 1720000.000    ->  frame  17200 time 1720000.000      Reading frame  173000 time 1730000.000    ->  frame  17300 time 1730000.000      Reading frame  174000 time 1740000.000    ->  frame  17400 time 1740000.000      Reading frame  175000 time 1750000.000    ->  frame  17500 time 1750000.000      Reading frame  176000 time 1760000.000    ->  frame  17600 time 1760000.000      Reading frame  177000 time 1770000.000    ->  frame  17700 time 1770000.000      Reading frame  178000 time 1780000.000    ->  frame  17800 time 1780000.000      Reading frame  179000 time 1790000.000    ->  frame  17900 time 1790000.000      Reading frame  180000 time 1800000.000    ->  frame  18000 time 1800000.000      Reading frame  181000 time 1810000.000    ->  frame  18100 time 1810000.000      Reading frame  182000 time 1820000.000    ->  frame  18200 time 1820000.000      Reading frame  183000 time 1830000.000    ->  frame  18300 time 1830000.000      Reading frame  184000 time 1840000.000    ->  frame  18400 time 1840000.000      Reading frame  185000 time 1850000.000    ->  frame  18500 time 1850000.000      Reading frame  186000 time 1860000.000    ->  frame  18600 time 1860000.000      Reading frame  187000 time 1870000.000    ->  frame  18700 time 1870000.000      Reading frame  188000 time 1880000.000    ->  frame  18800 time 1880000.000      Reading frame  189000 time 1890000.000    ->  frame  18900 time 1890000.000      Reading frame  190000 time 1900000.000    ->  frame  19000 time 1900000.000      Reading frame  191000 time 1910000.000    ->  frame  19100 time 1910000.000      Reading frame  192000 time 1920000.000    ->  frame  19200 time 1920000.000      Reading frame  193000 time 1930000.000    ->  frame  19300 time 1930000.000      Reading frame  194000 time 1940000.000    ->  frame  19400 time 1940000.000      Reading frame  195000 time 1950000.000    ->  frame  19500 time 1950000.000      Reading frame  196000 time 1960000.000    ->  frame  19600 time 1960000.000      Reading frame  197000 time 1970000.000    ->  frame  19700 time 1970000.000      Reading frame  198000 time 1980000.000    ->  frame  19800 time 1980000.000      Reading frame  199000 time 1990000.000    ->  frame  19900 time 1990000.000      Reading frame  200000 time 2000000.000    ->  frame  20000 time 2000000.000      Reading frame  201000 time 2010000.000    ->  frame  20100 time 2010000.000      Reading frame  202000 time 2020000.000    ->  frame  20200 time 2020000.000      Reading frame  203000 time 2030000.000    ->  frame  20300 time 2030000.000      Reading frame  204000 time 2040000.000    ->  frame  20400 time 2040000.000      Reading frame  205000 time 2050000.000    ->  frame  20500 time 2050000.000      Reading frame  206000 time 2060000.000    ->  frame  20600 time 2060000.000      Reading frame  207000 time 2070000.000    ->  frame  20700 time 2070000.000      Reading frame  208000 time 2080000.000    ->  frame  20800 time 2080000.000      Reading frame  209000 time 2090000.000    ->  frame  20900 time 2090000.000      Reading frame  210000 time 2100000.000    ->  frame  21000 time 2100000.000      Reading frame  211000 time 2110000.000    ->  frame  21100 time 2110000.000      Reading frame  212000 time 2120000.000    ->  frame  21200 time 2120000.000      Reading frame  213000 time 2130000.000    ->  frame  21300 time 2130000.000      Reading frame  214000 time 2140000.000    ->  frame  21400 time 2140000.000      Reading frame  215000 time 2150000.000    ->  frame  21500 time 2150000.000      Reading frame  216000 time 2160000.000    ->  frame  21600 time 2160000.000      Reading frame  217000 time 2170000.000    ->  frame  21700 time 2170000.000      Reading frame  218000 time 2180000.000    ->  frame  21800 time 2180000.000      Reading frame  219000 time 2190000.000    ->  frame  21900 time 2190000.000      Reading frame  220000 time 2200000.000    ->  frame  22000 time 2200000.000      Reading frame  221000 time 2210000.000    ->  frame  22100 time 2210000.000      Reading frame  222000 time 2220000.000    ->  frame  22200 time 2220000.000      Reading frame  223000 time 2230000.000    ->  frame  22300 time 2230000.000      Reading frame  224000 time 2240000.000    ->  frame  22400 time 2240000.000      Reading frame  225000 time 2250000.000    ->  frame  22500 time 2250000.000      Reading frame  226000 time 2260000.000    ->  frame  22600 time 2260000.000      Reading frame  227000 time 2270000.000    ->  frame  22700 time 2270000.000      Reading frame  228000 time 2280000.000    ->  frame  22800 time 2280000.000      Reading frame  229000 time 2290000.000    ->  frame  22900 time 2290000.000      Reading frame  230000 time 2300000.000    ->  frame  23000 time 2300000.000      Reading frame  231000 time 2310000.000    ->  frame  23100 time 2310000.000      Reading frame  232000 time 2320000.000    ->  frame  23200 time 2320000.000      Reading frame  233000 time 2330000.000    ->  frame  23300 time 2330000.000      Reading frame  234000 time 2340000.000    ->  frame  23400 time 2340000.000      Reading frame  235000 time 2350000.000    ->  frame  23500 time 2350000.000      Reading frame  236000 time 2360000.000    ->  frame  23600 time 2360000.000      Reading frame  237000 time 2370000.000    ->  frame  23700 time 2370000.000      Reading frame  238000 time 2380000.000    ->  frame  23800 time 2380000.000      Reading frame  239000 time 2390000.000    ->  frame  23900 time 2390000.000      Reading frame  240000 time 2400000.000    ->  frame  24000 time 2400000.000      Reading frame  241000 time 2410000.000    ->  frame  24100 time 2410000.000      Reading frame  242000 time 2420000.000    ->  frame  24200 time 2420000.000      Reading frame  243000 time 2430000.000    ->  frame  24300 time 2430000.000      Reading frame  244000 time 2440000.000    ->  frame  24400 time 2440000.000      Reading frame  245000 time 2450000.000    ->  frame  24500 time 2450000.000      Reading frame  246000 time 2460000.000    ->  frame  24600 time 2460000.000      Reading frame  247000 time 2470000.000    ->  frame  24700 time 2470000.000      Reading frame  248000 time 2480000.000    ->  frame  24800 time 2480000.000      Reading frame  249000 time 2490000.000    ->  frame  24900 time 2490000.000      Reading frame  250000 time 2500000.000    ->  frame  25000 time 2500000.000      Reading frame  251000 time 2510000.000    ->  frame  25100 time 2510000.000      Reading frame  252000 time 2520000.000    ->  frame  25200 time 2520000.000      Reading frame  253000 time 2530000.000    ->  frame  25300 time 2530000.000      Reading frame  254000 time 2540000.000    ->  frame  25400 time 2540000.000      Reading frame  255000 time 2550000.000    ->  frame  25500 time 2550000.000      Reading frame  256000 time 2560000.000    ->  frame  25600 time 2560000.000      Reading frame  257000 time 2570000.000    ->  frame  25700 time 2570000.000      Reading frame  258000 time 2580000.000    ->  frame  25800 time 2580000.000      Reading frame  259000 time 2590000.000    ->  frame  25900 time 2590000.000      Reading frame  260000 time 2600000.000    ->  frame  26000 time 2600000.000      Reading frame  261000 time 2610000.000    ->  frame  26100 time 2610000.000      Reading frame  262000 time 2620000.000    ->  frame  26200 time 2620000.000      Reading frame  263000 time 2630000.000    ->  frame  26300 time 2630000.000      Reading frame  264000 time 2640000.000    ->  frame  26400 time 2640000.000      Reading frame  265000 time 2650000.000    ->  frame  26500 time 2650000.000      Reading frame  266000 time 2660000.000    ->  frame  26600 time 2660000.000      Reading frame  267000 time 2670000.000    ->  frame  26700 time 2670000.000      Reading frame  268000 time 2680000.000    ->  frame  26800 time 2680000.000      Reading frame  269000 time 2690000.000    ->  frame  26900 time 2690000.000      Reading frame  270000 time 2700000.000    ->  frame  27000 time 2700000.000      Reading frame  271000 time 2710000.000    ->  frame  27100 time 2710000.000      Reading frame  272000 time 2720000.000    ->  frame  27200 time 2720000.000      Reading frame  273000 time 2730000.000    ->  frame  27300 time 2730000.000      Reading frame  274000 time 2740000.000    ->  frame  27400 time 2740000.000      Reading frame  275000 time 2750000.000    ->  frame  27500 time 2750000.000      Reading frame  276000 time 2760000.000    ->  frame  27600 time 2760000.000      Reading frame  277000 time 2770000.000    ->  frame  27700 time 2770000.000      
+
+Last written: frame  27777 time 2777700.000
+
+
+GROMACS reminds you: "Science is not a boy's game, it's not a girl's game. It's everyone's game. It's about where we are and where we're going." (Nichelle Nichols)
+
+Note that major changes are planned in future for trjconv, to improve usability and utility.
+Select group for centering
+Selected 2: 'Protein-H'
+Select group for output
+Selected 2: 'Protein-H'
+               :-) GROMACS - gmx trjconv, 2024.3-PLUMED_spack (-:
+
+Executable:   /apps/arch/2025/software/linux-rhel8-cascadelake/gcc-13.3.0/gromacs-2024.3-smpwhfqn3ae4xqs3fx7w6ktpvolaerm6/bin/gmx_mpi
+Data prefix:  /apps/arch/2025/software/linux-rhel8-cascadelake/gcc-13.3.0/gromacs-2024.3-smpwhfqn3ae4xqs3fx7w6ktpvolaerm6
+Working dir:  /scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/5EKY_monomeric/outputs/7_simple_MD
+Command line:
+  gmx_mpi trjconv -f md_protein-h_pbc_100.xtc -s md.tpr -n index.ndx -o md_protein-h_downsized_100.xtc -fit rot+trans
+
+Will write xtc: Compressed trajectory (portable xdr format): xtc
+Reading file md.tpr, VERSION 2024.3-plumed_2.9.3 (single precision)
+Reading file md.tpr, VERSION 2024.3-plumed_2.9.3 (single precision)
+Group     0 (         System) has 64936 elements
+Group     1 (        Protein) has  3918 elements
+Group     2 (      Protein-H) has  1947 elements
+Group     3 (        C-alpha) has   259 elements
+Group     4 (       Backbone) has   777 elements
+Group     5 (      MainChain) has  1037 elements
+Group     6 (   MainChain+Cb) has  1278 elements
+Group     7 (    MainChain+H) has  1290 elements
+Group     8 (      SideChain) has  2628 elements
+Group     9 (    SideChain-H) has   910 elements
+Group    10 (    Prot-Masses) has  3918 elements
+Group    11 (    non-Protein) has 61018 elements
+Group    12 (          Water) has 61011 elements
+Group    13 (            SOL) has 61011 elements
+Group    14 (      non-Water) has  3925 elements
+Group    15 (            Ion) has     7 elements
+Group    16 ( Water_and_ions) has 61018 elements
+Select a group: Group     0 (         System) has 64936 elements
+Group     1 (        Protein) has  3918 elements
+Group     2 (      Protein-H) has  1947 elements
+Group     3 (        C-alpha) has   259 elements
+Group     4 (       Backbone) has   777 elements
+Group     5 (      MainChain) has  1037 elements
+Group     6 (   MainChain+Cb) has  1278 elements
+Group     7 (    MainChain+H) has  1290 elements
+Group     8 (      SideChain) has  2628 elements
+Group     9 (    SideChain-H) has   910 elements
+Group    10 (    Prot-Masses) has  3918 elements
+Group    11 (    non-Protein) has 61018 elements
+Group    12 (          Water) has 61011 elements
+Group    13 (            SOL) has 61011 elements
+Group    14 (      non-Water) has  3925 elements
+Group    15 (            Ion) has     7 elements
+Group    16 ( Water_and_ions) has 61018 elements
+Select a group: Reading frame       0 time    0.000   
+Precision of md_protein-h_pbc_100.xtc is 0.001 (nm)
+Using output precision of 0.001 (nm)
+
+-------------------------------------------------------
+Program:     gmx trjconv, version 2024.3-PLUMED_spack
+Source file: src/gromacs/tools/trjconv.cpp (line 1037)
+
+Fatal error:
+Index[971] 1948 is larger than the number of atoms in the
+trajectory file (1947). There is a mismatch in the contents
+of your -f, -s and/or -n files.
+
+For more information and tips for troubleshooting, please check the GROMACS
+website at https://manual.gromacs.org/current/user-guide/run-time-errors.html
+-------------------------------------------------------
+Note that major changes are planned in future for trjconv, to improve usability and utility.
+Select group for least squares fit
+Selected 2: 'Protein-H'
+Select group for output
+Selected 2: 'Protein-H'
+--------------------------------------------------------------------------
+MPI_ABORT was invoked on rank 0 in communicator MPI_COMM_WORLD
+with errorcode 1.
+
+NOTE: invoking MPI_ABORT causes Open MPI to kill all MPI processes.
+You may or may not see output from other processes, depending on
+exactly when Open MPI kills them.
+--------------------------------------------------------------------------

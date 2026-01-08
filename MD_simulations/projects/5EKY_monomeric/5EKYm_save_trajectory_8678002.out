@@ -1,0 +1,149 @@
+
+Due to MODULEPATH changes, the following have been reloaded:
+  1) fftw/3.3.10_openmp_True     2) gromacs/2024.3     3) plumed/2.9.3
+
+
+Currently Loaded Modules:
+  1) slurm/current                   17) libpng/1.6.39
+  2) DefaultModules                  18) python-venv/1.0
+  3) 2025                            19) py-pybind11/2.13.5
+  4) gcc-runtime/13.3.0              20) py-contourpy/1.3.0
+  5) glibc/2.28                      21) py-cycler/0.11.0
+  6) hwloc/2.11.1                    22) py-fonttools/4.39.4
+  7) openblas/0.3.28_threads_openmp  23) py-kiwisolver/1.4.5
+  8) gsl/2.8                         24) py-packaging/24.1
+  9) zlib/1.2.13                     25) libjpeg-turbo/3.0.3
+ 10) openmpi/4.1.7                   26) py-pillow/11.0.0
+ 11) fftw/3.3.10_openmp_True         27) py-pyparsing/3.1.2
+ 12) plumed/2.9.3                    28) py-six/1.16.0
+ 13) cuda/11.6                       29) py-python-dateutil/2.8.2
+ 14) gromacs/2024.3                  30) qhull/2020.2
+ 15) python/3.11.9                   31) py-matplotlib/3.9.2
+ 16) freetype/2.13.2                 32) py-numpy/1.26.4
+
+ 
+
+============= Downsizing and Exporting trajectory =============
+              :-) GROMACS - gmx make_ndx, 2024.3-plumed_2.9.3 (-:
+
+Executable:   /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr/bin/gmx_mpi
+Data prefix:  /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr
+Working dir:  /scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/5EKY_monomeric/outputs/7_simple_MD
+Command line:
+  gmx_mpi make_ndx -f md.tpr -o index.ndx
+
+
+Reading structure file
+Reading file md.tpr, VERSION 2024.3-plumed_2.9.3 (single precision)
+Reading file md.tpr, VERSION 2024.3-plumed_2.9.3 (single precision)
+
+Back Off! I just backed up index.ndx to ./#index.ndx.4#
+
+GROMACS reminds you: "Science is organized knowledge. Wisdom is organized life." (Immanuel Kant)
+
+Going to read 0 old index file(s)
+Analysing residue names:
+There are:   259    Protein residues
+There are: 20337      Water residues
+There are:     7        Ion residues
+Analysing Protein...
+
+  0 System              : 64936 atoms
+  1 Protein             :  3918 atoms
+  2 Protein-H           :  1947 atoms
+  3 C-alpha             :   259 atoms
+  4 Backbone            :   777 atoms
+  5 MainChain           :  1037 atoms
+  6 MainChain+Cb        :  1278 atoms
+  7 MainChain+H         :  1290 atoms
+  8 SideChain           :  2628 atoms
+  9 SideChain-H         :   910 atoms
+ 10 Prot-Masses         :  3918 atoms
+ 11 non-Protein         : 61018 atoms
+ 12 Water               : 61011 atoms
+ 13 SOL                 : 61011 atoms
+ 14 non-Water           :  3925 atoms
+ 15 Ion                 :     7 atoms
+ 16 Water_and_ions      : 61018 atoms
+
+ nr : group      '!': not  'name' nr name   'splitch' nr    Enter: list groups
+ 'a': atom       '&': and  'del' nr         'splitres' nr   'l': list residues
+ 't': atom type  '|': or   'keep' nr        'splitat' nr    'h': help
+ 'r': residue              'res' nr         'chain' char
+ "name": group             'case': case sensitive           'q': save and quit
+ 'ri': residue index
+
+> 
+Copied index group 1 'Protein'
+
+> 
+               :-) GROMACS - gmx trjconv, 2024.3-plumed_2.9.3 (-:
+
+Executable:   /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr/bin/gmx_mpi
+Data prefix:  /apps/arch/2025/software/linux-rhel8-x86_64_v3/gcc-13.3.0/gromacs-2024.3-sgakfwa3ekjtpvew4ilhqrftyg7q2ydr
+Working dir:  /scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/5EKY_monomeric/outputs/7_simple_MD
+Command line:
+  gmx_mpi trjconv -f md.xtc -s md.tpr -n index.ndx -o md_protein_pbc.xtc -dt 10 -center -pbc nojump
+
+Will write xtc: Compressed trajectory (portable xdr format): xtc
+Reading file md.tpr, VERSION 2024.3-plumed_2.9.3 (single precision)
+Reading file md.tpr, VERSION 2024.3-plumed_2.9.3 (single precision)
+Group     0 (         System) has 64936 elements
+Group     1 (        Protein) has  3918 elements
+Group     2 (      Protein-H) has  1947 elements
+Group     3 (        C-alpha) has   259 elements
+Group     4 (       Backbone) has   777 elements
+Group     5 (      MainChain) has  1037 elements
+Group     6 (   MainChain+Cb) has  1278 elements
+Group     7 (    MainChain+H) has  1290 elements
+Group     8 (      SideChain) has  2628 elements
+Group     9 (    SideChain-H) has   910 elements
+Group    10 (    Prot-Masses) has  3918 elements
+Group    11 (    non-Protein) has 61018 elements
+Group    12 (          Water) has 61011 elements
+Group    13 (            SOL) has 61011 elements
+Group    14 (      non-Water) has  3925 elements
+Group    15 (            Ion) has     7 elements
+Group    16 ( Water_and_ions) has 61018 elements
+Group    17 (        Protein) has  3918 elements
+Select a group: Group     0 (         System) has 64936 elements
+Group     1 (        Protein) has  3918 elements
+Group     2 (      Protein-H) has  1947 elements
+Group     3 (        C-alpha) has   259 elements
+Group     4 (       Backbone) has   777 elements
+Group     5 (      MainChain) has  1037 elements
+Group     6 (   MainChain+Cb) has  1278 elements
+Group     7 (    MainChain+H) has  1290 elements
+Group     8 (      SideChain) has  2628 elements
+Group     9 (    SideChain-H) has   910 elements
+Group    10 (    Prot-Masses) has  3918 elements
+Group    11 (    non-Protein) has 61018 elements
+Group    12 (          Water) has 61011 elements
+Group    13 (            SOL) has 61011 elements
+Group    14 (      non-Water) has  3925 elements
+Group    15 (            Ion) has     7 elements
+Group    16 ( Water_and_ions) has 61018 elements
+Group    17 (        Protein) has  3918 elements
+Select a group: 
+-------------------------------------------------------
+Program:     gmx trjconv, version 2024.3-plumed_2.9.3
+Source file: src/gromacs/topology/index.cpp (line 859)
+
+Fatal error:
+Cannot read from input
+
+For more information and tips for troubleshooting, please check the GROMACS
+website at https://manual.gromacs.org/current/user-guide/run-time-errors.html
+-------------------------------------------------------
+Note that major changes are planned in future for trjconv, to improve usability and utility.
+Select group for centering
+Selected 1: 'Protein'
+Select group for output
+--------------------------------------------------------------------------
+MPI_ABORT was invoked on rank 0 in communicator MPI_COMM_WORLD
+with errorcode 1.
+
+NOTE: invoking MPI_ABORT causes Open MPI to kill all MPI processes.
+You may or may not see output from other processes, depending on
+exactly when Open MPI kills them.
+--------------------------------------------------------------------------
