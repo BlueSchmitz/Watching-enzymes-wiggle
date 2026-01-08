@@ -3,3 +3,7 @@
 
 #ignore all MODELLER and GROMACS outputs 
 MD_simulations/projects/*/outputs
+
+#ignore output files
+MD/simulations/projects/*/*.out
+MD/simulations/projects/*/outputs/*.out
