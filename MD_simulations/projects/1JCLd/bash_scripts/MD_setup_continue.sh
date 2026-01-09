@@ -101,6 +101,7 @@ module list
 mkdir -p ./outputs/2_parametrization ./outputs/3_minimization ./outputs/4_equilibration ./outputs/5_sanity_checks ./outputs/6_HREX
 
 # NPT Equilibration
+cd ./outputs/4_equilibration
 apptainer exec $GROMACS_CONTAINER mpirun -np $OMP_NUM_TASKS gmx_mpi mdrun -deffnm npt_250 -cpt 15 -cpi npt_250.cpt
 echo 18 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi energy -f npt_250.edr -o pressure_250.xvg # choose Pressure (18), 0 terminates input
 echo 24 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi energy -f npt_250.edr -o density_250.xvg # choose Density (24), 0 terminates input
