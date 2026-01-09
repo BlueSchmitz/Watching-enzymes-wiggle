@@ -111,5 +111,6 @@ apptainer exec $GROMACS_CONTAINER mpirun -np 120 \
     -f $mdp/small_hrex.mdp \
     -plumed ../plumed.dat \
     -ntomp 1 \
+    -hrex \
     -cpt 15
 echo "============= Small HREX-MD complete ============="
