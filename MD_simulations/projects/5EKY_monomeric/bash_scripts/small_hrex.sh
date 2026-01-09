@@ -108,7 +108,6 @@ cd ./outputs/8_small_HREX
 apptainer exec $GROMACS_CONTAINER mpirun -np 120 \
     gmx_mpi mdrun -multidir rep* \
     -replex 1000 \
-    -f $mdp/small_hrex.mdp \
     -plumed ../plumed.dat \
     -ntomp 1 \
     -hrex \
