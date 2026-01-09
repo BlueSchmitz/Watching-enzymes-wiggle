@@ -53,7 +53,8 @@ Folder structure:
                     ├── rep0.63
                     └── ...
 
-Run this script from the projects/project_dir/ directory, it contains relative paths
+Run this script from the projects/project_dir/ directory, it contains relative paths.
+This script is written for running inside an apptainer on the Snellius super computer.
 '
 # Exit immediately on errors, undefined vars, or failed pipes
 set -euo pipefail

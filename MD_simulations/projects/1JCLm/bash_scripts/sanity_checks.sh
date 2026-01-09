@@ -101,7 +101,7 @@ do
   plumed partial_tempering ${i} < processed_scaled.top  > ./rep${i}/scaled_${i}.top
   echo "Generated scaled_${i}.top in ./rep${i} with scaling factor ${i}."
   cd ./rep${i}
-  gmx_mpi grompp -f $hrex -c ../npt_5.gro -p scaled_${i}.top -o topol.tpr
+  gmx_mpi grompp -f $hrex -c ../npt_5.gro -p scaled_${i}.top -o topol.tpr -maxwarn 1
   echo "Generated topol.tpr from scaled_${i}.top in ./rep${i}."
   cd ..
 done 
