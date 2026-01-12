@@ -1,7 +1,7 @@
 #!/bin/bash  
 
 #SBATCH --job-name="analyse 5EKYm RMSF"   
-#SBATCH --time=01:00:00
+#SBATCH --time=00:30:00
 #SBATCH --ntasks=1 
 #SBATCH --cpus-per-task=8
 #SBATCH --gpus-per-task=1
@@ -77,7 +77,7 @@ cd ./outputs/7_simple_MD
 
 ### Analysis ###
 # center protein and remove jumps, keep whole protein 
-echo -e "1\n1" | srun gmx_mpi trjconv -f md.xtc -s md.tpr -n index.ndx -o md_nojump.xtc -pbc nojump -center
-echo -e "3\n3" | srun gmx_mpi rmsf -f md_nojump.xtc -s md.tpr -o rmsf.xvg -n index.ndx
+#echo -e "1\n1" | srun gmx_mpi trjconv -f md.xtc -s md.tpr -n index.ndx -o md_nojump.xtc -pbc nojump -center
+echo -e "3\n3" | srun gmx_mpi rmsf -f md_nojump.xtc -s md.tpr -o rmsf.xvg -n index.ndx -b 20000 -res  # start at 20 ns (time in ps)
 # python to analyse
 python $scripts/plot_RMSF.py rmsf.xvg
