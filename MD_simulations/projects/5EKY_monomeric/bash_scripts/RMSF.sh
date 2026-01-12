@@ -77,7 +77,7 @@ cd ./outputs/7_simple_MD
 
 ### Analysis ###
 # center protein and remove jumps, keep whole protein 
-echo -e "1\n1" | srun gmx_mpi trjconv -f md.xtc -s md.tpr -n index.ndx -o md_nojump.xtc -pbc nojump -center -fit rot+trans
+echo -e "1\n1" | srun gmx_mpi trjconv -f md.xtc -s md.tpr -n index.ndx -o md_nojump.xtc -pbc nojump -center
 echo -e "3\n3" | srun gmx_mpi rmsf -f md_nojump.xtc -s md.tpr -o rmsf.xvg -n index.ndx
 # python to analyse
 python $scripts/plot_RMSF.py rmsf.xvg
