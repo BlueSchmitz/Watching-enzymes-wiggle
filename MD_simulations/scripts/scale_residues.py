@@ -21,50 +21,48 @@ chain_filter = sys.argv[1] if len(sys.argv) == 2 else None
 section = None
 current_chain = None
 scale_active = True  # default: scale everything (only no if additional argument is given)
-last_resnum = None # to automatically detect residue number of chain A
-res_offset = 0  # keeps track of global --> local mapping
+first_resnum = None  # first residue number of current chain (for local numbering)
 
 with open("processed.top") as f:
     for line in f:
         stripped = line.strip()
 
+        # Preserve blank lines and comments
         if stripped == "" or stripped.startswith(";"):
             print(line, end="")
             continue
 
-        # Section headers
+        # Track section headers
         if stripped.startswith("["):
             section = stripped.lower()
             print(line, end="")
             continue
 
-        # Molecule name
+        # Detect chain name from moleculetype
         if section == "[ moleculetype ]":
             current_chain = stripped.split()[0]
             scale_active = (chain_filter is None or current_chain == chain_filter)
-            last_resnum = None
-            res_offset = 0
+            first_resnum = None  # reset for each chain
             print(line, end="")
             continue
 
         parts = line.split()
 
-        # Atoms section
+        # Modify only atoms in selected chains
         if section == "[ atoms ]" and scale_active:
             try:
                 global_res = int(parts[2])
 
-                # Detect new chain by residue number reset
-                if last_resnum is not None and global_res < last_resnum:
-                    res_offset += last_resnum
+                # First residue in this chain defines local index 1
+                if first_resnum is None:
+                    first_resnum = global_res
 
-                local_res = global_res - res_offset
-                last_resnum = global_res
+                local_res = global_res - first_resnum + 1
 
                 if local_res in residues_to_scale:
                     parts[1] += "_"
 
             except (IndexError, ValueError):
-                pass
+                pass  # leave line unchanged
 
         print("  ".join(parts))
