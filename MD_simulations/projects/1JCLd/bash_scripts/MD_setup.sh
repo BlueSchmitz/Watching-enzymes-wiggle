@@ -1,11 +1,11 @@
 #!/bin/bash  
 
 #SBATCH -J 1JCLd_setup  
-#SBATCH -t 20:00:00
+#SBATCH -t 10:00:00
 #SBATCH -p rome
 #SBATCH -N 1
-#SBATCH -n 2 
-#SBATCH --cpus-per-task 8
+#SBATCH -n 16 
+#SBATCH --cpus-per-task 1
 #SBATCH --gpus=0
 #SBATCH --requeue
 #SBATCH --output=./1JCLd_setup_%j.out
