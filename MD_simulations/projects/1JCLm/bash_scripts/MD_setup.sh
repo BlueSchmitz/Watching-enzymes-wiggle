@@ -66,6 +66,7 @@ pH=7
 # Set paths for mdp_templates, force_fields and pdb file (to change paths quickly)
 export GMXLIB=$TMPDIR/MD_simulations/force_fields
 export GROMACS_CONTAINER=$HOME/Blue/software/apptainer_2021/gromacs_plumed.sif # path to gromacs apptainer container
+export PDB2PQR_CONTAINER=$HOME/Blue/software/apptainer_pdb2pqr/pdb2pqr.sif # path to pdb2pqr apptainer container
 mdp=$TMPDIR/MD_simulations/mdp_templates
 scripts=$TMPDIR/MD_simulations/scripts
 pdb=$TMPDIR/MD_simulations/projects/$project_dir/inputs/*.pdb
@@ -107,8 +108,8 @@ mkdir -p ./outputs/1_protonation ./outputs/2_parametrization ./outputs/3_minimiz
 echo "============= Protonation states assignment with PDB2PQR and PROPKA 3 ============="
 cd ./outputs/1_protonation
 # Assign protonation states at the desired pH (and pH7) on the basis of the PROPKA 3 estimate
-pdb2pqr --ff=AMBER --titration-state-method=propka --with-ph=$pH $pdb ./${project_dir}_pH${pH}.pqr
-pdb2pqr --ff=AMBER --titration-state-method=propka --with-ph=7 $pdb ./${project_dir}_pH7.pqr
+apptainer exec $PDB2PQR_CONTAINER pdb2pqr --ff=AMBER --titration-state-method=propka --with-ph=$pH $pdb ./${project_dir}_pH${pH}.pqr
+apptainer exec $PDB2PQR_CONTAINER pdb2pqr --ff=AMBER --titration-state-method=propka --with-ph=7 $pdb ./${project_dir}_pH7.pqr
 # Convert .pqr to .pdb
 cp ${project_dir}_pH${pH}.pqr ${project_dir}_pH${pH}.pdb
 cp ${project_dir}_pH7.pqr ${project_dir}_pH7.pdb
