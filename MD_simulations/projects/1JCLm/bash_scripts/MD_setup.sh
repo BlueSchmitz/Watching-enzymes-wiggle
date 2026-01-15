@@ -1,11 +1,11 @@
 #!/bin/bash  
 
 #SBATCH -J 1JCLm_setup  
-#SBATCH -t 20:00:00
+#SBATCH -t 06:00:00
 #SBATCH -p rome
 #SBATCH -N 1
-#SBATCH -n 2 
-#SBATCH --cpus-per-task 8
+#SBATCH -n 16 
+#SBATCH --cpus-per-task 1
 #SBATCH --gpus=0
 #SBATCH --requeue
 #SBATCH --output=./1JCLm_setup_%j.out
@@ -60,13 +60,15 @@ This script is written for running inside an apptainer on the Snellius super com
 set -euo pipefail
 set -o errtrace
 
-# Set paths for mdp_templates, force_fields and pdb file (to change quickly)
-export GMXLIB=$TMPDIR/MD_simulations/force_fields
+### Project-specific settings ###
 project_dir=1JCLm
+pH=7
+# Set paths for mdp_templates, force_fields and pdb file (to change paths quickly)
+export GMXLIB=$TMPDIR/MD_simulations/force_fields
+export GROMACS_CONTAINER=$HOME/Blue/software/apptainer_2021/gromacs_plumed.sif # path to gromacs apptainer container
 mdp=$TMPDIR/MD_simulations/mdp_templates
 scripts=$TMPDIR/MD_simulations/scripts
 pdb=$TMPDIR/MD_simulations/projects/$project_dir/inputs/*.pdb
-export GROMACS_CONTAINER=$HOME/Blue/software/apptainer_2021/gromacs_plumed.sif # path to gromacs apptainer container
 
 # Copy input files to scratch
 cp -r $HOME/Blue/Watching-enzymes-wiggle/MD_simulations/ "$TMPDIR"
@@ -99,11 +101,25 @@ module load matplotlib/3.7.2-gfbf-2023a
 module list
 
 # mkdir outputs directories 
-mkdir -p ./outputs/2_parametrization ./outputs/3_minimization ./outputs/4_equilibration ./outputs/5_sanity_checks ./outputs/6_HREX
+mkdir -p ./outputs/1_protonation ./outputs/2_parametrization ./outputs/3_minimization ./outputs/4_equilibration ./outputs/5_sanity_checks ./outputs/6_HREX
+
+### 1 Protonation ###
+echo "============= Protonation states assignment with PDB2PQR and PROPKA 3 ============="
+cd ./outputs/1_protonation
+# Assign protonation states at the desired pH (and pH7) on the basis of the PROPKA 3 estimate
+pdb2pqr --ff=AMBER --titration-state-method=propka --with-ph=$pH $pdb ./${project_dir}_pH${pH}.pqr
+pdb2pqr --ff=AMBER --titration-state-method=propka --with-ph=7 $pdb ./${project_dir}_pH7.pqr
+# Convert .pqr to .pdb
+cp ${project_dir}_pH${pH}.pqr ${project_dir}_pH${pH}.pdb
+cp ${project_dir}_pH7.pqr ${project_dir}_pH7.pdb
+# change the names of the residues with differing H numbers at pH 6.8 in comparison to pH 7 so that GROMACS can rebuild them
+python compare_protonation.py ${project_dir}_pH${pH}.pdb ${project_dir}_pH7.pdb differences.txt $pdb ${project_dir}_pro.pdb
+echo "Differences in protonation states (pH ${pH} vs pH 7) written to differences.txt. Modified PDB written to ${project_dir}_pro.pdb."
+cp ./${project_dir}_pro.pdb ../2_parametrization/${project_dir}_pro.pdb
 
 ### 2 Parametrize ###
 echo "============= Parametrization with GROMACS =============" 
-cd ./outputs/2_parametrization
+cd ../2_parametrization
 # Generate topology and initial structure files
   # Amber 99SB*-ILDN force field in combination with TIP3P water model
 apptainer exec $GROMACS_CONTAINER gmx_mpi pdb2gmx -f $pdb -o processed.gro -p topol.top -ff amber99sb-star-ildnp -water tip3p 
