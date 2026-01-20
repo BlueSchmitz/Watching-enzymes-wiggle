@@ -108,12 +108,14 @@ mkdir -p ./outputs/9_minimal_scaling
 
 echo "============= Find lowest lambda required for HREX ============="
 lambdas="1.0 0.9 0.8 0.7 0.6 0.5"
+cp ./outputs/6_HREX/processed_scaled.top ./outputs/9_minimal_scaling/processed_scaled.top
+cp ./outputs/6_HREX/npt_5.gro ./outputs/9_minimal_scaling/npt_5.gro
 cd ./outputs/9_minimal_scaling
 for l in $lambdas; do
     cd l$l || exit 1
 
     echo "Running lambda $l"
-    apptainer exec $PLUMED_CONTAINER plumed partial_tempering ${l} < processed_scaled.top  > scaled_${l}.top
+    apptainer exec $PLUMED_CONTAINER plumed partial_tempering ${l} < ../processed_scaled.top  > scaled_${l}.top
     apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/small_hrex.mdp -c ../npt_5.gro -p scaled_${l}.top -o topol.tpr -maxwarn 1
     apptainer exec $GROMACS_CONTAINER mpirun -np $SLURM_NTASKS gmx_mpi mdrun -deffnm scaling_${l} -cpt 15
 

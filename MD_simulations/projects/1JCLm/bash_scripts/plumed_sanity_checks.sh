@@ -176,6 +176,7 @@ if [ -f topol_Protein_chain_A_5.itp ]; then # check for dimer
     cp ./2loops/rep1.00/scaled_1.00.top ../5_sanity_checks/scaled_2loops_1.00.top
 else
     cp ./rep1.00/scaled_1.00.top ../5_sanity_checks/scaled_1.00.top
+fi
 cd ../5_sanity_checks
 # 1. Sanity check of created topologies: compare energies between original and 1.00 scaled system
 # produce tpr + short trajectory (use processed.top)
