@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 # usage: compare_protonation.py pdb1 pdb2 differences.txt pdb3 renamed_pdb.pdb
-'''
+"""
 Compare two PDB files (pdb1 and pdb2) for differences in hydrogen counts per residue,
-and rename residues in a third PDB file (pdb3) based on these differences.
-The output is saved in renamed_pdb.pdb and can be used by GROMACS.
-'''
+and rename all residues in a third PDB file (pdb3) according to the hydrogen counts
+in pdb1 (the desired pH). The output is saved in renamed_pdb.pdb and can be used by GROMACS.
+"""
+
 import sys
 
 def count_hydrogens(pdb_file):
@@ -25,7 +26,7 @@ def count_hydrogens(pdb_file):
 
 
 def compare_hydrogens(pdb1, pdb2, outfile):
-    """Write residues with differing H counts and return dict of differences."""
+    """Write residues with differing H counts between pdb1 and pdb2."""
     counts1 = count_hydrogens(pdb1)
     counts2 = count_hydrogens(pdb2)
 
@@ -49,10 +50,7 @@ def map_protonation(resname, hcount):
     """
     resname = resname.upper()
     if resname == "HIS":
-        if hcount >= 8:
-            return "HIP"  # fully protonated
-        else:
-            return "HIE"  # default partially protonated
+        return "HIP" if hcount >= 8 else "HIE"
     elif resname == "ASP":
         return "ASH" if hcount > 4 else "ASP"
     elif resname == "GLU":
@@ -60,13 +58,13 @@ def map_protonation(resname, hcount):
     elif resname == "LYS":
         return "LYN" if hcount < 9 else "LYS"
     elif resname == "ARG":
-        return "ARG" if hcount >= 11 else "ARN" 
+        return "ARG" if hcount >= 11 else "ARN"
     else:
         return resname
 
 
-def rewrite_pdb(pdb_in, pdb_out, diffs, counts_ref):
-    """Rewrite pdb3 with updated residue names into renamed_pdb."""
+def rewrite_pdb(pdb_in, pdb_out, counts_ref):
+    """Rewrite pdb_in with updated residue names according to counts_ref."""
     with open(pdb_in, 'r') as f_in, open(pdb_out, 'w') as f_out:
         for line in f_in:
             if not line.startswith("ATOM"):
@@ -77,8 +75,8 @@ def rewrite_pdb(pdb_in, pdb_out, diffs, counts_ref):
             resid = line[22:26].strip()
             key = (resname, resid)
 
-            if key in diffs: # change name in pdb3 if different hydrogen count
-                new_resname = map_protonation(resname, counts_ref.get(key, 0))
+            if key in counts_ref:
+                new_resname = map_protonation(resname, counts_ref[key])
                 line = line[:17] + f"{new_resname:>3}" + line[20:]
             f_out.write(line)
 
@@ -90,8 +88,8 @@ if __name__ == "__main__":
 
     pdb1, pdb2, outfile, pdb3, renamed_pdb = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5]
 
-    # Step 1: Compare & save differences
+    # Step 1: Compare hydrogen counts (for logging)
     diffs, counts1 = compare_hydrogens(pdb1, pdb2, outfile)
 
-    # Step 2: Apply renaming to pdb3
-    rewrite_pdb(pdb3, renamed_pdb, diffs, counts1)
+    # Step 2: Rewrite pdb3 using counts from pdb1 (desired pH)
+    rewrite_pdb(pdb3, renamed_pdb, counts1)
