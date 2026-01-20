@@ -55,6 +55,7 @@ Folder structure:
 
 Run this script from the projects/$project_dir/ directory, it contains relative paths
 '
+
 ### Project-specific settings ###
 project_dir=1JCLm
 pH=7
@@ -66,6 +67,36 @@ export PLUMED_CONTAINER=$HOME/Blue/software/apptainer_plumed/plumed.sif # path t
 mdp=$TMPDIR/MD_simulations/mdp_templates
 scripts=$TMPDIR/MD_simulations/scripts
 pdb=$TMPDIR/MD_simulations/projects/$project_dir/inputs/*.pdb
+
+# Copy input files to scratch
+cp -r $HOME/Blue/Watching-enzymes-wiggle/MD_simulations/ "$TMPDIR"
+cd $TMPDIR/MD_simulations/projects/$project_dir
+
+# Function to copy back results when error occurs before the script exits
+function copy_back_results {
+    set +e # Disable exit on error for this function
+    echo "=== Error occured. Copying results back to home. ==="
+    if [[ -d "$TMPDIR/MD_simulations/projects/$project_dir/outputs" ]]; then
+        rsync -av \
+          --exclude 'rleveson.*' \
+          --exclude '*.out' \
+          "$TMPDIR/MD_simulations/projects/$project_dir/outputs/" \
+          "$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/$project_dir/outputs/"
+        echo "=== Copy complete ==="
+    else
+        echo "Nothing to copy back (outputs directory not found)"
+    fi
+}
+
+# Trap errors and print line number + command
+trap 'echo "ERROR at line ${LINENO}: ${BASH_COMMAND}" >&2' ERR
+trap copy_back_results EXIT
+
+# Load modules:  
+module load 2023
+module load matplotlib/3.7.2-gfbf-2023a
+# Print modules 
+module list
 
 # mkdir outputs
 mkdir -p ./outputs/5_sanity_checks ./outputs/6_HREX
@@ -189,3 +220,13 @@ apptainer exec $GROMACS_CONTAINER mpirun -np $SLURM_NTASKS gmx_mpi mdrun -multid
 # Inspect logs
 echo "Replica-exchange acceptance"
 grep "Repl" rep0/md.log
+
+echo "============= Plumed sanity checks completed successfully. ============="
+
+echo "============= Copying project outputs back to home ============="
+rsync -av \
+      --exclude 'rleveson.*' \
+      --exclude '*.out' \
+      $TMPDIR/MD_simulations/projects/$project_dir/outputs/ \
+      $HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/$project_dir/outputs/
+echo "============= Copy complete ============="
