@@ -136,10 +136,14 @@ echo SOL | apptainer exec $GROMACS_CONTAINER gmx_mpi genion -s ions.tpr -o solv_
 # -pname NA -neutral: add Na⁺ to neutralize (paper)
 cp solv_ions.gro ../3_minimization/solv_ions.gro
 cp topol.top ../3_minimization/topol.top
-cp topol_Protein_chain_A.itp ../3_minimization/topol_Protein_chain_A.itp
-cp topol_Protein_chain_B.itp ../3_minimization/topol_Protein_chain_B.itp
-cp posre_Protein_chain_B.itp ../3_minimization/posre_Protein_chain_B.itp
-cp posre_Protein_chain_A.itp ../3_minimization/posre_Protein_chain_A.itp
+if [ -f topol_Protein_chain_A.itp ]; then
+  cp topol_Protein_chain_A.itp ../3_minimization/topol_Protein_chain_A.itp
+  cp topol_Protein_chain_B.itp ../3_minimization/topol_Protein_chain_B.itp
+  cp posre_Protein_chain_B.itp ../3_minimization/posre_Protein_chain_B.itp
+  cp posre_Protein_chain_A.itp ../3_minimization/posre_Protein_chain_A.itp
+else
+  cp posre.itp ../3_minimization/posre.itp
+fi
 
 ### 3 Energy minimization ###
 echo "============= Energy minimization with GROMACS ============="
@@ -154,66 +158,87 @@ echo "============= Equilibration with GROMACS ============="
 mkdir -p ../4_equilibration
 cp em.gro ../4_equilibration/em.gro
 cp topol.top ../4_equilibration/topol.top
-cp topol_Protein_chain_A.itp ../4_equilibration/topol_Protein_chain_A.itp
-cp topol_Protein_chain_B.itp ../4_equilibration/topol_Protein_chain_B.itp
-cp posre_Protein_chain_B.itp ../4_equilibration/posre_Protein_chain_B.itp
-cp posre_Protein_chain_A.itp ../4_equilibration/posre_Protein_chain_A.itp
+if [ -f topol_Protein_chain_A.itp ]; then
+  cp topol_Protein_chain_A.itp ../4_equilibration/topol_Protein_chain_A.itp
+  cp topol_Protein_chain_B.itp ../4_equilibration/topol_Protein_chain_B.itp
+  cp posre_Protein_chain_B.itp ../4_equilibration/posre_Protein_chain_B.itp
+  cp posre_Protein_chain_A.itp ../4_equilibration/posre_Protein_chain_A.itp
+else
+  cp posre.itp ../4_equilibration/posre.itp
+fi
 cd ../4_equilibration
+
 # NVT Equilibration
 apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/nvt.mdp -c em.gro -r em.gro -p topol.top -o nvt.tpr
 apptainer exec $GROMACS_CONTAINER mpirun -np $OMP_NUM_TASKS gmx_mpi mdrun -deffnm nvt -cpt 15
 echo 16 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi energy -f nvt.edr -o temperature.xvg # choose Temperature (16), 0 terminates input
 python $scripts/plot_xvg.py temperature.xvg
-# NPT Equilibration
+
+# Prepare NPT equilibration
 # Gradually reduce restraints from 1000 to 5 kJ mol−1 nm−2 by running 5 short NPT simulations of 500 ps each (5*500=2.5 ns)
-for i in 1000 500 250 100 5;
-do
-  # Copy posre.itp for both chains for each restraint and modify the force constant in each
-  cp posre_Protein_chain_B.itp posre_Protein_chain_B_$i.itp
-  cp posre_Protein_chain_A.itp posre_Protein_chain_A_$i.itp
-  sed -i "s/\b1000\b/$i/g" posre_Protein_chain_B_$i.itp # \b for whole word match
-  sed -i "s/\b1000\b/$i/g" posre_Protein_chain_A_$i.itp
-  echo "Modified posre_Protein_chain_A.itp to posre_Protein_chain_A_$i.itp."
-  echo "Modified posre_Protein_chain_B.itp to posre_Protein_chain_B_$i.itp."
-  # Modify topol.top to include the correct protein chain file for each run
-  cp topol.top topol_${i}.top
-  sed -i "s/topol_Protein_chain_A.itp/topol_Protein_chain_A_$i.itp/g" topol_${i}.top
-  sed -i "s/topol_Protein_chain_B.itp/topol_Protein_chain_B_$i.itp/g" topol_${i}.top
-  echo "Modified topol.top to topol_${i}.top."
-  # Modify topol files for both chains to include the correct posre file for each run
-  cp topol_Protein_chain_A.itp topol_Protein_chain_A_$i.itp
-  cp topol_Protein_chain_B.itp topol_Protein_chain_B_$i.itp
-  sed -i "s/posre_Protein_chain_A.itp/posre_Protein_chain_A_$i.itp/g" topol_Protein_chain_A_$i.itp
-  sed -i "s/posre_Protein_chain_B.itp/posre_Protein_chain_B_$i.itp/g" topol_Protein_chain_B_$i.itp
-  echo "Modified topol_Protein_chain_A.itp to topol_Protein_chain_A_$i.itp."
-  echo "Modified topol_Protein_chain_B.itp to topol_Protein_chain_B_$i.itp."
-done
+if [ -f topol_Protein_chain_A.itp ]; then
+  for i in 1000 500 250 100 5;
+  do
+    # Copy posre.itp for both chains for each restraint and modify the force constant in each
+    cp posre_Protein_chain_B.itp posre_Protein_chain_B_$i.itp
+    cp posre_Protein_chain_A.itp posre_Protein_chain_A_$i.itp
+    sed -i "s/\b1000\b/$i/g" posre_Protein_chain_B_$i.itp # \b for whole word match
+    sed -i "s/\b1000\b/$i/g" posre_Protein_chain_A_$i.itp
+    echo "Modified posre_Protein_chain_A.itp to posre_Protein_chain_A_$i.itp."
+    echo "Modified posre_Protein_chain_B.itp to posre_Protein_chain_B_$i.itp."
+    # Modify topol.top to include the correct protein chain file for each run
+    cp topol.top topol_${i}.top
+    sed -i "s/topol_Protein_chain_A.itp/topol_Protein_chain_A_$i.itp/g" topol_${i}.top
+    sed -i "s/topol_Protein_chain_B.itp/topol_Protein_chain_B_$i.itp/g" topol_${i}.top
+    echo "Modified topol.top to topol_${i}.top."
+    # Modify topol files for both chains to include the correct posre file for each run
+    cp topol_Protein_chain_A.itp topol_Protein_chain_A_$i.itp
+    cp topol_Protein_chain_B.itp topol_Protein_chain_B_$i.itp
+    sed -i "s/posre_Protein_chain_A.itp/posre_Protein_chain_A_$i.itp/g" topol_Protein_chain_A_$i.itp
+    sed -i "s/posre_Protein_chain_B.itp/posre_Protein_chain_B_$i.itp/g" topol_Protein_chain_B_$i.itp
+    echo "Modified topol_Protein_chain_A.itp to topol_Protein_chain_A_$i.itp."
+    echo "Modified topol_Protein_chain_B.itp to topol_Protein_chain_B_$i.itp."
+  done
+else
+  for i in 1000 500 250 100 5;
+  do
+    # Copy posre.itp 5 times and modify the force constant in each file
+    cp posre.itp posre_$i.itp
+    sed -i "s/\b1000\b/$i/g" posre_$i.itp # \b for whole word match
+    echo "Modified posre.itp to posre_$i.itp."
+    # Modify topol.top to include the correct posre file for each run
+    cp topol.top topol_$i.top
+    sed -i "s/posre.itp/posre_$i.itp/g" topol_$i.top
+    echo "Modified topol.top to topol_$i.top."
+  done
+fi
 
 # NPT Equilibration
 for i in 1000 500 250 100 5;
 do
   echo "Running NPT equilibration with restraints = ${i}"
-
   apptainer exec $GROMACS_CONTAINER gmx_mpi grompp \
-             -f $mdp/npt.mdp \
-             -c ${prev:-nvt.gro} \
-             -r ${prev:-nvt.gro} \
-             -p topol_${i}.top \
-             -o npt_${i}.tpr \
-              -maxwarn 1
+     -f $mdp/npt.mdp \
+     -c ${prev:-nvt.gro} \
+     -r ${prev:-nvt.gro} \
+     -p topol_${i}.top \
+     -o npt_${i}.tpr \
+     -maxwarn 1
   # ${prev:-nvt.gro} ensures the first run starts from NVT output, then continues from the last .gro
   apptainer exec $GROMACS_CONTAINER mpirun -np $OMP_NUM_TASKS gmx_mpi mdrun -deffnm npt_${i} -cpt 15
   echo 18 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi energy -f npt_${i}.edr -o pressure_${i}.xvg # choose Pressure (18), 0 terminates input
   echo 24 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi energy -f npt_${i}.edr -o density_${i}.xvg # choose Density (24), 0 terminates input
   prev=npt_${i}.gro
 done
+
 python $scripts/plot_xvg.py pressure_*.xvg
 python $scripts/plot_xvg.py density_*.xvg
 cp npt_5.gro ../6_HREX/npt_5.gro
 cp topol_5.top ../6_HREX/topol_5.top
-cp topol_Protein_chain_A_5.itp ../6_HREX/topol_Protein_chain_A_5.itp
-cp topol_Protein_chain_B_5.itp ../6_HREX/topol_Protein_chain_B_5.itp
-
+if [ -f topol_Protein_chain_A.itp ]; then
+  cp topol_Protein_chain_A_5.itp ../6_HREX/topol_Protein_chain_A_5.itp
+  cp topol_Protein_chain_B_5.itp ../6_HREX/topol_Protein_chain_B_5.itp
+fi
 echo "============= Setup completed successfully. ============="
 
 echo "============= Copying project outputs back to home ============="

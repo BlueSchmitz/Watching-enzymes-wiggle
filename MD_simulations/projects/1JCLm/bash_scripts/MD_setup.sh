@@ -154,6 +154,7 @@ mkdir -p ../4_equilibration
 cp em.gro ../4_equilibration/em.gro
 cp topol.top ../4_equilibration/topol.top
 cd ../4_equilibration
+
 # NVT Equilibration
 apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/nvt.mdp -c em.gro -r em.gro -p topol.top -o nvt.tpr
 apptainer exec $GROMACS_CONTAINER mpirun -np $SLURM_NTASKS gmx_mpi mdrun -deffnm nvt -cpt 15
