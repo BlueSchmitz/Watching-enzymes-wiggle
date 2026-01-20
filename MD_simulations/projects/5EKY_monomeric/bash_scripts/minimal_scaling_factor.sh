@@ -112,6 +112,7 @@ cp ./outputs/6_HREX/processed_scaled.top ./outputs/9_minimal_scaling/processed_s
 cp ./outputs/6_HREX/npt_5.gro ./outputs/9_minimal_scaling/npt_5.gro
 cd ./outputs/9_minimal_scaling
 for l in $lambdas; do
+    mkdir -p 2d/l$l
     cd l$l || exit 1
 
     echo "Running lambda $l"
@@ -135,7 +136,7 @@ for l in $lambdas; do
     echo "PRINT ARG=$args FILE=COLVAR" >> plumed.dat
 
     # run plumed
-    plumed driver --ixtc traj_comp.xtc --plumed plumed.dat
+    plumed driver --ixtc scaling_${l}.xtc --plumed plumed.dat
 
     cd ../../
 done
