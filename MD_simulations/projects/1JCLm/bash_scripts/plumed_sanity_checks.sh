@@ -55,6 +55,9 @@ Folder structure:
 
 Run this script from the projects/$project_dir/ directory, it contains relative paths
 '
+# Exit immediately on errors, undefined vars, or failed pipes
+set -euo pipefail
+set -o errtrace
 
 ### Project-specific settings ###
 project_dir=1JCLm
@@ -118,15 +121,15 @@ else
     echo "Removed position restraints from topol_prod.top."
 fi 
 # 2. Generate a self-contained topology file
-gmx_mpi grompp -f $mdp/tempering.mdp -c npt_5.gro -p topol_prod.top -pp processed.top -o dummy.tpr -r npt_5.gro -maxwarn 2
+apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/tempering.mdp -c npt_5.gro -p topol_prod.top -pp processed.top -o dummy.tpr -r npt_5.gro -maxwarn 2
 echo "Generated self-contained processed.top without position restraints."
 # 3. Edit the processed.top file to indicate which atoms we want to scale (marked with an _ after the residue name)
 if [ -f topol_Protein_chain_A_5.itp ]; then # check for dimer
-    python3 $scripts/scale_residues.py > processed_scaled_2loops.top
-    python3 $scripts/scale_residues.py Protein_chain_A > processed_scaled_1loop.top
+    python $scripts/scale_residues.py > processed_scaled_2loops.top
+    python $scripts/scale_residues.py Protein_chain_A > processed_scaled_1loop.top
     echo "Generated processed_scaled_1loop.top and processed_scaled_2loops.top with selected residues for scaling."
 else
-    python3 $scripts/scale_residues.py > processed_scaled.top
+    python $scripts/scale_residues.py > processed_scaled.top
     echo "Generated processed_scaled.top with selected residues for scaling."
 fi
 # 4. Scale the Hamiltonian of the selected atoms by the factors 1.00, 0.95, 0.91, 0.87, 0.83, 0.79, 0.76, 0.72, 0.69, 0.66, 0.63, and 0.60
@@ -192,7 +195,7 @@ echo -e "1\n2\n3\n4\n5\n6\n7\n8\n9\n10" | apptainer exec $GROMACS_CONTAINER gmx_
 echo -e "1\n2\n3\n4\n5\n6\n7\n8\n9\n10" | apptainer exec $GROMACS_CONTAINER gmx_mpi energy -f ener_scaled_1.00.edr -o energies_scaled_1.00.xvg -xvg none
 python $scripts/energy_comparison.py energies_pro.xvg energies_scaled_1.00.xvg > energy_diff_1.00.log
 # 2. Sanity check of scaled topologies: compare energies between original and 0.5 scaled system
-python3 $scripts/scale_all_residues.py 0.5 > processed_scaled_0.5_all.top
+python $scripts/scale_all_residues.py 0.5 > processed_scaled_0.5_all.top
 apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/sanity_check.mdp -c ./npt_5.gro -p ./scaled_0.5_all.top -o scaled_0.5_all.tpr -maxwarn 2
 apptainer exec $GROMACS_CONTAINER gmx_mpi mdrun -rerun traj.xtc -s scaled_0.5_all.tpr -e ener_scaled_0.5_all.edr -g rerun_scaled_0.5_all.log
 echo -e "1\n2\n3\n4\n5\n6\n7\n8\n9\n10" | apptainer exec $GROMACS_CONTAINER gmx_mpi energy -f ener_scaled_0.5_all.edr -o energies_scaled_0.5_all.xvg -xvg none
