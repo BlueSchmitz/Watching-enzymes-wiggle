@@ -50,13 +50,20 @@ def map_protonation(resname, hcount):
     """
     resname = resname.upper()
     if resname == "HIS":
-        return "HIP" if hcount >= 8 else "HIE"
+        if hcount == 8:
+            return "HIP"
+        elif hcount == 7:
+            return "HIE"
+        elif hcount == 6:
+            return "HID"
+        else:
+            return resname  # fallback for unusual H counts
     elif resname == "ASP":
         return "ASH" if hcount > 4 else "ASP"
     elif resname == "GLU":
-        return "GLH" if hcount > 5 else "GLU"
+        return "GLH" if hcount > 6 else "GLU"
     elif resname == "LYS":
-        return "LYN" if hcount < 9 else "LYS"
+        return "LYS" if hcount > 12 else "LYN"
     elif resname == "ARG":
         return "ARG" if hcount >= 11 else "ARN"
     else:
