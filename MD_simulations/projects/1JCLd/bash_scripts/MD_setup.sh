@@ -108,12 +108,12 @@ echo "============= Protonation states assignment with PDB2PQR and PROPKA 3 ====
 cd ./outputs/1_protonation
 # Assign protonation states at the desired pH (and pH7) on the basis of the PROPKA 3 estimate
 apptainer exec $PDB2PQR_CONTAINER pdb2pqr --ff=AMBER --titration-state-method=propka --with-ph=$pH $pdb ./${project_dir}_pH${pH}.pqr
-apptainer exec $PDB2PQR_CONTAINER pdb2pqr --ff=AMBER --titration-state-method=propka --with-ph=7 $pdb ./${project_dir}_pH7.pqr
+apptainer exec $PDB2PQR_CONTAINER pdb2pqr --ff=AMBER --titration-state-method=propka --with-ph=7 $pdb ./${project_dir}_pH7_compare.pqr
 # Convert .pqr to .pdb
 cp ${project_dir}_pH${pH}.pqr ${project_dir}_pH${pH}.pdb
-cp ${project_dir}_pH7.pqr ${project_dir}_pH7.pdb
+cp ${project_dir}_pH7_compare.pqr ${project_dir}_pH7_compare.pdb
 # change the names of the residues with differing H numbers at pH 6.8 in comparison to pH 7 so that GROMACS can rebuild them
-python $scripts/compare_protonation.py ${project_dir}_pH${pH}.pdb ${project_dir}_pH7.pdb differences.txt $pdb ${project_dir}_pro.pdb
+python $scripts/compare_protonation.py ${project_dir}_pH${pH}.pdb ${project_dir}_pH7_compare.pdb differences.txt $pdb ${project_dir}_pro.pdb
 echo "Differences in protonation states (pH ${pH} vs pH 7) written to differences.txt. Modified PDB written to ${project_dir}_pro.pdb."
 cp ./${project_dir}_pro.pdb ../2_parametrization/${project_dir}_pro.pdb
 
