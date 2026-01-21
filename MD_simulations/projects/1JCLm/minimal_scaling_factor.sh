@@ -117,7 +117,7 @@ for l in $lambdas; do
 
     echo "Running lambda $l"
     apptainer exec $PLUMED_CONTAINER plumed partial_tempering ${l} < ../processed_scaled.top  > scaled_${l}.top
-    apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/small_hrex.mdp -c ../npt_5.gro -p scaled_${l}.top -o topol.tpr -maxwarn 1
+    apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/small_hrex.mdp -c ../npt_5.gro -p scaled_${l}.top -o scaling_${l}.tpr -maxwarn 1
     apptainer exec $GROMACS_CONTAINER mpirun -np $SLURM_NTASKS gmx_mpi mdrun -deffnm scaling_${l} -cpt 15
 
     # generate plumed.dat
