@@ -145,7 +145,7 @@ if [ -f topol_Protein_chain_A_5.itp ]; then # check for dimer
           apptainer exec $PLUMED_CONTAINER plumed partial_tempering ${i} < ../processed_scaled_${chains}.top  > ./rep${i}/scaled_${i}_${chains}.top
           echo "Generated scaled_${i}.top in ${chains}/rep${i} with scaling factor ${i}."
           cd ./rep${i}
-          apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/hrex.mdp -c ../npt_5.gro -p scaled_${i}_${chains}.top -o topol.tpr -maxwarn 1
+          apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/hrex.mdp -c ../../npt_5.gro -p scaled_${i}_${chains}.top -o topol.tpr -maxwarn 1
           echo "Generated topol.tpr from scaled_${i}_${chains}.top in ${chains}/rep${i}."
           cd ..
         done 
