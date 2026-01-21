@@ -172,8 +172,7 @@ echo "Sanity checks"
 cp npt_5.gro ../5_sanity_checks/npt_5.gro
 cp processed.top ../5_sanity_checks/processed.top
 if [ -f topol_Protein_chain_A_5.itp ]; then # check for dimer
-    cp ./1loop/rep1.00/scaled_1.00.top ../5_sanity_checks/scaled_1loop_1.00.top
-    cp ./2loops/rep1.00/scaled_1.00.top ../5_sanity_checks/scaled_2loops_1.00.top
+    cp ./2loops/rep1.00/scaled_1.00_2loops.top ../5_sanity_checks/scaled_1.00.top
 else
     cp ./rep1.00/scaled_1.00.top ../5_sanity_checks/scaled_1.00.top
 fi
@@ -201,7 +200,7 @@ apptainer exec $PLUMED_CONTAINER plumed partial_tempering 0.5 < processed_scaled
 apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/sanity_check.mdp -c ./npt_5.gro -p ./scaled_0.5_all.top -o scaled_0.5_all.tpr -maxwarn 2
 apptainer exec $GROMACS_CONTAINER gmx_mpi mdrun -rerun traj.xtc -s scaled_0.5_all.tpr -e ener_scaled_0.5_all.edr -g rerun_scaled_0.5_all.log
 echo -e "1\n2\n3\n4\n5\n6\n7\n8\n9\n10" | apptainer exec $GROMACS_CONTAINER gmx_mpi energy -f ener_scaled_0.5_all.edr -o energies_scaled_0.5_all.xvg -xvg none
-python $scripts/energy_comparison.py energies_scaled_1.00.xvg energies_scaled_0.5_all.xvg > energy_diff_0.5_all.log
+python $scripts/energy_comparison.py energies_scaled_1.00_2loops.xvg energies_scaled_0.5_all.xvg > energy_diff_0.5_all.log
 # 3. Sanity check of replica-exchange implementation
 # Run a short HREX with two equivalent topology files (topol.tpr and scaled_1.00.tpr)
 mkdir -p ./rep0 ./rep1
