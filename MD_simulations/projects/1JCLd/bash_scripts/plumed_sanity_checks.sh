@@ -142,11 +142,11 @@ if [ -f topol_Protein_chain_A_5.itp ]; then # check for dimer
         for i in 1.00 0.95 0.91 0.87 0.83 0.79 0.76 0.72 0.69 0.66 0.63 0.60;
         do 
           mkdir -p ./rep${i} # create directory for each replica
-          apptainer exec $PLUMED_CONTAINER plumed partial_tempering ${i} < processed_scaled.top  > ./rep${i}/scaled_${i}.top
+          apptainer exec $PLUMED_CONTAINER plumed partial_tempering ${i} < ../processed_scaled_${chains}.top  > ./rep${i}/scaled_${i}_${chains}.top
           echo "Generated scaled_${i}.top in ${chains}/rep${i} with scaling factor ${i}."
           cd ./rep${i}
-          apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/hrex.mdp -c ../npt_5.gro -p scaled_${i}.top -o topol.tpr -maxwarn 1
-          echo "Generated topol.tpr from scaled_${i}.top in ${chains}/rep${i}."
+          apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/hrex.mdp -c ../npt_5.gro -p scaled_${i}_${chains}.top -o topol.tpr -maxwarn 1
+          echo "Generated topol.tpr from scaled_${i}_${chains}.top in ${chains}/rep${i}."
           cd ..
         done 
         cd ..
