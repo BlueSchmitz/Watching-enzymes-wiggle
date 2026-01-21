@@ -124,7 +124,7 @@ echo "============= Parametrization with GROMACS ============="
 cd ../2_parametrization
 # Generate topology and initial structure files
   # Amber 99SB*-ILDN force field in combination with TIP3P water model
-apptainer exec $GROMACS_CONTAINER gmx_mpi pdb2gmx -f $pdb -o processed.gro -p topol.top -ff amber99sb-star-ildnp -water tip3p 
+apptainer exec $GROMACS_CONTAINER gmx_mpi pdb2gmx -f ${project_dir}_pro.pdb -o processed.gro -p topol.top -ff amber99sb-star-ildnp -water tip3p 
 # Define the unit cell: 15 A from protein to box edge = 1.5 nm
 apptainer exec $GROMACS_CONTAINER gmx_mpi editconf -f processed.gro -o boxed.gro -c -d 1.5 -bt cubic
   # -c: center the protein in the box
