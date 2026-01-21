@@ -1,7 +1,7 @@
 #!/bin/bash  
 
 #SBATCH -J 1JCLm_setup  
-#SBATCH -t 06:00:00
+#SBATCH -t 02:30:00
 #SBATCH -p rome
 #SBATCH -N 1
 #SBATCH -n 16 
