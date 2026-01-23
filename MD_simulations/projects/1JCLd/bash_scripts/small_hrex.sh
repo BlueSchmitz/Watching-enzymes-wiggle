@@ -119,7 +119,7 @@ done
 apptainer exec $GROMACS_CONTAINER mpirun -np 120 \
     gmx_mpi mdrun -multidir rep* \
     -replex 1000 \
-    -plumed ./plumed.dat \
+    -plumed ../plumed.dat \
     -ntomp 1 \
     -hrex \
     -cpt 15
