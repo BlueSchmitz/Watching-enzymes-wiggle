@@ -1,7 +1,7 @@
 #!/bin/bash  
 
 #SBATCH -J 1JCLm_minimal_lambda
-#SBATCH -t 02:00:00
+#SBATCH -t 04:00:00
 #SBATCH -p rome
 #SBATCH -N 1
 #SBATCH -n 16
@@ -136,7 +136,7 @@ for l in $lambdas; do
     echo "PRINT ARG=$args FILE=COLVAR" >> plumed.dat
 
     # run plumed
-    plumed driver --ixtc scaling_${l}.xtc --plumed plumed.dat
+    apptainer exec $PLUMED_CONTAINER plumed driver --ixtc scaling_${l}.xtc --plumed plumed.dat
 
     cd ../../
 done
