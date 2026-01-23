@@ -125,7 +125,7 @@ for l in $lambdas; do
     echo "" >> plumed.dat
 
     args=""
-    for r in $(seq 250 259); do
+    for r in $(seq 250 258); do
         echo "phi$r: TORSION ATOMS=@phi-$r" >> plumed.dat
         echo "psi$r: TORSION ATOMS=@psi-$r" >> plumed.dat
         args="$args,phi$r,psi$r"
