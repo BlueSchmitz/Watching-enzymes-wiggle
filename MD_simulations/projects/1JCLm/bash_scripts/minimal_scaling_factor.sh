@@ -138,7 +138,7 @@ for l in $lambdas; do
     # run plumed
     apptainer exec $PLUMED_CONTAINER plumed driver --ixtc scaling_${l}.xtc --plumed plumed.dat
 
-    cd ../../
+    cd ../
 done
 
 python $scripts/plot_torsions.py
