@@ -1,7 +1,7 @@
 #!/bin/bash  
 
 #SBATCH -J 1JCLd_small_HREX
-#SBATCH -t 10:00:00
+#SBATCH -t 15:00:00
 #SBATCH -p rome
 #SBATCH -N 1
 #SBATCH -n 120
@@ -11,6 +11,7 @@
 #SBATCH --output=./1JCLd_small_HREX_%j.out
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=blueschmitz@tudelft.nl
+#SBATCH --signal=B:USR1@300
 
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 export OMP_NUM_TASKS=$SLURM_NTASKS
@@ -80,7 +81,7 @@ cd $TMPDIR/MD_simulations/projects/$project_dir
 # Function to copy back results when error occurs before the script exits
 function copy_back_results {
     set +e # Disable exit on error for this function
-    echo "=== Error occured. Copying results back to home. ==="
+    echo "=== Error occured. Copying results back to home at $(date). ==="
     if [[ -d "$TMPDIR/MD_simulations/projects/$project_dir/outputs" ]]; then
         rsync -av \
           --exclude 'rleveson.*' \
@@ -95,6 +96,8 @@ function copy_back_results {
 
 # Trap errors and print line number + command
 trap 'echo "ERROR at line ${LINENO}: ${BASH_COMMAND}" >&2' ERR
+# Trap timeout warning (USR1)
+trap 'echo "=== Walltime approaching, copying results ==="; copy_back_results' USR1
 trap copy_back_results EXIT
 
 # Load modules:  
@@ -122,6 +125,6 @@ apptainer exec $GROMACS_CONTAINER mpirun -np 120 \
     -plumed ../plumed.dat \
     -ntomp 1 \
     -hrex \
-    -cpt 15
+    -cpt 15 \
     -cpi state.cpt
 echo "============= Small HREX-MD complete ============="
