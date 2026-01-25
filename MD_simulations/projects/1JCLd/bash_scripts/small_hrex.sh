@@ -1,7 +1,7 @@
 #!/bin/bash  
 
 #SBATCH -J 1JCLd_small_HREX
-#SBATCH -t 15:00:00
+#SBATCH -t 20:00:00
 #SBATCH -p rome
 #SBATCH -N 1
 #SBATCH -n 120
