@@ -1,7 +1,7 @@
 #!/bin/bash  
 
 #SBATCH -J 1JCLd_small_HREX
-#SBATCH -t 05:00:00
+#SBATCH -t 10:00:00
 #SBATCH -p rome
 #SBATCH -N 1
 #SBATCH -n 120
@@ -108,13 +108,13 @@ mkdir -p ./outputs/8_small_HREX
 
 echo "============= Small HREX-MD with GROMACS and PLUMED to check acceptance rate ============="
 cd ./outputs/8_small_HREX
-for i in 1.00 0.95 0.91 0.87 0.83 0.79 0.76 0.72 0.69 0.66 0.63 0.60;
-do 
-    cd ./rep${i}
-    apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/small_hrex.mdp -c ../npt_5.gro -p scaled_${i}_2loops.top -o topol.tpr -maxwarn 1
-    echo "Generated topol.tpr from scaled_${i}_2loops.top in rep${i}."
-    cd ..
-done
+#for i in 1.00 0.95 0.91 0.87 0.83 0.79 0.76 0.72 0.69 0.66 0.63 0.60;
+#do 
+#    cd ./rep${i}
+#    apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/small_hrex.mdp -c ../npt_5.gro -p scaled_${i}_2loops.top -o topol.tpr -maxwarn 1
+#    echo "Generated topol.tpr from scaled_${i}_2loops.top in rep${i}."
+#    cd ..
+#done
 # 500 total exchanges
 apptainer exec $GROMACS_CONTAINER mpirun -np 120 \
     gmx_mpi mdrun -multidir rep* \
@@ -123,4 +123,5 @@ apptainer exec $GROMACS_CONTAINER mpirun -np 120 \
     -ntomp 1 \
     -hrex \
     -cpt 15
+    -cpi state.cpt
 echo "============= Small HREX-MD complete ============="
