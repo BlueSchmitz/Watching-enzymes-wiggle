@@ -4,6 +4,7 @@
 
 import pandas as pd
 import matplotlib.pyplot as plt
+import math
 
 lambdas = [1.0, 0.9, 0.8, 0.7, 0.6, 0.5]
 residues = range(250, 260)
@@ -24,35 +25,52 @@ for l in lambdas:
     df = pd.read_csv(path, delim_whitespace=True, comment="#", names=columns)
     data[l] = df
 
-# Plot
-fig, axes = plt.subplots(len(lambdas), 2, figsize=(12, 4*len(lambdas)), sharex=True, sharey='row')
-
-for i, l in enumerate(lambdas):
+# Plot one figure per lambda
+for l in lambdas:
     df = data[l]
 
-    # φ plot
-    for r in residues:
-        col_name = f'phi{r}'
-        if col_name in df.columns:
-            axes[i,0].plot(df["time"], df[col_name], label=f"{r}")
-    axes[i,0].set_title(f"Lambda {l} φ")
-    axes[i,0].set_ylabel("Angle (rad)")
-    if i == len(lambdas)-1:
-        axes[i,0].set_xlabel("Time")
-    axes[i,0].legend(fontsize=8, title="Residue")
+    n_res = len(residues)
+    ncols = 5  # adjust for aesthetics
+    nrows = math.ceil(n_res / ncols)
 
-    # ψ plot
-    for r in residues:
-        col_name = f'psi{r}'
-        if col_name in df.columns:
-            axes[i,1].plot(df["time"], df[col_name], label=f"{r}")
-    axes[i,1].set_title(f"Lambda {l} ψ")
-    if i == len(lambdas)-1:
-        axes[i,1].set_xlabel("Time")
+    fig, axes = plt.subplots(
+        nrows,
+        ncols,
+        figsize=(3*ncols, 2.5*nrows),
+        sharex=True,
+        sharey=True
+    )
 
-plt.tight_layout()
+    axes = axes.flatten()
 
-# Save figure 
-plt.savefig("torsions_all_lambdas.png", dpi=300)
-plt.close(fig)
-print(f"Saved plot: torsions_all_lambdas.png")
+    for i, r in enumerate(residues):
+        ax = axes[i]
+
+        phi = f"phi{r}"
+        psi = f"psi{r}"
+
+        if phi in df.columns:
+            ax.plot(df["time"], df[phi], label="φ", linewidth=0.8)
+        if psi in df.columns:
+            ax.plot(df["time"], df[psi], label="ψ", linewidth=0.8)
+
+        ax.set_title(f"Residue {r}", fontsize=9)
+        ax.set_ylim(-3.2, 3.2)
+
+    # Remove unused subplots (if any)
+    for j in range(i+1, len(axes)):
+        fig.delaxes(axes[j])
+
+    # One global legend
+    handles, labels = axes[0].get_legend_handles_labels()
+    fig.legend(handles, labels, loc="upper right")
+
+    fig.suptitle(f"Torsions for λ = {l}", fontsize=14)
+    fig.supxlabel("Time")
+    fig.supylabel("Angle [rad]")
+
+    plt.tight_layout()
+    plt.savefig(f"torsions_lambda_{l}.png", dpi=300)
+    plt.close(fig)
+
+    print(f"Saved torsions_lambda_{l}.png")
