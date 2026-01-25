@@ -82,12 +82,12 @@ cd $TMPDIR/MD_simulations/projects/$project_dir
 function copy_back_results {
     set +e # Disable exit on error for this function
     echo "=== Error occured. Copying results back to home at $(date). ==="
-    if [[ -d "$TMPDIR/MD_simulations/projects/$project_dir/outputs" ]]; then
+    if [[ -d "$TMPDIR/MD_simulations/projects/$project_dir/outputs/8_small_HREX" ]]; then
         rsync -av \
           --exclude 'rleveson.*' \
           --exclude '*.out' \
-          "$TMPDIR/MD_simulations/projects/$project_dir/outputs/" \
-          "$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/$project_dir/outputs/"
+          "$TMPDIR/MD_simulations/projects/$project_dir/outputs/8_small_HREX/" \
+          "$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/$project_dir/outputs/8_small_HREX/"
         echo "=== Copy complete ==="
     else
         echo "Nothing to copy back (outputs directory not found)"
@@ -128,3 +128,11 @@ apptainer exec $GROMACS_CONTAINER mpirun -np 120 \
     -cpt 15 \
     -cpi state.cpt
 echo "============= Small HREX-MD complete ============="
+
+echo "============= Copying project outputs back to home ============="
+rsync -av \
+      --exclude 'rleveson.*' \
+      --exclude '*.out' \
+      $TMPDIR/MD_simulations/projects/$project_dir/outputs/8_small_HREX/ \
+      $HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/$project_dir/outputs/8_small_HREX/
+echo "============= Copy complete ============="

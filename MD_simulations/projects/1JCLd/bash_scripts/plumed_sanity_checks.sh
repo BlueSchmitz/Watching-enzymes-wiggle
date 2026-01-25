@@ -231,6 +231,6 @@ echo "============= Copying project outputs back to home ============="
 rsync -av \
       --exclude 'rleveson.*' \
       --exclude '*.out' \
-      $TMPDIR/MD_simulations/projects/$project_dir/outputs/ \
-      $HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/$project_dir/outputs/
+      $TMPDIR/MD_simulations/projects/$project_dir/outputs/5_sanity_checks \
+      $HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/$project_dir/outputs/5_sanity_checks
 echo "============= Copy complete ============="

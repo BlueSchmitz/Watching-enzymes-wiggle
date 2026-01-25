@@ -142,3 +142,11 @@ for l in $lambdas; do
 done
 
 python $scripts/plot_torsions.py
+
+echo "============= Copying project outputs back to home ============="
+rsync -av \
+      --exclude 'rleveson.*' \
+      --exclude '*.out' \
+      $TMPDIR/MD_simulations/projects/$project_dir/outputs/9_minimal_scaling/ \
+      $HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/$project_dir/outputs/9_minimal_scaling/
+echo "============= Copy complete ============="
