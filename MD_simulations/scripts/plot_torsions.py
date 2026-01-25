@@ -38,7 +38,7 @@ for i, l in enumerate(lambdas):
     axes[i,0].set_title(f"Lambda {l} φ")
     axes[i,0].set_ylabel("Angle (rad)")
     if i == len(lambdas)-1:
-        axes[i,0].set_xlabel("Frame")
+        axes[i,0].plot(df["time"], df[col_name])
     axes[i,0].legend(fontsize=8, title="Residue")
 
     # ψ plot
