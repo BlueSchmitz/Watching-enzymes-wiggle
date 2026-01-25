@@ -12,7 +12,16 @@ residues = range(250, 260)
 data = {}  
 for l in lambdas:
     path = f"./l{l}/COLVAR"
-    df = pd.read_csv(path, delim_whitespace=True, comment='#')
+
+    # Extract column names from the header
+    with open(path) as f:
+        for line in f:
+            if line.startswith("#! FIELDS"):
+                columns = line.split()[2:]  # skip "#!" and "FIELDS"
+                break
+
+    # Load dataframe with correct column names
+    df = pd.read_csv(path, delim_whitespace=True, comment="#", names=columns)
     data[l] = df
 
 # Plot
