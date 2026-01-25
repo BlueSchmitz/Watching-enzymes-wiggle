@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import math
 
 lambdas = [1.0, 0.9, 0.8, 0.7, 0.6, 0.5]
-residues = range(250, 260)
+residues = range(250, 259)
 
 # Read all COLVARs
 data = {}  
