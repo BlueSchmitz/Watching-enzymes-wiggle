@@ -32,8 +32,8 @@ import matplotlib
 matplotlib.use("Agg")  # Use non-GUI backend
 
 # ---------- Configurable variables ----------
-SAMPLING_INTERVAL = 15.0       # seconds between data points
-WINDOW_POINTS = 9              # number of points in sliding window
+SAMPLING_INTERVAL = 16.0       # seconds between data points
+WINDOW_POINTS = 8              # number of points in sliding window
 R2_THRESHOLD = 0.999           # threshold for accepting a window
 # Specific activity constants
 Vreaction = 0.0002             # liters
