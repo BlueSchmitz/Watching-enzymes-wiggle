@@ -116,7 +116,6 @@ cd ./outputs/$output_dir
 echo "Production HREX-MD with GROMACS and PLUMED"
 apptainer exec $GROMACS_CONTAINER mpirun -np 120 \
     gmx_mpi mdrun -multidir rep* \
-    -multidir rep* \
     -replex 2000 \
     -plumed ../plumed.dat \
     -cpt 15 \
