@@ -132,25 +132,34 @@ else
     python $scripts/scale_residues.py > processed_scaled.top
     echo "Generated processed_scaled.top with selected residues for scaling."
 fi
-# 4. Scale the Hamiltonian of the selected atoms by the factors 1.00, 0.95, 0.91, 0.87, 0.83, 0.79, 0.76, 0.72, 0.69, 0.66, 0.63, and 0.60
+# 4. Scale the Hamiltonian of the selected atoms by the lambda factors
 if [ -f topol_Protein_chain_A_5.itp ]; then # check for dimer
     mkdir -p ./1loop ./2loops # scale either one or both loops
-    for chains in 1loop 2loops;
+    cd 1loop
+    : > plumed.dat # empty plumed file
+    for i in 1.00 0.95 0.91 0.87 0.83 0.79 0.76 0.72 0.69 0.66 0.63 0.60;
     do 
-        cd ./$chains
-        : > plumed.dat # empty plumed file
-        for i in 1.00 0.95 0.91 0.87 0.83 0.79 0.76 0.72 0.69 0.66 0.63 0.60;
-        do 
-          mkdir -p ./rep${i} # create directory for each replica
-          apptainer exec $PLUMED_CONTAINER plumed partial_tempering ${i} < ../processed_scaled_${chains}.top  > ./rep${i}/scaled_${i}_${chains}.top
-          echo "Generated scaled_${i}.top in ${chains}/rep${i} with scaling factor ${i}."
-          cd ./rep${i}
-          apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/hrex.mdp -c ../../npt_5.gro -p scaled_${i}_${chains}.top -o topol.tpr -maxwarn 1
-          echo "Generated topol.tpr from scaled_${i}_${chains}.top in ${chains}/rep${i}."
-          cd ..
-        done 
+        mkdir -p ./rep${i} # create directory for each replica
+        apptainer exec $PLUMED_CONTAINER plumed partial_tempering ${i} < ../processed_scaled_1loop.top  > ./rep${i}/scaled_${i}_1loop.top
+        echo "Generated scaled_${i}.top in 1loop/rep${i} with scaling factor ${i}."
+        cd ./rep${i}
+        apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/hrex.mdp -c ../../npt_5.gro -p scaled_${i}_1loop.top -o topol.tpr -maxwarn 1
+        echo "Generated topol.tpr from scaled_${i}_1loop.top in 1loop/rep${i}."
         cd ..
-    done
+    done 
+    cd ../2loops
+    : > plumed.dat # empty plumed file
+    for i in 1.00 0.96 0.93 0.90 0.87 0.84 0.81 0.78 0.75 0.72 0.70 0.68 0.66 0.64 0.62 0.60;
+        do 
+        mkdir -p ./rep${i} # create directory for each replica
+        apptainer exec $PLUMED_CONTAINER plumed partial_tempering ${i} < ../processed_scaled_${chains}.top  > ./rep${i}/scaled_${i}_${chains}.top
+        echo "Generated scaled_${i}.top in ${chains}/rep${i} with scaling factor ${i}."
+        cd ./rep${i}
+        apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/hrex.mdp -c ../../npt_5.gro -p scaled_${i}_${chains}.top -o topol.tpr -maxwarn 1
+        echo "Generated topol.tpr from scaled_${i}_${chains}.top in ${chains}/rep${i}."
+        cd ..
+    done 
+    cd ../
     echo "Generated all scaled topology files and tpr files for HREX replicas in 1loop and 2loops."
 else
     for i in 1.00 0.95 0.91 0.87 0.83 0.79 0.76 0.72 0.69 0.66 0.63 0.60;

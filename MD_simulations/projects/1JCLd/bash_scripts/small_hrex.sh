@@ -1,14 +1,14 @@
 #!/bin/bash  
 
-#SBATCH -J 1JCLd_small_HREX
+#SBATCH -J 1JCLd_small_HREX2
 #SBATCH -t 20:00:00
 #SBATCH -p rome
 #SBATCH -N 1
-#SBATCH -n 120
+#SBATCH -n 128
 #SBATCH --cpus-per-task 1
 #SBATCH --gpus=0
 #SBATCH --requeue
-#SBATCH --output=./1JCLd_small_HREX_%j.out
+#SBATCH --output=./1JCLd_small_HREX2_%j.out
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=blueschmitz@tudelft.nl
 #SBATCH --signal=B:USR1@300
@@ -64,6 +64,7 @@ set -o errtrace
 
 ### Project-specific settings ###
 project_dir=1JCLd
+output_dir=8_small_HREX/16lambdas
 pH=7
 # Set paths for mdp_templates, force_fields and pdb file (to change paths quickly)
 export GMXLIB=$TMPDIR/MD_simulations/force_fields
@@ -86,8 +87,8 @@ function copy_back_results {
         rsync -av \
           --exclude 'rleveson.*' \
           --exclude '*.out' \
-          "$TMPDIR/MD_simulations/projects/$project_dir/outputs/8_small_HREX/" \
-          "$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/$project_dir/outputs/8_small_HREX/"
+          "$TMPDIR/MD_simulations/projects/$project_dir/outputs/$output_dir/" \
+          "$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/$project_dir/outputs/$output_dir/"
         echo "=== Copy complete ==="
     else
         echo "Nothing to copy back (outputs directory not found)"
@@ -107,19 +108,22 @@ module load matplotlib/3.7.2-gfbf-2023a
 module list
 
 # mkdir outputs directories 
-mkdir -p ./outputs/8_small_HREX
+mkdir -p ./outputs/$output_dir
 
 echo "============= Small HREX-MD with GROMACS and PLUMED to check acceptance rate ============="
-cd ./outputs/8_small_HREX
-#for i in 1.00 0.95 0.91 0.87 0.83 0.79 0.76 0.72 0.69 0.66 0.63 0.60;
-#do 
-#    cd ./rep${i}
-#    apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/small_hrex.mdp -c ../npt_5.gro -p scaled_${i}_2loops.top -o topol.tpr -maxwarn 1
-#    echo "Generated topol.tpr from scaled_${i}_2loops.top in rep${i}."
-#    cd ..
-#done
+cd ./outputs/$output_dir
+for i in 1.00 0.96 0.93 0.90 0.87 0.84 0.81 0.78 0.75 0.72 0.70 0.68 0.66 0.64 0.62 0.60;
+do 
+    mkdir -p ./rep${i} # create directory for each replica
+    apptainer exec $PLUMED_CONTAINER plumed partial_tempering ${i} < ./processed_scaled_2loops.top  > ./rep${i}/scaled_${i}_2loops.top
+    echo "Generated scaled_${i}.top in 2loops/rep${i} with scaling factor ${i}."
+    cd ./rep${i}
+    apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/small_hrex.mdp -c ../npt_5.gro -p scaled_${i}_2loops.top -o topol.tpr -maxwarn 1
+    echo "Generated topol.tpr from scaled_${i}_2loops.top in rep${i}."
+    cd ..
+done
 # 500 total exchanges
-apptainer exec $GROMACS_CONTAINER mpirun -np 120 \
+apptainer exec $GROMACS_CONTAINER mpirun -np 128 \
     gmx_mpi mdrun -multidir rep* \
     -replex 1000 \
     -plumed ../plumed.dat \
@@ -133,6 +137,6 @@ echo "============= Copying project outputs back to home ============="
 rsync -av \
       --exclude 'rleveson.*' \
       --exclude '*.out' \
-      $TMPDIR/MD_simulations/projects/$project_dir/outputs/8_small_HREX/ \
-      $HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/$project_dir/outputs/8_small_HREX/
+      $TMPDIR/MD_simulations/projects/$project_dir/outputs/$output_dir/ \
+      $HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/$project_dir/outputs/$output_dir/
 echo "============= Copy complete ============="
