@@ -43,7 +43,7 @@ R2_THRESHOLD = 0.999           # threshold for accepting a window
 Vreaction = 0.0002             # liters
 extinction_coefficient_NADH = 6220.0  # M^-1 cm^-1
 Vprotein = 0.00001             # liters (volume of protein in reaction)
-path_length_l = 0.5            # cm
+path_length_l = 1              # cm
 # ------------------------------------------------
 
 def linear_fit_and_r2(x, y):

@@ -29,7 +29,7 @@ R2_THRESHOLD = 0.999
 Vreaction = 0.0002
 extinction_coefficient_NADH = 6220.0
 Vprotein = 0.00001
-path_length_l = 0.5
+path_length_l = 1
 # ------------------------------------------------
 
 SELECTIVE_COMPARISONS = [
