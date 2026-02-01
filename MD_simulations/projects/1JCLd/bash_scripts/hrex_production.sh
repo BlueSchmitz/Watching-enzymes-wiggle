@@ -13,7 +13,6 @@
 #SBATCH --mail-user=blueschmitz@tudelft.nl
 #SBATCH --signal=B:USR1@300
 
-
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 export OMP_NUM_TASKS=$SLURM_NTASKS
 
