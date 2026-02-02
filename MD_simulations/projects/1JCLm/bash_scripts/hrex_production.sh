@@ -58,15 +58,20 @@ cd ./outputs/$output_dir
 ### Detect restart vs fresh start ###
 MD_ARGS=()
 
+shopt -s nullglob
 rep_dirs=(rep*/)
-n_rep=${#rep_dirs[@]}
+shopt -u nullglob
 
-# Count checkpoints
-n_cpt=$(ls rep*/state.cpt 2>/dev/null | wc -l)
+n_rep=${#rep_dirs[@]}
+n_cpt=0
+
+for r in "${rep_dirs[@]}"; do
+    [[ -f "$r/state.cpt" ]] && ((n_cpt++))
+done
 
 echo "Found $n_cpt / $n_rep replica checkpoints"
 
-if [[ "$n_cpt" -eq "$n_rep" ]]; then
+if [[ "$n_rep" -gt 0 && "$n_cpt" -eq "$n_rep" ]]; then
     echo "=== All replicas have checkpoints: restarting ==="
     MD_ARGS+=(-cpi state.cpt)
 
@@ -75,12 +80,8 @@ elif [[ "$n_cpt" -eq 0 ]]; then
 
 else
     echo "=== ERROR: Partial checkpoints detected ($n_cpt / $n_rep) ===" >&2
-    echo "=== Refusing to continue to avoid corrupt HREX ===" >&2
     exit 1
 fi
-
-echo "============= HREX-MD with GROMACS and PLUMED ============="
-echo "Starting mdrun at $(date)"
 
 ### Run HREX ###
 apptainer exec $GROMACS_CONTAINER mpirun -np 120 \
