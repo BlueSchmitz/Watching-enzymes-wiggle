@@ -1,17 +1,17 @@
-#!/bin/bash  
+#!/bin/bash
 
 #SBATCH -J 1JCLm_HREX
-#SBATCH -t 120:00:00
+#SBATCH -t 48:00:00
 #SBATCH -p rome
 #SBATCH -N 1
 #SBATCH -n 120
-#SBATCH --cpus-per-task 1
+#SBATCH --cpus-per-task=1
 #SBATCH --gpus=0
 #SBATCH --requeue
 #SBATCH --output=./1JCLm_HREX_%j.out
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=blueschmitz@tudelft.nl
-#SBATCH --signal=B:USR1@3600
+#SBATCH --signal=B:USR1@1800
 
 # Exit immediately on errors
 set -euo pipefail
@@ -34,16 +34,17 @@ pdb=$TMPDIR/MD_simulations/projects/$project_dir/inputs/*.pdb
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 export OMP_NUM_TASKS=$SLURM_NTASKS
 
-### Copy project to scratch ###
-cp -r $HOME/Blue/Watching-enzymes-wiggle/MD_simulations/ "$TMPDIR"
-cd $TMPDIR/MD_simulations/projects/$project_dir
-
 ### Trap: stop GROMACS cleanly when walltime approaches ###
-function handle_usr1 {
-    echo "=== USR1 received: stopping mdrun cleanly at $(date) ==="
+handle_usr1() {
+    echo "=== USR1 received at $(date): requesting clean stop ==="
     touch STOP_MDRUN
 }
 trap handle_usr1 USR1
+
+### Copy project to scratch ###
+echo "=== Copying project to scratch ==="
+cp -r $HOME/Blue/Watching-enzymes-wiggle/MD_simulations/ "$TMPDIR"
+cd $TMPDIR/MD_simulations/projects/$project_dir
 
 ### Load modules ###
 module load 2023
@@ -53,6 +54,30 @@ module list
 ### Prepare output directory ###
 mkdir -p ./outputs/$output_dir
 cd ./outputs/$output_dir
+
+### Detect restart vs fresh start ###
+MD_ARGS=()
+
+rep_dirs=(rep*/)
+n_rep=${#rep_dirs[@]}
+
+# Count checkpoints
+n_cpt=$(ls rep*/state.cpt 2>/dev/null | wc -l)
+
+echo "Found $n_cpt / $n_rep replica checkpoints"
+
+if [[ "$n_cpt" -eq "$n_rep" ]]; then
+    echo "=== All replicas have checkpoints: restarting ==="
+    MD_ARGS+=(-cpi state.cpt)
+
+elif [[ "$n_cpt" -eq 0 ]]; then
+    echo "=== No checkpoints found: starting fresh ==="
+
+else
+    echo "=== ERROR: Partial checkpoints detected ($n_cpt / $n_rep) ===" >&2
+    echo "=== Refusing to continue to avoid corrupt HREX ===" >&2
+    exit 1
+fi
 
 echo "============= HREX-MD with GROMACS and PLUMED ============="
 echo "Starting mdrun at $(date)"
@@ -66,17 +91,37 @@ apptainer exec $GROMACS_CONTAINER mpirun -np 120 \
     -cpt 15 \
     -ntomp 1 \
     -hrex \
-    -cpi state.cpt \
-    -stop STOP_MDRUN
+    -stop STOP_MDRUN \
+    "${MD_ARGS[@]}"
 
-echo "mdrun finished at $(date)"
+echo "mdrun exited at $(date)"
 
 ### Copy results back ###
 echo "============= Copying project outputs back to home ============="
+
+echo "=== Copying non-replica files ==="
 rsync -av --partial --inplace \
-    --exclude 'rleveson.*' \
-    --exclude '*.out' \
+    --exclude 'rep*' \
     "$TMPDIR/MD_simulations/projects/$project_dir/outputs/$output_dir/" \
     "$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/$project_dir/outputs/$output_dir/"
 
+echo "=== Copying replicas ==="
+for rep in "$TMPDIR/MD_simulations/projects/$project_dir/outputs/$output_dir/"/rep*; do
+    [ -d "$rep" ] || continue
+    repname=$(basename "$rep")
+    echo ">>> Syncing $repname"
+    rsync -av --partial --inplace \
+        "$rep/" "$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/$project_dir/outputs/$output_dir/$repname/"
+done
+
 echo "============= Copy complete at $(date) ============="
+
+# Decide whether to requeue
+if [ -f STOP_MDRUN ]; then
+    echo "=== Walltime stop detected — requeueing job ==="
+    scontrol requeue "$SLURM_JOB_ID"
+else
+    echo "=== Simulation finished — no requeue ==="
+fi
+
+echo "=== Job finished at $(date) ==="
