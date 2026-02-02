@@ -56,30 +56,32 @@ mkdir -p ./outputs/$output_dir
 cd ./outputs/$output_dir
 
 ### Detect restart vs fresh start ###
-MD_ARGS=()
-
 shopt -s nullglob
 rep_dirs=(rep*/)
 shopt -u nullglob
 
 n_rep=${#rep_dirs[@]}
-n_cpt=0
+if [[ "$n_rep" -eq 0 ]]; then
+    echo "ERROR: No replica directories (rep*) found"
+    exit 1
+fi
 
+n_cpt=0
 for r in "${rep_dirs[@]}"; do
     [[ -f "$r/state.cpt" ]] && ((n_cpt++))
 done
 
 echo "Found $n_cpt / $n_rep replica checkpoints"
 
-if [[ "$n_rep" -gt 0 && "$n_cpt" -eq "$n_rep" ]]; then
-    echo "=== All replicas have checkpoints: restarting ==="
+MD_ARGS=()
+
+if [[ "$n_cpt" -eq 0 ]]; then
+    echo "=== Fresh start ==="
+elif [[ "$n_cpt" -eq "$n_rep" ]]; then
+    echo "=== Restarting from checkpoints ==="
     MD_ARGS+=(-cpi state.cpt)
-
-elif [[ "$n_cpt" -eq 0 ]]; then
-    echo "=== No checkpoints found: starting fresh ==="
-
 else
-    echo "=== ERROR: Partial checkpoints detected ($n_cpt / $n_rep) ===" >&2
+    echo "ERROR: Partial checkpoints detected ($n_cpt / $n_rep)" >&2
     exit 1
 fi
 
@@ -92,7 +94,7 @@ apptainer exec $GROMACS_CONTAINER mpirun -np 120 \
     -cpt 15 \
     -ntomp 1 \
     -hrex \
-    -stop STOP_MDRUN \
+    -maxh 46.5 \
     "${MD_ARGS[@]}"
 
 echo "mdrun exited at $(date)"
@@ -118,11 +120,18 @@ done
 echo "============= Copy complete at $(date) ============="
 
 # Decide whether to requeue
-if [ -f STOP_MDRUN ]; then
-    echo "=== Walltime stop detected — requeueing job ==="
-    scontrol requeue "$SLURM_JOB_ID"
-else
-    echo "=== Simulation finished — no requeue ==="
-fi
+all_done=true
+for r in rep*/md.log; do
+    if ! grep -q "Finished mdrun" "$r"; then
+        all_done=false
+        break
+    fi
+done
 
-echo "=== Job finished at $(date) ==="
+if $all_done; then
+    echo "=== All replicas finished: simulation complete ==="
+    echo "=== Job will NOT be requeued ==="
+else
+    echo "=== Simulation not finished yet: requeueing job ==="
+    scontrol requeue "$SLURM_JOB_ID"
+fi
