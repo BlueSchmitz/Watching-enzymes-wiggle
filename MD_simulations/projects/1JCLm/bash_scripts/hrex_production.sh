@@ -120,18 +120,21 @@ done
 echo "============= Copy complete at $(date) ============="
 
 # Decide whether to requeue
+FINAL_STEP=110000000
 all_done=true
+
 for r in rep*/md.log; do
-    if ! grep -q "Finished mdrun" "$r"; then
+    if ! grep -q "Writing checkpoint, step ${FINAL_STEP} " "$r"; then
         all_done=false
         break
     fi
 done
 
 if $all_done; then
-    echo "=== All replicas finished: simulation complete ==="
-    echo "=== Job will NOT be requeued ==="
+    echo "=== Simulation fully completed (step $FINAL_STEP reached) ==="
+    echo "=== No requeue ==="
 else
-    echo "=== Simulation not finished yet: requeueing job ==="
+    echo "=== Simulation stopped before final step ==="
+    echo "=== Requeueing job ==="
     scontrol requeue "$SLURM_JOB_ID"
 fi
