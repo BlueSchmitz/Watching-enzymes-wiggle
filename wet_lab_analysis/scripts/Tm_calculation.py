@@ -6,6 +6,7 @@ Use this script to calculate melting temperatures (Tm) from fluorescence data in
 by fitting a Boltzman sigmoid curve and finding the highest derivative.
 '''
 
+import sys
 import pandas as pd
 import numpy as np
 from scipy.optimize import curve_fit
@@ -16,16 +17,21 @@ import matplotlib
 matplotlib.use("Agg") # Use non-GUI backend (avoids errors)
 
 # Define Boltzmann sigmoid (lower plateau, upper plateau, Tm, slope)
-def boltzmann(x, A1, A2, Tm, k):
-    return A1 + ((A2 - A1) / (1 + np.exp((Tm - x)/k)))
+def sigmoid(x, L, x0, k, b):
+    """
+    L  = curve maximum
+    x0 = midpoint (inflection point)
+    k  = slope
+    b  = baseline offset
+    """
+    return L / (1 + np.exp(-k * (x - x0))) + b
 
 # Load Excel
-import sys
 file_path = sys.argv[1]
 df = pd.read_excel(file_path)
 
-temperatures = df.iloc[:, 0].values
-enzymes = df.columns[1:]  # assume columns like Enzyme1_Rep1, Enzyme1_Rep2, etc.
+xdata = df.iloc[:, 0].astype(str).str.replace(",", ".").astype(float)
+enzymes = df.columns[1:] # assume columns like Enzyme1_Rep1, Enzyme1_Rep2, etc.
 
 # Create output folder
 os.makedirs("Tm_plots", exist_ok=True)
@@ -36,11 +42,6 @@ fit_rows = []
 
 # Prepare multi-panel figure (automatic grid layout based on number of enzymes)
 unique_enzymes = sorted(set(col.split("_")[0] for col in enzymes))
-n = len(unique_enzymes)
-cols = math.ceil(math.sqrt(n))
-rows = math.ceil(n / cols)
-fig_panel, axes = plt.subplots(rows, cols, figsize=(cols * 5, rows * 4))
-axes = axes.flatten()
 
 for enzyme in sorted(set(col.split("_")[0] for col in enzymes)):
     reps = [col for col in enzymes if col.startswith(enzyme)]
@@ -50,74 +51,77 @@ for enzyme in sorted(set(col.split("_")[0] for col in enzymes)):
     
     plt.figure()
     plt.title(enzyme)
-    plt.xlabel("Temperature (°C)")
-    plt.ylabel("Fluorescence RFU)") # relative fluorescence units
-    
-    # Access correct subplot
-    ax_panel = axes[unique_enzymes.index(enzyme)]
-    ax_panel.set_title(enzyme)
-    ax_panel.set_xlabel("Temperature (°C)")
-    ax_panel.set_ylabel("Fluorescence (RFU)")
+    plt.xlabel("Temperature [°C]")
+    plt.ylabel("Fluorescence [RFU]") # relative fluorescence units
 
-    N = len(reps)
     cmap = plt.get_cmap("viridis", max(1, len(reps)))  # Viridis colormap for replicates
     
     for i, rep in enumerate(reps):
         color = cmap(i)
-        ydata = df[rep].values
+        ydata = df[rep].astype(str).str.replace(",", ".").astype(float).values
+
+        # Plot raw data
+        plt.plot(xdata, ydata, 'o', color=color, markersize=3, label=f'{rep} data')
         
-        # Initial guess
-        p0 = [min(ydata), max(ydata), temperatures[np.argmax(np.gradient(ydata))], 2]
-        max_idx = np.argmax(ydata) # limit fitting to data up to max fluorescence
-        x_fit_data = temperatures[:max_idx+1]
-        y_fit_data = ydata[:max_idx+1]
-        
+        ydata_np = ydata.copy()  # ensure it's a NumPy array
+        xdata_np = xdata.values  # convert Series to NumPy array
+
+        # Keep only finite values
+        mask = np.isfinite(ydata_np) & np.isfinite(xdata_np)
+        xdata_np = xdata_np[mask]
+        ydata_np = ydata_np[mask]
+
+        max_idx = np.argmax(ydata_np)
+        x_fit_data = xdata_np[:max_idx + 10]
+        y_fit_data = ydata_np[:max_idx + 10]
+
+        # Keep only finite values
+        mask = np.isfinite(y_fit_data) & np.isfinite(x_fit_data)
+        x_fit_data = x_fit_data[mask]
+        y_fit_data = y_fit_data[mask]
+
+        # Initial guesses for sigmoid parameters
+        L_guess = max(ydata)
+        x0_guess = x_fit_data[np.argmax(np.gradient(y_fit_data))]
+        k_guess = 2
+        b_guess = min(ydata)
+
+        p0 = [L_guess, x0_guess, k_guess, b_guess]
+
         try:
-            popt, pcov = curve_fit(boltzmann, x_fit_data, y_fit_data, p0=p0, maxfev=5000)
-            perr = np.sqrt(np.diag(pcov)) # parameter uncertainties
-            
+            params, covariance = curve_fit(sigmoid, x_fit_data, y_fit_data, p0=p0, maxfev=10000)
+
+            L, x0, k, b = params
+
+            residuals = y_fit_data - sigmoid(x_fit_data, *params)
+            rss = np.sum(residuals**2)
+
             # Derivative-based Tm
-            x_fit = np.linspace(min(x_fit_data), max(x_fit_data), 500) # generate smooth temp values
-            y_fit = boltzmann(x_fit, *popt) # smooth fitted curve
+            x_fit = np.linspace(min(xdata), max(xdata), 500) # generate smooth temp values
+            y_fit = sigmoid(x_fit, *params) # smooth fitted curve
             dydx = np.gradient(y_fit, x_fit) # numerical derivative
             Tm_derivative = x_fit[np.argmax(dydx)] # Tm from max derivative
             Tm_values.append(Tm_derivative)
             success_count += 1
-            
+
             # Store fit parameters per replicate
             fit_rows.append({
                 "Enzyme": enzyme,
                 "Replicate": rep,
-                "A1": popt[0],
-                "A2": popt[1],
-                "Tm_fit": popt[2],
-                "k": popt[3],
-                "σA1": perr[0],
-                "σA2": perr[1],
-                "σTm": perr[2],
-                "σk": perr[3],
+                "Baseline": b,
+                "Amplitude": L,
+                "Tm_fit": x0,
+                "Slope": k,
+                "σBaseline": np.sqrt(covariance[3,3]),
+                "σAmplitude": np.sqrt(covariance[0,0]),
+                "σTm": np.sqrt(covariance[1,1]),
+                "σSlope": np.sqrt(covariance[2,2]),
                 "Tm_derivative": Tm_derivative
             })
-            
-            # Plot points and fit line
-            plt.plot(temperatures, ydata, 'o', color=color, markersize=3, label=f'{rep} data')
-            plt.plot(x_fit, y_fit, '-', color=color, label=f'{rep} fit')
-            plt.fill_between(x_fit, y_lower := boltzmann(x_fit, 
-                                popt[0] - perr[0], 
-                                popt[1] - perr[1], 
-                                popt[2] - perr[2], 
-                                popt[3] - perr[3]),
-                                y_upper := boltzmann(x_fit, 
-                                popt[0] + perr[0], 
-                                popt[1] + perr[1], 
-                                popt[2] + perr[2], 
-                                popt[3] + perr[3]),
-                                color=color, alpha=0.4)
 
-            # Replicate plotting in multi-panel
-            ax_panel.plot(temperatures, ydata, 'o', color=color, markersize=2)
-            ax_panel.plot(x_fit, y_fit, '-', color=color)
-            ax_panel.fill_between(x_fit, y_lower, y_upper, color=color, alpha=0.3)
+
+            # Plot fit line
+            plt.plot(x_fit, y_fit, '-', color=color, label=f'{rep} fit')
             
         except Exception as e:
             print(f"Could not fit {rep}: {e}")
@@ -141,18 +145,16 @@ for enzyme in sorted(set(col.split("_")[0] for col in enzymes)):
         mean_Tm = np.mean(Tm_values)
         std_Tm = np.std(Tm_values)
         plt.axvline(mean_Tm, color='red', linestyle='--', label=f'Tm = {mean_Tm:.2f} ± {std_Tm:.2f}')
-        # Add to panel
-        ax_panel.axvline(mean_Tm, color='red', linestyle='--')
     else:
         mean_Tm = np.nan
         std_Tm = np.nan
-    
+
     plt.legend(fontsize="small", loc = 'upper right')
     plt.grid(alpha=0.3)
     plt.tight_layout()
     plt.savefig(f"Tm_plots/{enzyme}_Tm_plot.png", dpi=300)
     plt.close()
-    
+
     summary_rows.append({
         "Enzyme": enzyme,
         "Mean_Tm": mean_Tm,
@@ -160,17 +162,6 @@ for enzyme in sorted(set(col.split("_")[0] for col in enzymes)):
         "N_success": success_count,
         "N_failed": fail_count
     })
-
-# Save combined panel of all enzymes
-for i in range(len(axes)):
-    if i >= len(unique_enzymes):
-        axes[i].axis("off") 
-
-fig_panel.tight_layout()
-fig_panel.savefig("Tm_plots/ALL_enzymes_panel.png", dpi=300)
-plt.close(fig_panel)
-
-print("Saved combined multi-enzyme panel: Tm_plots/ALL_enzymes_panel.png")
 
 # Save to Excel with multiple sheets
 summary_df = pd.DataFrame(summary_rows)
