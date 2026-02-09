@@ -7,7 +7,6 @@
 #SBATCH -n 120
 #SBATCH --cpus-per-task=1
 #SBATCH --gpus=0
-#SBATCH --requeue
 #SBATCH --output=./1JCLm_HREX_%j.out
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=blueschmitz@tudelft.nl
