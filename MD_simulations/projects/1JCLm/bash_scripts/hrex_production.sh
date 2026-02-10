@@ -10,7 +10,6 @@
 #SBATCH --output=./1JCLm_HREX_%j.out
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=blueschmitz@tudelft.nl
-#SBATCH --signal=B:USR1@1800
 
 # Exit immediately on errors
 set -euo pipefail
@@ -33,13 +32,6 @@ pdb=$TMPDIR/MD_simulations/projects/$project_dir/inputs/*.pdb
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 export OMP_NUM_TASKS=$SLURM_NTASKS
 
-### Trap: stop GROMACS cleanly when walltime approaches ###
-handle_usr1() {
-    echo "=== USR1 received at $(date): requesting clean stop ==="
-    touch STOP_MDRUN
-}
-trap handle_usr1 USR1
-
 ### Copy project to scratch ###
 echo "=== Copying project to scratch ==="
 cp -r $HOME/Blue/Watching-enzymes-wiggle/MD_simulations/ "$TMPDIR"
@@ -54,35 +46,20 @@ module list
 mkdir -p ./outputs/$output_dir
 cd ./outputs/$output_dir
 
-### Detect restart vs fresh start ###
-shopt -s nullglob
-rep_dirs=(rep*/)
-shopt -u nullglob
-
-n_rep=${#rep_dirs[@]}
-if [[ "$n_rep" -eq 0 ]]; then
-    echo "ERROR: No replica directories (rep*) found"
-    exit 1
-fi
-
-n_cpt=0
-for r in "${rep_dirs[@]}"; do
-    [[ -f "$r/state.cpt" ]] && ((n_cpt++))
-done
-
-echo "Found $n_cpt / $n_rep replica checkpoints"
-
-MD_ARGS=()
-
-if [[ "$n_cpt" -eq 0 ]]; then
-    echo "=== Fresh start ==="
-elif [[ "$n_cpt" -eq "$n_rep" ]]; then
-    echo "=== Restarting from checkpoints ==="
-    MD_ARGS+=(-cpi state.cpt)
-else
-    echo "ERROR: Partial checkpoints detected ($n_cpt / $n_rep)" >&2
-    exit 1
-fi
+# Function to copy back results when error occurs and before the script exits
+function copy_back_results {
+    set +e +u # Disable exit on error for this function
+    echo "=== Copying results back to home at $(date). ==="
+    if [[ -d "$TMPDIR/MD_simulations/projects/$project_dir/outputs/$output_dir" ]]; then
+        rsync -av --partial --inplace \
+          "$TMPDIR/MD_simulations/projects/$project_dir/outputs/$output_dir/" \
+          "$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/$project_dir/outputs/$output_dir/"
+        echo "=== Copy complete at $(date) ==="
+    else
+        echo "Nothing to copy back (outputs directory not found)"
+    fi
+}
+trap copy_back_results EXIT
 
 ### Run HREX ###
 apptainer exec $GROMACS_CONTAINER mpirun -np 120 \
@@ -94,46 +71,6 @@ apptainer exec $GROMACS_CONTAINER mpirun -np 120 \
     -ntomp 1 \
     -hrex \
     -maxh 46.5 \
-    "${MD_ARGS[@]}"
+    -cpi state.cpt
 
 echo "mdrun exited at $(date)"
-
-### Copy results back ###
-echo "============= Copying project outputs back to home ============="
-
-echo "=== Copying non-replica files ==="
-rsync -av --partial --inplace \
-    --exclude 'rep*' \
-    "$TMPDIR/MD_simulations/projects/$project_dir/outputs/$output_dir/" \
-    "$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/$project_dir/outputs/$output_dir/"
-
-echo "=== Copying replicas ==="
-for rep in "$TMPDIR/MD_simulations/projects/$project_dir/outputs/$output_dir/"/rep*; do
-    [ -d "$rep" ] || continue
-    repname=$(basename "$rep")
-    echo ">>> Syncing $repname"
-    rsync -av --partial --inplace \
-        "$rep/" "$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/$project_dir/outputs/$output_dir/$repname/"
-done
-
-echo "============= Copy complete at $(date) ============="
-
-# Decide whether to requeue
-FINAL_STEP=110000000
-all_done=true
-
-for r in rep*/md.log; do
-    if ! grep -q "Writing checkpoint, step ${FINAL_STEP} " "$r"; then
-        all_done=false
-        break
-    fi
-done
-
-if $all_done; then
-    echo "=== Simulation fully completed (step $FINAL_STEP reached) ==="
-    echo "=== No requeue ==="
-else
-    echo "=== Simulation stopped before final step ==="
-    echo "=== Requeueing job ==="
-    scontrol requeue "$SLURM_JOB_ID"
-fi

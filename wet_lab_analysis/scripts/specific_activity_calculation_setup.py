@@ -18,6 +18,7 @@ import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 from scipy.stats import ttest_ind
 from statsmodels.stats.multitest import multipletests
+from scipy.stats import mannwhitneyu
 import matplotlib
 
 matplotlib.use("Agg")
@@ -110,8 +111,11 @@ def plot_activity_boxplot(df_summary, df_replicates, comparisons, outfile_png):
             d1 = df_replicates[df_replicates["Enzyme"]==g1]["Specific_activity"].dropna()
             d2 = df_replicates[df_replicates["Enzyme"]==g2]["Specific_activity"].dropna()
             if len(d1)>0 and len(d2)>0:
-                t_stat, p_val = ttest_ind(d1, d2)
+                stat, p_val = mannwhitneyu(d1, d2, alternative='two-sided')
                 results.append({"group1": g1, "group2": g2, "p_raw": p_val})
+    
+    for r in results:
+        print(f"{r['group1']} vs {r['group2']}: raw p = {r['p_raw']:.4f}")
 
     if results:
         pvals = [r["p_raw"] for r in results]
