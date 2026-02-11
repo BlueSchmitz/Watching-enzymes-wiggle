@@ -66,7 +66,7 @@ cd ./outputs/$output_dir/
 sed '/#ifdef POSRES/,/#endif/ s|#include "posre_.*\.itp"|#include "posre_core_CA.itp"|' topol_5.top > topol.top # Change the protein restraint block (POSRES)
 echo "Changed position restraints from topol.top to restrain core_CA."
 # define groups for pulling: tail_COM and active_site_COM
-gmx_mpi make_ndx -f npt.gro -o index.ndx << EOF
+apptainer exec $GROMACS_CONTAINER gmx_mpi make_ndx -f npt.gro -o index.ndx << EOF
 r 257-259
 name 18 tail_COM 
 r 166-168
