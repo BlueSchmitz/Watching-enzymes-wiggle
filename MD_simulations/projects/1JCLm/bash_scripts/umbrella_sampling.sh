@@ -78,7 +78,7 @@ EOF
 # restrain the core CA atoms during pulling
 echo 20 | apptainer exec $GROMACS_CONTAINER gmx_mpi genrestr -f npt.gro -n index.ndx -o posre_core_CA.itp -fc 10 10 10
 # run steered MD
-apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/pull.mdp -c npt.gro -n index.ndx -p topol.top -o pull.tpr
+apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/pull.mdp -c npt.gro -n index.ndx -p topol.top -o pull.tpr -r npt.gro
 apptainer exec $GROMACS_CONTAINER mpirun -np 8 gmx_mpi mdrun -deffnm pull -pf pullf.xvg -px pullx.xvg -v -ntomp 2 
 
 # 2 Assemble COM distances indexed by frame number
