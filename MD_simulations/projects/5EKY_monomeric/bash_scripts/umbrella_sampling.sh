@@ -62,21 +62,21 @@ trap copy_back_results EXIT
 mkdir -p ./outputs/$output_dir
 cp ./outputs/4_equilibration/npt_5.gro ./outputs/$output_dir/npt.gro
 cp ./outputs/4_equilibration/topol_5.top ./outputs/$output_dir/topol_5.top
+cd ./outputs/$output_dir/
 sed '/#ifdef POSRES/,/#endif/ s|#include "posre_.*\.itp"|#include "posre_core_CA.itp"|' topol_5.top > topol.top # Change the protein restraint block (POSRES)
 echo "Changed position restraints from topol.top to restrain core_CA."
-cd ./outputs/$output_dir/
 # define groups for pulling: tail_COM and active_site_COM
 gmx_mpi make_ndx -f npt.gro -o index.ndx << EOF
 r 257-259
-name 19 tail_COM 
+name 18 tail_COM 
 r 166-168
-name 20 active_site_COM
+name 19 active_site_COM
 r 1-247 & a CA
-name 21 core_CA
+name 20 core_CA
 q
 EOF
 # restrain the core CA atoms during pulling
-echo 21 | apptainer exec $GROMACS_CONTAINER gmx_mpi genrestr -f npt.gro -n index.ndx -o posre_core_CA.itp -fc 10 10 10
+echo 20 | apptainer exec $GROMACS_CONTAINER gmx_mpi genrestr -f npt.gro -n index.ndx -o posre_core_CA.itp -fc 10 10 10
 # run steered MD
 apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/pull.mdp -c npt.gro -n index.ndx -p topol.top -o pull.tpr
 apptainer exec $GROMACS_CONTAINER mpirun -np 8 gmx_mpi mdrun -deffnm pull -pf pullf.xvg -px pullx.xvg -v -ntomp 2 
