@@ -103,7 +103,7 @@ do
 done
 
 # 3 Prepare umbrella sampling windows
-python setupUmbrella.py summary_distances.dat 0.1 ../../bash_scripts/umbrella_template.sh &> caught-output.txt #edit!!!
+python $scripts/setupUmbrella.py summary_distances.dat 0.1 ../../bash_scripts/umbrella_template.sh &> caught-output.txt #edit!!!
 
 # 4 Run umbrella sampling windows
 # Collect all .sh scripts in COM_* directories

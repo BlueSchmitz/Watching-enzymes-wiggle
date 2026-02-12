@@ -2,7 +2,7 @@ define                  = -DPOSRES
 ; Run parameters
 integrator              = md
 dt                      = 0.002
-nsteps                  = 1000000              ; 1000000 * 0.002 ps --> 2 ns
+nsteps                  = 2000000              ; 2000000 * 0.002 ps --> 4 ns
 ; Output control 
 nstxout                 = 0                    ; no coordinates
 nstvout                 = 0                    ; no velocities
