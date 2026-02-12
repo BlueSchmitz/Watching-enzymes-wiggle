@@ -90,7 +90,7 @@ do
     apptainer exec $GROMACS_CONTAINER gmx_mpi distance -s pull.tpr \
         -f conf${i}.gro \
         -n index.ndx \
-        -select 'distance between com of group "tail_COM" and com of group "active_site_COM"' \
+        -select 'com of group "tail_COM" plus com of group "active_site_COM"' \
         -oall dist${i}.xvg 
 done
 # compile summary
