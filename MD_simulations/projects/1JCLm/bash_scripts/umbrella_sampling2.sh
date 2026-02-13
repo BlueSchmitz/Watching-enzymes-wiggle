@@ -1,7 +1,7 @@
 #!/bin/bash  
 
 #SBATCH -J umbrella_1JCLm 
-#SBATCH -t 02:00:00
+#SBATCH -t 01:00:00
 #SBATCH -p rome
 #SBATCH -N 1
 #SBATCH -n 8
@@ -82,7 +82,7 @@ cd ./outputs/$output_dir/
 #apptainer exec $GROMACS_CONTAINER mpirun -np 8 gmx_mpi mdrun -deffnm pull -pf pullf.xvg -px pullx.xvg -v -ntomp 2 
 
 # 2 Assemble COM distances indexed by frame number
-#echo 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s pull.tpr -f pull.xtc -o conf.gro -sep
+echo 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s pull.tpr -f pull.xtc -o conf.gro -sep
 # compute distances
 nframes=$(ls conf*.gro | wc -l)
 for (( i=0; i<${nframes}; i++ ))
