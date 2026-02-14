@@ -79,5 +79,5 @@ cd ./outputs/7_simple_MD
 echo "============= Downsizing and Exporting trajectory ============="
 echo -e "q" | gmx_mpi make_ndx -f md.tpr -o index.ndx # make index file with default groups
 # first checks if atoms jump across the box and then puts them back --> continuous trajectory
-echo -e "0\n0" | gmx_mpi trjconv -f md.xtc -s md.tpr -n index.ndx -o md_1000.xtc -dt 1000
+echo -e "0\n0" | gmx_mpi trjconv -f md.xtc -s md.tpr -n index.ndx -o md_10000.xtc -dt 1000
 echo "Trajectory saved as md_1000.xtc"
