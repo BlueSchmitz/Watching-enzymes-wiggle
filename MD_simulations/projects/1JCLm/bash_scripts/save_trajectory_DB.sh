@@ -1,6 +1,6 @@
 #!/bin/bash  
 
-#SBATCH --job-name="save 5EKYm trajectory"   
+#SBATCH --job-name="save 1JCLm trajectory"   
 #SBATCH --time=01:00:00
 #SBATCH --ntasks=1 
 #SBATCH --cpus-per-task=2
@@ -8,7 +8,7 @@
 #SBATCH --partition=compute-p1
 #SBATCH --mem-per-cpu=1GB
 #SBATCH --account=Research-AS-BN
-#SBATCH --output=/scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/5EKY_monomeric/5EKYm_save_trajectory_%j.out
+#SBATCH --output=/scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/1JCLm/1JCLm_save_trajectory_%j.out
 #SBATCH --mail-type=ALL ##you can also set BEGIN/END
 
 : '
@@ -79,5 +79,5 @@ cd ./outputs/7_simple_MD
 echo "============= Downsizing and Exporting trajectory ============="
 echo -e "q" | gmx_mpi make_ndx -f md.tpr -o index.ndx # make index file with default groups
 # first checks if atoms jump across the box and then puts them back --> continuous trajectory
-echo -e "0\n0" | gmx_mpi trjconv -f md.xtc -s md.tpr -n index.ndx -o md_100.xtc -dt 100
-echo "Trajectory saved as md_100.xtc"
+echo -e "0\n0" | gmx_mpi trjconv -f md.xtc -s md.tpr -n index.ndx -o md_1000.xtc -dt 1000
+echo "Trajectory saved as md_1000.xtc"
