@@ -82,28 +82,28 @@ cd ./outputs/$output_dir/
 #apptainer exec $GROMACS_CONTAINER mpirun -np 8 gmx_mpi mdrun -deffnm pull -pf pullf.xvg -px pullx.xvg -v -ntomp 2 -maxh 1.9 \
 
 # 2 Assemble COM distances indexed by frame number
-echo 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s pull.tpr -f pull.xtc -o conf.gro -sep
+#echo 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s pull.tpr -f pull.xtc -o conf.gro -sep
 # compute distances
-#nframes=$(ls conf*.gro | wc -l)
-#for (( i=0; i<${nframes}; i++ ))
-#do
-#    apptainer exec $GROMACS_CONTAINER gmx_mpi distance -s pull.tpr \
-#        -f conf${i}.gro \
-#        -n index.ndx \
-#        -select 'com of group "tail_COM" plus com of group "active_site_COM"' \
-#        -oall dist${i}.xvg 
-#done
+nframes=$(ls conf*.gro | wc -l)
+for (( i=0; i<${nframes}; i++ ))
+do
+    apptainer exec $GROMACS_CONTAINER gmx_mpi distance -s pull.tpr \
+        -f conf${i}.gro \
+        -n index.ndx \
+        -select 'com of group "tail_COM" plus com of group "active_site_COM"' \
+        -oall dist${i}.xvg 
+done
 # compile summary
-#touch summary_distances.dat
-#for (( i=0; i<${nframes}; i++ ))
-#do
-#    d=`tail -n 1 dist${i}.xvg | awk '{print $2}'`
-#    echo "${i} ${d}" >> summary_distances.dat
-#    rm dist${i}.xvg
-#done
+touch summary_distances.dat
+for (( i=0; i<${nframes}; i++ ))
+do
+    d=`tail -n 1 dist${i}.xvg | awk '{print $2}'`
+    echo "${i} ${d}" >> summary_distances.dat
+    rm dist${i}.xvg
+done
 
 # 3 Prepare umbrella sampling windows
-#python $scripts/setupUmbrella.py summary_distances.dat 0.1 ../../bash_scripts/umbrella_template.sh &> caught-output.txt #edit!!!
+python $scripts/setupUmbrella.py summary_distances.dat 0.1 ../../bash_scripts/umbrella_template.sh &> caught-output.txt #edit!!!
 
 #################################################
 # 4 Run umbrella sampling windows
