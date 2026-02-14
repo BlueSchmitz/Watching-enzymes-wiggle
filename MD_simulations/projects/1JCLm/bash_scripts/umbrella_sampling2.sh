@@ -1,7 +1,7 @@
 #!/bin/bash  
 
 #SBATCH -J umbrella_1JCLm 
-#SBATCH -t 02:0:00
+#SBATCH -t 02:00:00
 #SBATCH -p rome
 #SBATCH -N 1
 #SBATCH -n 8
@@ -79,7 +79,7 @@ cd ./outputs/$output_dir/
 #echo 20 | apptainer exec $GROMACS_CONTAINER gmx_mpi genrestr -f npt.gro -n index.ndx -o posre_core_CA.itp -fc 10 10 10
 # run steered MD
 apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/pull.mdp -c ./pull1/conf128.gro -n index.ndx -p topol.top -o pull.tpr -r ./pull1/conf128.gro
-apptainer exec $GROMACS_CONTAINER mpirun -np 8 gmx_mpi mdrun -deffnm pull -pf pullf.xvg -px pullx.xvg -v -ntomp 2 
+apptainer exec $GROMACS_CONTAINER mpirun -np 8 gmx_mpi mdrun -deffnm pull -pf pullf.xvg -px pullx.xvg -v -ntomp 2 -maxh 1.9 \
 
 # 2 Assemble COM distances indexed by frame number
 echo 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s pull.tpr -f pull.xtc -o conf.gro -sep
