@@ -78,7 +78,7 @@ def sampleDistances(distance_table,sample_interval):
     sampled_indexes = [current_index]
     while current_index < len(distances):
         
-        target_distance = distances[current_index] + sample_interval
+        target_distance = distances[current_index] - sample_interval
      
         # Walk through the rest of the distances list and find the distance 
         # that is closest to the target distance
