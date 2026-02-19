@@ -46,11 +46,12 @@ gen_vel                 = no                    ; Velocity generation is off
 ; Pull code
 pull                    = yes
 pull_ncoords            = 1                     ; only one reaction coordinate
-pull_coord1_groups      = 18 19                 ; groups 18 (tail_COM) and 19 (active_site_COM) define the reaction coordinate
+pull_ngroups            = 2                     ; Creates pull-group 1 & 2
+pull_coord1_groups      = 1 2                   ; groups 1 (tail_COM) and 2 (active_site_COM) define the reaction coordinate
 pull_group1_name        = tail_COM
 pull_group2_name        = active_site_COM
 pull_coord1_type        = umbrella              ; harmonic potential
-pull_coord1_geometry    = direction             ; simple distance increase
+pull_coord1_geometry    = direction             ; pulls along fixed vec
 pull_coord1_vec         = -0.04 1.00 -0.24      ; calculated distance from ChimeraX
 pull_coord1_dim         = Y Y Y                 ; pull along all dimensions
 pull_coord1_start       = yes                   ; define initial COM distance > 0

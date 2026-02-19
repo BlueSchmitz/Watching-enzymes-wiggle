@@ -78,7 +78,7 @@ cd ./outputs/$output_dir/
 # restrain the core CA atoms during pulling
 #echo 20 | apptainer exec $GROMACS_CONTAINER gmx_mpi genrestr -f npt.gro -n index.ndx -o posre_core_CA.itp -fc 10 10 10
 # extract last frame of first pulling
-echo 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f ./pull1/pull.xtc -s ./pull1/pull.tpr -o pull2.gro -dump 2728
+#echo 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f ./pull1/pull.xtc -s ./pull1/pull.tpr -o pull2.gro -dump 2728
 # run steered MD
 apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/pull2.mdp -c pull2.gro -n index.ndx -p topol.top -o pull2.tpr -r npt.gro
 apptainer exec $GROMACS_CONTAINER mpirun -np 8 gmx_mpi mdrun -deffnm pull2 -pf pullf2.xvg -px pullx2.xvg -v -ntomp 2 
