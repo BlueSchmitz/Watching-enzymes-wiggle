@@ -71,7 +71,7 @@ r 257-259
 name 18 tail_COM 
 r 166-168
 name 19 active_site_COM
-r 1-247 & a CA
+r 1-237 & a CA
 name 20 core_CA
 q
 EOF

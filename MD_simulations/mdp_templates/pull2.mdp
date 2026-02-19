@@ -2,7 +2,7 @@ define                  = -DPOSRES
 ; Run parameters
 integrator              = md
 dt                      = 0.002
-nsteps                  = 2000000              ; 2000000 * 0.002 ps --> 4 ns
+nsteps                  = 2000000              ; 5000000 * 0.002 ps --> 10 ns
 ; Output control 
 nstxout                 = 0                    ; no coordinates
 nstvout                 = 0                    ; no velocities
@@ -46,13 +46,13 @@ gen_vel                 = no                    ; Velocity generation is off
 ; Pull code
 pull                    = yes
 pull_ncoords            = 1                     ; only one reaction coordinate
-pull_ngroups            = 2                     ; two groups defining one reaction coordinate
+pull_coord1_groups      = 1 2                   ; groups 1 (tail_COM) and 2 (active_site_COM) define the reaction coordinate
 pull_group1_name        = tail_COM
 pull_group2_name        = active_site_COM
 pull_coord1_type        = umbrella              ; harmonic potential
-pull_coord1_geometry    = distance              ; simple distance increase
+pull_coord1_geometry    = direction             ; simple distance increase
+pull_coord1_vec         = -0.04 1.00 -0.24      ; calculated distance from ChimeraX
 pull_coord1_dim         = Y Y Y                 ; pull along all dimensions
-pull_coord1_groups      = 1 2                   ; groups 1 (tail_COM) and 2 (active_site_COM) define the reaction coordinate
 pull_coord1_start       = yes                   ; define initial COM distance > 0
-pull_coord1_rate        = -0.001                ; 0.001 nm/ps = 1 nm/ns, - to pull together
+pull_coord1_rate        = 0.001                 ; 0.001 nm/ps = 1 nm/ns
 pull_coord1_k           = 1000                  ; kJ mol^-1 nm^-2
