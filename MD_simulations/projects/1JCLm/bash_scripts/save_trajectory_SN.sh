@@ -63,7 +63,7 @@ trap copy_back_results EXIT
 
 ### Simple MD production run ###
 echo "============= Downsizing and Exporting trajectory ============="
-echo -e "q" | gmx_mpi make_ndx -f topol.tpr -o index.ndx # make index file with default groups
+echo -e "q" | apptainer exec $GROMACS_CONTAINER gmx_mpi make_ndx -f topol.tpr -o index.ndx # make index file with default groups
 # first checks if atoms jump across the box and then puts them back --> continuous trajectory
-echo -e "0\n0" | gmx_mpi trjconv -f md.xtc -s md.tpr -n index.ndx -o md_10000.xtc -dt 200
+echo -e "0\n0" | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md.xtc -s md.tpr -n index.ndx -o md_10000.xtc -dt 200
 echo "Trajectory saved as md_200.xtc"
