@@ -123,5 +123,8 @@ gmx_mpi distance -f md_fit.xtc -s md.tpr -n index.ndx -select 'com of group 24 p
 # Create new trajectory with selected frames where distance < 0.6 nm
 echo 0 | gmx_mpi trjconv -f md_fit.xtc -s md.tpr -o md_closed.xtc -drop dist_k167_y259_ps.xvg -dropover 0.6
 # number of h-bonds over time between protein and tail (DHA angle > 120 degrees --> HDA angle > 60 degrees, distance < 0.35 nm), output in xvg format
-echo 2 21 | gmx_mpi hbond -s md.tpr -f md_closed.xtc -n index.ndx -num hbond_time_closed.xvg -tu ns -b 20000 -a 60 -r 0.25
+echo 2 21 | gmx_mpi hbond -s md.tpr -f md_closed.xtc -n index.ndx -num hbond_time_closed_60_25.xvg -tu ns -b 20000 -a 60 -r 0.25
+# 2024
+echo 2 21 | gmx_mpi hbond -s md.tpr -f md_closed.xtc -n index.ndx -num hbond_time_closed_60_25.xvg -tu ns -b 20000 -a 60 -r 0.35
+echo 2 21 | gmx_mpi hbond -s md.tpr -f md_closed.xtc -n index.ndx -num hbond_time_closed_30_35.xvg -tu ns -b 20000 -a 30 -r 0.35
 # 
