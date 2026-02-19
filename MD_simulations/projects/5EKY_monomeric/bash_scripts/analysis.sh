@@ -80,20 +80,48 @@ echo "============= Analysis of trajectory ============="
 # make index file with default + custom groups
 gmx_mpi make_ndx -f md.tpr -o index.ndx << EOF
 r 1-248
-name 17 TIM_barrel
+name 18 TIM_barrel
 r 1-248 & a CA
-name 18 CA_TIM
+name 19 CA_TIM
+4 & 18 
+name 20 TIM_barrel_backbone
 r 249-259
-name 19 tail
+name 21 tail
 r 249-259 & a CA
-name 20 CA_loop
+name 22 CA_tail
+4 & 21 
+name 23 tail_backbone
 r 167 & a NZ
-name 21 Lys167_NZ
+name 24 Lys167_NZ
 r 259 & a OH
-name 22 Tyr259_OH
+name 25 Tyr259_OH
+
 q
 EOF
-# center protein and remove jumps, keep whole protein 
-gmx_mpi trjconv -f md.xtc -s md.tpr -o md_nojump.xtc -pbc nojump -center
-# Fit trajectory to reference (usually backbone or Cα)
-gmx_mpi trjconv -s md.tpr -f md_nojump.xtc -o md_fit.xtc -fit rot+trans
+
+# center the trajectory on the whole protein and remove PBC artifacts, output in compact format
+echo 1 0 | gmx_mpi trjconv -s md.tpr -f md.xtc -o md_center_mol.xtc -center -pbc mol -ur compact
+# fit trajectory to reference (TIM barrel backbone) to remove overall rotation and translation, keep whole system
+echo 20 0 | gmx_mpi trjconv -s md.tpr -f md_center_mol.xtc -o md_fit.xtc -fit rot+trans -n index.ndx
+# calculate RMSD of TIM barrel backbone over time, output in xvg format
+echo 20 20 | gmx_mpi rms -s md.tpr -f md_fit.xtc -n index.ndx -o rmsd_tim_barrel_backbone.xvg -tu ns
+python $scripts/plotxvg.py -i rmsd_tim_barrel_backbone.xvg 
+# calculate RMSD of tail backbone over time, output in xvg format
+echo 23 23 | gmx_mpi rms -s md.tpr -f md_fit.xtc -n index.ndx -o rmsd_tail_backbone.xvg -tu ns
+python $scripts/plotxvg.py -i rmsd_tail_backbone.xvg 
+# calculate distance between Lys167 NZ and Tyr259 OH over time, output in xvg format
+gmx_mpi distance -s md.tpr -f md_fit.xtc -n index.ndx -oall lys167_tyr259_distance.xvg -tu ns -select 'com of group 24 plus com of group 25'
+python $scripts/plotxvg.py -i lys167_tyr259_distance.xvg
+# histogram of the distance between Lys167 NZ and Tyr259 OH with bin width of 0.2 nm, output in xvg format
+gmx_mpi analyze -f lys167_tyr259_distance.xvg -dist lys167_tyr259_hist.xvg -bw 0.2
+# RSMF of CA atoms of the whole protein, output in xvg format
+echo 3 | gmx_mpi rmsf -f md_fit.xtc -s md.tpr -o rmsf_Ca.xvg -n index.ndx -b 20000 -res  # start at 20 ns (time in ps)
+python $scripts/plot_RMSF.py rmsf_Ca_10000.xvg
+### define frames with distance between Lys167 NZ and Tyr259 OH < 0.6 nm as "closed" and >= 0.6 nm as "open", output in xvg format
+# Compute distance time series (ps)
+gmx_mpi distance -f md_fit.xtc -s md.tpr -n index.ndx -select 'com of group 24 plus com of group 25' -oall dist_k167_y259_ps.xvg
+# Create new trajectory with selected frames where distance < 0.6 nm
+echo 0 | gmx_mpi trjconv -f md_fit.xtc -s md.tpr -o md_closed.xtc -drop dist_k167_y259_ps.xvg -dropover 0.6
+# number of h-bonds over time between protein and tail (DHA angle > 120 degrees --> HDA angle > 60 degrees, distance < 0.35 nm), output in xvg format
+echo 2 21 | gmx_mpi hbond -s md.tpr -f md_closed.xtc -n index.ndx -num hbond_time_closed.xvg -tu ns -b 20000 -a 60 -r 0.25
+# 

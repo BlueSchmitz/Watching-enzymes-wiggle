@@ -1,7 +1,7 @@
 #!/bin/bash  
 
 #SBATCH -J umbrella_1JCLm 
-#SBATCH -t 00:20:00
+#SBATCH -t 04:00:00
 #SBATCH -p rome
 #SBATCH -N 1
 #SBATCH -n 8
@@ -20,7 +20,7 @@ set -o errtrace
 
 ### Project-specific settings ###
 project_dir=1JCLm
-output_dir=8_umbrella
+output_dir=8_umbrella2
 pH=7
 
 export GMXLIB=$TMPDIR/MD_simulations/force_fields
@@ -59,51 +59,51 @@ trap copy_back_results EXIT
 
 # 1 Steered MD to pull tail into sctive site 
 # remove restraints from npt_5.gro 
-#mkdir -p ./outputs/$output_dir
-#cp ./outputs/4_equilibration/npt_5.gro ./outputs/$output_dir/npt.gro
-#cp ./outputs/4_equilibration/topol_5.top ./outputs/$output_dir/topol_5.top
+mkdir -p ./outputs/$output_dir
+cp ./outputs/4_equilibration/npt_5.gro ./outputs/$output_dir/npt.gro
+cp ./outputs/4_equilibration/topol_5.top ./outputs/$output_dir/topol_5.top
 cd ./outputs/$output_dir/
-#sed '/#ifdef POSRES/,/#endif/ s|#include "posre_.*\.itp"|#include "posre_core_CA.itp"|' topol_5.top > topol.top # Change the protein restraint block (POSRES)
-#echo "Changed position restraints from topol.top to restrain core_CA."
+sed '/#ifdef POSRES/,/#endif/ s|#include "posre_.*\.itp"|#include "posre_core_CA.itp"|' topol_5.top > topol.top # Change the protein restraint block (POSRES)
+echo "Changed position restraints from topol.top to restrain core_CA."
 # define groups for pulling: tail_COM and active_site_COM
-#apptainer exec $GROMACS_CONTAINER gmx_mpi make_ndx -f npt.gro -o index.ndx << EOF
-#r 257-259
-#name 18 tail_COM 
-#r 166-168
-#name 19 active_site_COM
-#r 1-247 & a CA
-#name 20 core_CA
-#q
-#EOF
+apptainer exec $GROMACS_CONTAINER gmx_mpi make_ndx -f npt.gro -o index.ndx << EOF
+r 257-259
+name 18 tail_COM 
+r 165-167
+name 19 active_site_COM
+r 1-237 & a CA
+name 20 core_CA
+q
+EOF
 # restrain the core CA atoms during pulling
-#echo 20 | apptainer exec $GROMACS_CONTAINER gmx_mpi genrestr -f npt.gro -n index.ndx -o posre_core_CA.itp -fc 10 10 10
+echo 20 | apptainer exec $GROMACS_CONTAINER gmx_mpi genrestr -f npt.gro -n index.ndx -o posre_core_CA.itp -fc 10 10 10
 # run steered MD
-#apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/pull.mdp -c ./pull1/conf128.gro -n index.ndx -p topol.top -o pull.tpr -r ./pull1/conf128.gro
-#apptainer exec $GROMACS_CONTAINER mpirun -np 8 gmx_mpi mdrun -deffnm pull -pf pullf.xvg -px pullx.xvg -v -ntomp 2 -maxh 1.9 \
+apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/pull.mdp -c npt.gro -n index.ndx -p topol.top -o pull.tpr -r npt.gro
+apptainer exec $GROMACS_CONTAINER mpirun -np 8 gmx_mpi mdrun -deffnm pull -pf pullf.xvg -px pullx.xvg -v -ntomp 2 \
 
 # 2 Assemble COM distances indexed by frame number
-#echo 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s pull.tpr -f pull.xtc -o conf.gro -sep
+echo 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s pull.tpr -f pull.xtc -o conf.gro -sep
 # compute distances
-#nframes=$(ls conf*.gro | wc -l)
-#for (( i=0; i<${nframes}; i++ ))
-#do
-#    apptainer exec $GROMACS_CONTAINER gmx_mpi distance -s pull.tpr \
-#        -f conf${i}.gro \
-#        -n index.ndx \
-#        -select 'com of group "tail_COM" plus com of group "active_site_COM"' \
-#        -oall dist${i}.xvg 
-#done
+nframes=$(ls conf*.gro | wc -l)
+for (( i=0; i<${nframes}; i++ ))
+do
+    apptainer exec $GROMACS_CONTAINER gmx_mpi distance -s pull.tpr \
+        -f conf${i}.gro \
+        -n index.ndx \
+        -select 'com of group "tail_COM" plus com of group "active_site_COM"' \
+        -oall dist${i}.xvg 
+done
 # compile summary
-#touch summary_distances.dat
-#for (( i=0; i<${nframes}; i++ ))
-#do
-#    d=`tail -n 1 dist${i}.xvg | awk '{print $2}'`
-#    echo "${i} ${d}" >> summary_distances.dat
-#    rm dist${i}.xvg
-#done
+touch summary_distances.dat
+for (( i=0; i<${nframes}; i++ ))
+do
+    d=`tail -n 1 dist${i}.xvg | awk '{print $2}'`
+    echo "${i} ${d}" >> summary_distances.dat
+    rm dist${i}.xvg
+done
 
 # 3 Prepare umbrella sampling windows
-python $scripts/setupUmbrella.py summary_distances.dat 0.1 ../../bash_scripts/umbrella_template.sh #edit!!!
+python $scripts/setupUmbrella.py summary_distances.dat 0.1 ../../bash_scripts/umbrella_template.sh 
 
 #################################################
 # 4 Run umbrella sampling windows
