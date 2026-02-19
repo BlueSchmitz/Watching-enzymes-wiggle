@@ -1,7 +1,7 @@
 #!/bin/bash  
 
 #SBATCH -J umbrella_1JCLm 
-#SBATCH -t 01:00:00
+#SBATCH -t 04:00:00
 #SBATCH -p rome
 #SBATCH -N 1
 #SBATCH -n 8
