@@ -105,7 +105,7 @@ do
     rm dist${i}.xvg
 done
 cd ..
-gmx trjconv -f pull2.xtc -o pull2_truncated.xtc -e 1700
+echo 0| apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f pull2.xtc -o pull2_truncated.xtc -e 1700
 echo 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s pull.tpr -f pull2_truncated.xtc -o conf.gro -sep
 # compute distances
 nframes=$(ls conf*.gro | wc -l)
