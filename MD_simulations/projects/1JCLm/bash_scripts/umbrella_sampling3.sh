@@ -84,28 +84,28 @@ cd ./outputs/$output_dir/
 #apptainer exec $GROMACS_CONTAINER mpirun -np 8 gmx_mpi mdrun -deffnm pull2 -pf pullf2.xvg -px pullx2.xvg -v -ntomp 2 
 
 # 2 Assemble COM distances indexed by frame number
-cd ./pull1
-echo 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s pull.tpr -f pull.xtc -o conf.gro -sep
+#cd ./pull1
+#echo 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s pull.tpr -f pull.xtc -o conf.gro -sep
 # compute distances
-nframes=$(ls conf*.gro | wc -l)
-for (( i=0; i<${nframes}; i++ ))
-do
-    apptainer exec $GROMACS_CONTAINER gmx_mpi distance -s pull.tpr \
-        -f conf${i}.gro \
-        -n index.ndx \
-        -select 'com of group "tail_COM" plus com of group "active_site_COM"' \
-        -oall dist${i}.xvg 
-done
+#nframes=$(ls conf*.gro | wc -l)
+#for (( i=0; i<${nframes}; i++ ))
+#do
+#    apptainer exec $GROMACS_CONTAINER gmx_mpi distance -s pull.tpr \
+#        -f conf${i}.gro \
+#        -n index.ndx \
+#        -select 'com of group "tail_COM" plus com of group "active_site_COM"' \
+#        -oall dist${i}.xvg 
+#done
 # compile summary
-touch summary_distances.dat
-for (( i=0; i<${nframes}; i++ ))
-do
-    d=`tail -n 1 dist${i}.xvg | awk '{print $2}'`
-    echo "${i} ${d}" >> summary_distances.dat
-    rm dist${i}.xvg
-done
-cd ..
-echo 0| apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f pull2.xtc -o pull2_truncated.xtc -e 1700
+#touch summary_distances.dat
+#for (( i=0; i<${nframes}; i++ ))
+#do
+#    d=`tail -n 1 dist${i}.xvg | awk '{print $2}'`
+#    echo "${i} ${d}" >> summary_distances.dat
+#    rm dist${i}.xvg
+#done
+#cd ..
+#echo 0| apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f pull2.xtc -o pull2_truncated.xtc -e 1700
 echo 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s pull2.tpr -f pull2_truncated.xtc -o conf.gro -sep
 # compute distances
 nframes=$(ls conf*.gro | wc -l)
