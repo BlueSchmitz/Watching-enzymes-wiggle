@@ -55,5 +55,5 @@ pull_coord1_geometry    = direction             ; pulls along fixed vec
 pull_coord1_vec         = -0.04 1.00 -0.24      ; calculated distance from ChimeraX
 pull_coord1_dim         = Y Y Y                 ; pull along all dimensions
 pull_coord1_start       = yes                   ; define initial COM distance > 0
-pull_coord1_rate        = 0.001                 ; 0.001 nm/ps = 1 nm/ns
+pull_coord1_rate        = -0.001                ; 0.001 nm/ps = 1 nm/ns; - to pull together
 pull_coord1_k           = 1000                  ; kJ mol^-1 nm^-2
