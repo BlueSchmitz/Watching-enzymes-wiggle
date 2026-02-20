@@ -36,7 +36,6 @@ plt.figure(figsize=(8, 4))
 plt.plot(resid, rmsf, linewidth=2)
 plt.xlabel("Residue number")
 plt.ylabel("RMSF (nm)")
-plt.title("Cα RMSF per residue")
 plt.grid(alpha=0.3)
 plt.tight_layout()
 
