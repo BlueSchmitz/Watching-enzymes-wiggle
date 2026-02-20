@@ -106,12 +106,12 @@ do
 done
 cd ..
 echo 0| apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f pull2.xtc -o pull2_truncated.xtc -e 1700
-echo 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s pull.tpr -f pull2_truncated.xtc -o conf.gro -sep
+echo 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s pull2.tpr -f pull2_truncated.xtc -o conf.gro -sep
 # compute distances
 nframes=$(ls conf*.gro | wc -l)
 for (( i=0; i<${nframes}; i++ ))
 do
-    apptainer exec $GROMACS_CONTAINER gmx_mpi distance -s pull.tpr \
+    apptainer exec $GROMACS_CONTAINER gmx_mpi distance -s pull2.tpr \
         -f conf${i}.gro \
         -n index.ndx \
         -select 'com of group "tail_COM" plus com of group "active_site_COM"' \
