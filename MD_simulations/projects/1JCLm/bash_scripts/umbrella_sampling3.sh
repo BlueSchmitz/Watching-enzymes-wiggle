@@ -106,7 +106,7 @@ cd ./outputs/$output_dir/
 #done
 #cd ..
 #echo 0| apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f pull2.xtc -o pull2_truncated.xtc -e 1700
-echo 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s pull2.tpr -f pull2_truncated.xtc -o conf.gro -sep
+#echo 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s pull2.tpr -f pull2_truncated.xtc -o conf.gro -sep
 # compute distances
 nframes=$(ls conf*.gro | wc -l)
 for (( i=0; i<${nframes}; i++ ))
@@ -127,7 +127,7 @@ do
 done
 
 # 3 Prepare umbrella sampling windows
-#python $scripts/setupUmbrella.py summary_distances.dat 0.1 ../../bash_scripts/umbrella_template.sh 
+python $scripts/setupUmbrella.py summary_distances.dat 0.1 ../../bash_scripts/umbrella_template.sh 
 
 #################################################
 # 4 Run umbrella sampling windows
