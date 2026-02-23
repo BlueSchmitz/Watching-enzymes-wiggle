@@ -21,7 +21,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-apptainer exec $GROMACS_CONTAINER gmx_mpi mdrun -deffnm nptXXX -nt 1 -v
+apptainer exec $GROMACS_CONTAINER gmx_mpi mdrun -deffnm nptXXX -v
 if [ $? -ne 0 ]; then
     echo "FAIL: mdrun equilibration failed" > FAIL
     exit 1
@@ -34,7 +34,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-apptainer exec $GROMACS_CONTAINER gmx_mpi mdrun -deffnm umbrellaXXX -nt 1 -v
+apptainer exec $GROMACS_CONTAINER gmx_mpi mdrun -deffnm umbrellaXXX -v
 if [ $? -ne 0 ]; then
     echo "FAIL: mdrun umbrella failed" > FAIL
     exit 1

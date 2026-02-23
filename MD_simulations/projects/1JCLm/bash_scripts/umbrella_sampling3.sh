@@ -1,7 +1,7 @@
 #!/bin/bash  
 
 #SBATCH -J umbrella_1JCLm 
-#SBATCH -t 00:30:00
+#SBATCH -t 00:05:00
 #SBATCH -p rome
 #SBATCH -N 1
 #SBATCH -n 8
@@ -108,23 +108,23 @@ cd ./outputs/$output_dir/
 #echo 0| apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f pull2.xtc -o pull2_truncated.xtc -e 1700
 #echo 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s pull2.tpr -f pull2_truncated.xtc -o conf.gro -sep
 # compute distances
-nframes=$(ls conf*.gro | wc -l)
-for (( i=0; i<${nframes}; i++ ))
-do
-    apptainer exec $GROMACS_CONTAINER gmx_mpi distance -s ./pull2/pull2.tpr \
-        -f conf${i}.gro \
-        -n index.ndx \
-        -select 'com of group "tail_COM" plus com of group "active_site_COM"' \
-        -oall dist${i}.xvg 
-done
+#nframes=$(ls conf*.gro | wc -l)
+#for (( i=0; i<${nframes}; i++ ))
+#do
+#    apptainer exec $GROMACS_CONTAINER gmx_mpi distance -s ./pull2/pull2.tpr \
+#        -f conf${i}.gro \
+#        -n index.ndx \
+#        -select 'com of group "tail_COM" plus com of group "active_site_COM"' \
+#        -oall dist${i}.xvg 
+#done
 # compile summary
-touch summary_distances.dat
-for (( i=0; i<${nframes}; i++ ))
-do
-    d=`tail -n 1 dist${i}.xvg | awk '{print $2}'`
-    echo "${i} ${d}" >> summary_distances.dat
-    rm dist${i}.xvg
-done
+#touch summary_distances.dat
+#for (( i=0; i<${nframes}; i++ ))
+#do
+#    d=`tail -n 1 dist${i}.xvg | awk '{print $2}'`
+#    echo "${i} ${d}" >> summary_distances.dat
+#    rm dist${i}.xvg
+#done
 
 # 3 Prepare umbrella sampling windows
 python $scripts/setupUmbrella.py summary_distances.dat 0.1 ../../bash_scripts/umbrella_template.sh 
