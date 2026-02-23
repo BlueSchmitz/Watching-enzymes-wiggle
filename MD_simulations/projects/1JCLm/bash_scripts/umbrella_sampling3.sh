@@ -111,7 +111,7 @@ cd ./outputs/$output_dir/
 nframes=$(ls conf*.gro | wc -l)
 for (( i=0; i<${nframes}; i++ ))
 do
-    apptainer exec $GROMACS_CONTAINER gmx_mpi distance -s pull2.tpr \
+    apptainer exec $GROMACS_CONTAINER gmx_mpi distance -s ./pull2/pull2.tpr \
         -f conf${i}.gro \
         -n index.ndx \
         -select 'com of group "tail_COM" plus com of group "active_site_COM"' \
