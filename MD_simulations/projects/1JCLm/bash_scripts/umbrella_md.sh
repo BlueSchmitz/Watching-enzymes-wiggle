@@ -77,10 +77,20 @@ fi
 script_dir=$(dirname "$script")
 frame_number=$(echo "$script" | grep -oP 'frame-\K[0-9]+')
 
-echo "Task $TASK_ID: Running $script..."
-
 # 1 thread per rank
 export OMP_NUM_THREADS=1
 
-# Run with 8 MPI ranks, 1 thread each
-bash "$script"
+# Run script 
+cd "$script_dir"
+echo "Task $TASK_ID: Running $script..."
+
+export OMP_NUM_THREADS=1
+
+# Run inside subshell to ensure we return to the original directory after execution
+(
+  cd "$script_dir" || exit 1
+  echo "Working directory: $(pwd)"
+  bash "$(basename "$script")"
+)
+
+echo "Task $TASK_ID: Finished $script."

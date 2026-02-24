@@ -64,7 +64,6 @@ set -o errtrace
 ### Project-specific settings ###
 project_dir=MlDERA
 pH=7
-output_dir=1_protonation
 # Set paths for mdp_templates, force_fields and pdb file (to change paths quickly)
 export GMXLIB=$TMPDIR/MD_simulations/force_fields
 export GROMACS_CONTAINER=$HOME/Blue/software/apptainer_2021/gromacs_plumed.sif # path to gromacs apptainer container
@@ -83,8 +82,8 @@ function copy_back_results {
     echo "=== Copying results back to home at $(date). ==="
     if [[ -d "$TMPDIR/MD_simulations/projects/$project_dir/outputs/$output_dir" ]]; then
         rsync -av --partial --inplace \
-          "$TMPDIR/MD_simulations/projects/$project_dir/outputs/$output_dir/" \
-          "$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/$project_dir/outputs/$output_dir/"
+          "$TMPDIR/MD_simulations/projects/$project_dir/outputs/" \
+          "$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/$project_dir/outputs/"
         echo "=== Copy complete at $(date) ==="
     else
         echo "Nothing to copy back (outputs directory not found)"
