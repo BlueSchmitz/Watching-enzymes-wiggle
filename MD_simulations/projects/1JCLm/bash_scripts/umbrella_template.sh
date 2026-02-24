@@ -2,7 +2,7 @@
 
 ### Project-specific settings ###
 project_dir=1JCLm
-output_dir=8_umbrella
+output_dir=8_umbrella2
 pH=7
 
 export GMXLIB=$TMPDIR/MD_simulations/force_fields
@@ -21,7 +21,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-apptainer exec $GROMACS_CONTAINER gmx_mpi mdrun -deffnm nptXXX -v
+apptainer exec $GROMACS_CONTAINER mpirun -np 8 gmx_mpi mdrun -deffnm nptXXX -v
 if [ $? -ne 0 ]; then
     echo "FAIL: mdrun equilibration failed" > FAIL
     exit 1
@@ -34,7 +34,7 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-apptainer exec $GROMACS_CONTAINER gmx_mpi mdrun -deffnm umbrellaXXX -v
+apptainer exec $GROMACS_CONTAINER mpirun -np 8 gmx_mpi mdrun -deffnm umbrellaXXX -v
 if [ $? -ne 0 ]; then
     echo "FAIL: mdrun umbrella failed" > FAIL
     exit 1

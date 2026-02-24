@@ -77,13 +77,10 @@ fi
 script_dir=$(dirname "$script")
 frame_number=$(echo "$script" | grep -oP 'frame-\K[0-9]+')
 
-# Define log file like in your serial script
-log_file="$script_dir/frame-${frame_number}.log"
-
-echo "Task $TASK_ID: Running $script... (Logging to $log_file)"
+echo "Task $TASK_ID: Running $script..."
 
 # 1 thread per rank
 export OMP_NUM_THREADS=1
 
 # Run with 8 MPI ranks, 1 thread each
-srun bash "$script" > "$log_file" 2>&1
+bash "$script"
