@@ -89,7 +89,7 @@ frame_number=$(echo "$script" | grep -oP 'frame-\K[0-9]+')
 export OMP_NUM_THREADS=1
 
 # Run script 
-cd "$script_dir"
+print("Current directory: $(pwd)")
 echo "Task $TASK_ID: Running $script..."
 
 export OMP_NUM_THREADS=1
