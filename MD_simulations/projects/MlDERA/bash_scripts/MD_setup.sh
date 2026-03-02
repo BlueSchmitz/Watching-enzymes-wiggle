@@ -73,7 +73,16 @@ scripts=$TMPDIR/MD_simulations/scripts
 pdb=$TMPDIR/MD_simulations/projects/$project_dir/inputs/*.pdb
 
 # Copy input files to scratch
-cp -r $HOME/Blue/Watching-enzymes-wiggle/MD_simulations/ "$TMPDIR"
+rsync -av \
+  --exclude="1JCLm/" \
+  --exclude="1JCLd/" \
+  --exclude="5EKY_monomeric/" \
+  --exclude="BbDERA/" \
+  --exclude="BtDERA/" \
+  --exclude="CbDERA/" \
+  $HOME/Blue/Watching-enzymes-wiggle/MD_simulations/ \
+  "$TMPDIR/MD_simulations/"
+
 cd $TMPDIR/MD_simulations/projects/$project_dir
 
 # Function to copy back results when error occurs and before the script exits

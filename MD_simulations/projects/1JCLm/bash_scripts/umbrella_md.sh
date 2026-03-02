@@ -37,7 +37,15 @@ module list
 
 ### Copy project to scratch ###
 echo "=== Copying project to scratch ==="
-cp -r $HOME/Blue/Watching-enzymes-wiggle/MD_simulations/ "$TMPDIR"
+rsync -av \
+  --exclude="MlDERA/" \
+  --exclude="1JCLd/" \
+  --exclude="5EKY_monomeric/" \
+  --exclude="BbDERA/" \
+  --exclude="BtDERA/" \
+  --exclude="CbDERA/" \
+  $HOME/Blue/Watching-enzymes-wiggle/MD_simulations/ \
+  "$TMPDIR/MD_simulations/"
 cd $TMPDIR/MD_simulations/projects/$project_dir
 
 # Function to copy back results when error occurs and before the script exits
