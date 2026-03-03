@@ -21,14 +21,17 @@ project_dir=1JCLm
 output_dir=8_umbrella2
 pH=7
 
-export GMXLIB=$TMPDIR/MD_simulations/force_fields
+export GMXLIB=$HOME/MD_simulations/force_fields
 export GROMACS_CONTAINER=$HOME/Blue/software/apptainer_2021/gromacs_plumed.sif
 export PDB2PQR_CONTAINER=$HOME/Blue/software/apptainer_pdb2pqr/pdb2pqr.sif
 export PLUMED_CONTAINER=$HOME/Blue/software/apptainer_plumed/plumed.sif
 
-mdp=$TMPDIR/MD_simulations/mdp_templates
-scripts=$TMPDIR/MD_simulations/scripts
-pdb=$TMPDIR/MD_simulations/projects/$project_dir/inputs/*.pdb
+mdp=$HOME/MD_simulations/mdp_templates
+scripts=$HOME/MD_simulations/scripts
+pdb=$HOME/MD_simulations/projects/$project_dir/inputs/*.pdb
+
+mktemp /gpfs/scratch1/shared/rleveson/MD_simulations/
+tmpdir=/gpfs/scratch1/shared/rleveson/MD_simulations/
 
 # Load modules:  
 module load 2023
@@ -37,24 +40,16 @@ module list
 
 ### Copy project to scratch ###
 echo "=== Copying project to scratch ==="
-rsync -av \
-  --exclude="MlDERA/" \
-  --exclude="1JCLd/" \
-  --exclude="5EKY_monomeric/" \
-  --exclude="BbDERA/" \
-  --exclude="BtDERA/" \
-  --exclude="CbDERA/" \
-  $HOME/Blue/Watching-enzymes-wiggle/MD_simulations/ \
-  "$TMPDIR/MD_simulations/"
-cd $TMPDIR/MD_simulations/projects/$project_dir
+cp -r $HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/$project_dir "$tmpdir/MD_simulations/projects/"
+cd $tmpdir/MD_simulations/projects/$project_dir
 
 # Function to copy back results when error occurs and before the script exits
 function copy_back_results {
     set +e +u # Disable exit on error for this function
     echo "=== Copying results back to home at $(date). ==="
-    if [[ -d "$TMPDIR/MD_simulations/projects/$project_dir/outputs/$output_dir" ]]; then
+    if [[ -d "$tmpdir/MD_simulations/projects/$project_dir/outputs/$output_dir" ]]; then
         rsync -av --partial --inplace \
-          "$TMPDIR/MD_simulations/projects/$project_dir/outputs/$output_dir/" \
+          "$tmpdir/MD_simulations/projects/$project_dir/outputs/$output_dir/" \
           "$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/$project_dir/outputs/$output_dir/"
         echo "=== Copy complete at $(date) ==="
     else

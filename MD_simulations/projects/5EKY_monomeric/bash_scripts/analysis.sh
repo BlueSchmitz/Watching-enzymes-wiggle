@@ -126,4 +126,10 @@ echo 0 | gmx_mpi trjconv -f md_fit.xtc -s md.tpr -o md_closed.xtc -drop dist_k16
 echo 18 21 | gmx_mpi hbond -s md.tpr -f md_closed.xtc -n index.ndx -num hbond_time_closed_60_25.xvg -tu ns -a 60 -r 0.35
 # 2024
 echo 18 21 | gmx_mpi hbond-legacy -s md.tpr -f md_closed.xtc -n index.ndx -num hbond_time_closed_60_25.xvg -tu ns -a 60 -r 0.35
-# 
+
+
+# PCA
+# Compute covariance matrix
+gmx_mpi covar -s md.tpr -f md_fit.xtc -o eigenvalues.xvg -v eigenvectors.trr
+# Project trajectory onto PCs
+gmx anaeig -v eigenvectors.trr -f md_fit.xtc -proj proj.xvg

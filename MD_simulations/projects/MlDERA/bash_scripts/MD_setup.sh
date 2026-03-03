@@ -65,12 +65,15 @@ set -o errtrace
 project_dir=MlDERA
 pH=7
 # Set paths for mdp_templates, force_fields and pdb file (to change paths quickly)
-export GMXLIB=$TMPDIR/MD_simulations/force_fields
+export GMXLIB=$tmpdir/MD_simulations/force_fields
 export GROMACS_CONTAINER=$HOME/Blue/software/apptainer_2021/gromacs_plumed.sif # path to gromacs apptainer container
 export PDB2PQR_CONTAINER=$HOME/Blue/software/apptainer_pdb2pqr/pdb2pqr.sif # path to pdb2pqr apptainer container
-mdp=$TMPDIR/MD_simulations/mdp_templates
-scripts=$TMPDIR/MD_simulations/scripts
-pdb=$TMPDIR/MD_simulations/projects/$project_dir/inputs/*.pdb
+mdp=$tmpdir/MD_simulations/mdp_templates
+scripts=$tmpdir/MD_simulations/scripts
+pdb=$tmpdir/MD_simulations/projects/$project_dir/inputs/*.pdb
+
+mktemp /gpfs/scratch1/shared/rleveson/MD_simulations/
+tmpdir=/gpfs/scratch1/shared/rleveson/MD_simulations/
 
 # Copy input files to scratch
 rsync -av \
@@ -81,17 +84,17 @@ rsync -av \
   --exclude="BtDERA/" \
   --exclude="CbDERA/" \
   $HOME/Blue/Watching-enzymes-wiggle/MD_simulations/ \
-  "$TMPDIR/MD_simulations/"
+  "$tmpdir/MD_simulations/"
 
-cd $TMPDIR/MD_simulations/projects/$project_dir
+cd $tmpdir/MD_simulations/projects/$project_dir
 
 # Function to copy back results when error occurs and before the script exits
 function copy_back_results {
     set +e +u # Disable exit on error for this function
     echo "=== Copying results back to home at $(date). ==="
-    if [[ -d "$TMPDIR/MD_simulations/projects/$project_dir/outputs/$output_dir" ]]; then
+    if [[ -d "$tmpdir/MD_simulations/projects/$project_dir/outputs/$output_dir" ]]; then
         rsync -av --partial --inplace \
-          "$TMPDIR/MD_simulations/projects/$project_dir/outputs/" \
+          "$tmpdir/MD_simulations/projects/$project_dir/outputs/" \
           "$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/$project_dir/outputs/"
         echo "=== Copy complete at $(date) ==="
     else
@@ -207,6 +210,6 @@ echo "============= Copying project outputs back to home ============="
 rsync -av \
       --exclude 'rleveson.*' \
       --exclude '*.out' \
-      $TMPDIR/MD_simulations/projects/$project_dir/outputs/ \
+      $tmpdir/MD_simulations/projects/$project_dir/outputs/ \
       $HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/$project_dir/outputs/
 echo "============= Copy complete ============="
