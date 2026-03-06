@@ -10,9 +10,9 @@ export GROMACS_CONTAINER=$HOME/Blue/software/apptainer_2021/gromacs_plumed.sif
 export PDB2PQR_CONTAINER=$HOME/Blue/software/apptainer_pdb2pqr/pdb2pqr.sif
 export PLUMED_CONTAINER=$HOME/Blue/software/apptainer_plumed/plumed.sif
 
-mdp=$TMPDIR/MD_simulations/mdp_templates
-scripts=$TMPDIR/MD_simulations/scripts
-pdb=$TMPDIR/MD_simulations/projects/$project_dir/inputs/*.pdb
+mdp=$HOME/MD_simulations/mdp_templates
+scripts=$HOME/MD_simulations/scripts
+pdb=$HOME/MD_simulations/projects/$project_dir/inputs/*.pdb
 
 # Short equilibration
 apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/umbrella_npt.mdp -c ../confXXX.gro -r ../confXXX.gro -p ../topol.top -n ../index.ndx -o nptXXX.tpr
