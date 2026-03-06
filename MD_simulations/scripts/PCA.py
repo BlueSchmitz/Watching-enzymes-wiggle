@@ -58,7 +58,7 @@ kB = 0.008314  # kJ/mol/K
 T = 298  # K
 
 H, xedges, yedges = np.histogram2d(pc1, pc2, bins=50)
-P = H / np.max(H) # normalize to max probability --> most populated bin F=0, others F>0
+P = H / np.max(H) # normalize to max bin count --> most populated bin F=0, others F>0
 F = -kB * T * np.log(P + 1e-12)  # avoid log(0)
 #F[P == 0] = np.nan               # hide unsampled regions
 
@@ -73,6 +73,26 @@ plt.xlabel("PC1")
 plt.ylabel("PC2")
 plt.tight_layout()
 plt.savefig("free_energy.png", dpi=300)
+plt.close()
+
+### Optional: Probability density 
+# 2D histogram with density=True
+H, xedges, yedges = np.histogram2d(pc1, pc2, bins=50, density=True)
+# probability density -> free energy
+F = -kB * T * np.log(H + 1e-12)  # avoid log(0)
+# shift minimum free energy to zero
+F = F - np.nanmin(F)
+plt.figure(figsize=(8, 4))
+plt.imshow(F.T, origin='lower',
+           extent=[xedges[0], xedges[-1],
+                   yedges[0], yedges[-1]],
+           aspect='auto')
+
+plt.colorbar(label="Free Energy (kJ/mol)")
+plt.xlabel("PC1")
+plt.ylabel("PC2")
+plt.tight_layout()
+plt.savefig("free_energy_density.png", dpi=300)
 plt.close()
 
 ### Optional: KDE-based free energy landscape ###
