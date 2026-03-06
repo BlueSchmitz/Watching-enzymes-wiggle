@@ -6,6 +6,7 @@ import sys
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import gaussian_kde
+from scipy.ndimage import gaussian_filter
 
 ### 1 Plot PC1 vs. PC2 ###
 # Load projection file (skip comments)
@@ -78,8 +79,11 @@ plt.close()
 ### Optional: Probability density 
 # 2D histogram with density=True
 H, xedges, yedges = np.histogram2d(pc1, pc2, bins=50, density=True)
+# Apply Gaussian smoothing to the histogram
+sigma = 1  # standard deviation in bins, adjust for more/less smoothing
+H_smooth = gaussian_filter(H, sigma=sigma)
 # probability density -> free energy
-F = -kB * T * np.log(H + 1e-12)  # avoid log(0)
+F = -kB * T * np.log(H_smooth + 1e-12)  # avoid log(0)
 # shift minimum free energy to zero
 F = F - np.nanmin(F)
 plt.figure(figsize=(8, 4))
