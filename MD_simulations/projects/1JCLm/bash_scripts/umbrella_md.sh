@@ -30,8 +30,8 @@ mdp=$HOME/MD_simulations/mdp_templates
 scripts=$HOME/MD_simulations/scripts
 pdb=$HOME/MD_simulations/projects/$project_dir/inputs/*.pdb
 
-mktemp /gpfs/scratch1/shared/rleveson/MD_simulations/
-tmpdir=/gpfs/scratch1/shared/rleveson/MD_simulations/
+mktemp /gpfs/scratch1/shared/rleveson/Blue/MD_simulations/
+tmpdir=/gpfs/scratch1/shared/rleveson/Blue/MD_simulations/
 
 # Load modules:  
 module load 2023

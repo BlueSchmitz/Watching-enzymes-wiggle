@@ -130,6 +130,21 @@ echo 18 21 | gmx_mpi hbond-legacy -s md.tpr -f md_closed.xtc -n index.ndx -num h
 
 # PCA
 # Compute covariance matrix
-gmx_mpi covar -s md.tpr -f md_fit.xtc -o eigenvalues.xvg -v eigenvectors.trr
+echo 19 3 | gmx_mpi covar -s md.tpr -f md_fit.xtc -n index.ndx -b 20000 -o eigenvalues.xvg -v eigenvectors.trr
+    # fit to CA TIM, covariance of whole protein CA (so side-chains do not contribute to covariance)
+    # eigenvalues.xvg contains the eigenvalues (variance along each PC as mean square fluctuation captured by that PC in nm^2), eigenvectors.trr contains the eigenvectors (PCs) as a trajectory
 # Project trajectory onto PCs
-gmx anaeig -v eigenvectors.trr -f md_fit.xtc -proj proj.xvg
+echo 19 3 | gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s md.tpr -n index.ndx -proj proj.xvg -first 1 -last 2
+# Extract extreme projections along PC1 and PC2
+echo 19 3 | gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s md.tpr -n index.ndx -extr extremes.pdb -first 1 -last 2
+# Eigenvector components per atom (which residues dominate the motion)
+echo 3 | gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s md.tpr -n index.ndx -rmsf PC_rmsf_per_atom.xvg -first 1 -last 2
+# Extract extreme projections (from python script)
+min_pc1=$(awk '/min_pc1/ {print $2}' pc_extreme_frames.dat)
+echo 1 | gmx trjconv -f md_fit.xtc -s md.tpr -dump $min_pc1 -o min_pc1.pdb
+max_pc1=$(awk '/max_pc1/ {print $2}' pc_extreme_frames.dat)
+echo 1 | gmx trjconv -f md_fit.xtc -s md.tpr -dump $max_pc1 -o max_pc1.pdb
+min_pc2=$(awk '/min_pc2/ {print $2}' pc_extreme_frames.dat)
+echo 1 | gmx trjconv -f md_fit.xtc -s md.tpr -dump $min_pc2 -o min_pc2.pdb
+max_pc2=$(awk '/max_pc2/ {print $2}' pc_extreme_frames.dat)
+echo 1 | gmx trjconv -f md_fit.xtc -s md.tpr -dump $max_pc2 -o max_pc2.pdb
