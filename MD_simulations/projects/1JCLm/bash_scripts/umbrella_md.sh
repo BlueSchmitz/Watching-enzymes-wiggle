@@ -30,8 +30,9 @@ mdp=$HOME/MD_simulations/mdp_templates
 scripts=$HOME/MD_simulations/scripts
 pdb=$HOME/MD_simulations/projects/$project_dir/inputs/*.pdb
 
-mktemp /gpfs/scratch1/shared/rleveson/Blue/MD_simulations/
-tmpdir=/gpfs/scratch1/shared/rleveson/Blue/MD_simulations/
+# Create temporary directory on scratch for this job
+tmpdir=$(mktemp -d /gpfs/scratch1/shared/rleveson/Blue/tmp.XXXXXX)
+mkdir -p "$tmpdir/MD_simulations/projects/"
 
 # Load modules:  
 module load 2023
@@ -55,6 +56,8 @@ function copy_back_results {
     else
         echo "Nothing to copy back (outputs directory not found)"
     fi
+    # Clean up temporary directory
+    rm -rf "$tmpdir"
 }
 trap copy_back_results EXIT
 
