@@ -139,12 +139,15 @@ echo 19 3 | gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s md.tpr -n index.
 echo 19 3 | gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s md.tpr -n index.ndx -extr extremes.pdb -first 1 -last 2
 # Eigenvector components per atom (which residues dominate the motion)
 echo 3 | gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s md.tpr -n index.ndx -rmsf PC_rmsf_per_atom.xvg -first 1 -last 2
+
+python $scripts/PCA.py proj.xvg eigenvalues.xvg
+
 # Extract extreme projections (from python script)
 min_pc1=$(awk '/min_pc1/ {print $2}' pc_extreme_frames.dat)
-echo 1 | gmx trjconv -f md_fit.xtc -s md.tpr -dump $min_pc1 -o min_pc1.pdb
+echo 1 | gmx_mpi trjconv -f md_fit.xtc -s md.tpr -dump $min_pc1 -o min_pc1.pdb
 max_pc1=$(awk '/max_pc1/ {print $2}' pc_extreme_frames.dat)
-echo 1 | gmx trjconv -f md_fit.xtc -s md.tpr -dump $max_pc1 -o max_pc1.pdb
+echo 1 | gmx_mpi trjconv -f md_fit.xtc -s md.tpr -dump $max_pc1 -o max_pc1.pdb
 min_pc2=$(awk '/min_pc2/ {print $2}' pc_extreme_frames.dat)
-echo 1 | gmx trjconv -f md_fit.xtc -s md.tpr -dump $min_pc2 -o min_pc2.pdb
+echo 1 | gmx_mpi trjconv -f md_fit.xtc -s md.tpr -dump $min_pc2 -o min_pc2.pdb
 max_pc2=$(awk '/max_pc2/ {print $2}' pc_extreme_frames.dat)
-echo 1 | gmx trjconv -f md_fit.xtc -s md.tpr -dump $max_pc2 -o max_pc2.pdb
+echo 1 | gmx_mpi trjconv -f md_fit.xtc -s md.tpr -dump $max_pc2 -o max_pc2.pdb
