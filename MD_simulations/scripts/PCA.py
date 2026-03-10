@@ -46,7 +46,7 @@ np.savetxt(
     fmt=["%d", "%.6f", "%.6f"]
 )
 
-plt.figure(figsize=(8, 4))
+plt.figure(figsize=(6, 4))
 plt.scatter(pc1, pc2, s=5, color = "#287c8e", alpha=0.5)
 plt.xlabel("PC1")
 plt.ylabel("PC2")
