@@ -31,11 +31,12 @@ def load_xvg_columns(path, cols=(0,1)):
     return np.loadtxt(path, comments=['@','#'], usecols=cols, unpack=True)
 
 
-def find_file(folder, suffix):
+def find_file(folder, start_str, end_str):
+    """Find a single file in folder that starts with start_str and ends with end_str."""
     for f in os.listdir(folder):
-        if f.endswith(suffix) and "#" not in f:
+        if f.startswith(start_str) and f.endswith(end_str) and "#" not in f:
             return os.path.join(folder, f)
-    raise FileNotFoundError(f"{suffix} not found in {folder}")
+    raise FileNotFoundError(f"No file starting with '{start_str}' and ending with '{end_str}' in {folder}")
 
 
 def plot_line(x, y, xlabel, ylabel, title, path):
@@ -64,8 +65,8 @@ def process_window(folder):
 
     center = float(folder.split("_")[-1])
 
-    pullx = find_file(folder, "umbrella*_pullx.xvg")
-    pullf = find_file(folder, "umbrella*_pullf.xvg")
+    pullx = find_file(folder, start_str="umbrella", end_str="_pullx.xvg")
+    pullf = find_file(folder, start_str="umbrella", end_str="_pullf.xvg")
 
     timex, pos = load_xvg_columns(pullx,(0,1))
     timef, force = load_xvg_columns(pullf,(0,1))
@@ -233,7 +234,7 @@ def plot_residue_vs_com(folder):
 
         path = os.path.join(folder, w)
 
-        pullx = find_file(path, "umbrella*_pullx.xvg")
+        pullx = find_file(path, start_str="umbrella", end_str="_pullx.xvg")
         atomd = os.path.join(path, "lys167_tyr259_dist.xvg")
 
         if not os.path.exists(atomd):
