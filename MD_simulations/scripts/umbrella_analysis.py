@@ -260,6 +260,7 @@ def plot_residue_vs_com(folder):
     x = np.linspace(com_all.min(), com_all.max(),100)
     r = np.corrcoef(com_all, res_all)[0,1]
     r2 = r**2
+    diff = res_all - com_all
     fit_label = (
         f"Fit: d_res = {m:.2f} d_COM + {b:.2f} nm\n"
         f"$R^2$ = {r2:.3f}\n"
@@ -276,8 +277,6 @@ def plot_residue_vs_com(folder):
     plt.tight_layout()
     plt.savefig(os.path.join(folder,"residue_vs_COM_distance.png"))
     plt.close()
-
-    diff = res_all - com_all
 
     print("Average difference (residue - COM):", np.mean(diff))
 
