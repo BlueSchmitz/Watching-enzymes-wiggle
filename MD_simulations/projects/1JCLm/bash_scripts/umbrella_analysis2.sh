@@ -1,7 +1,7 @@
 #!/bin/bash  
 
 #SBATCH -J umbrella_1JCLm_analysis 
-#SBATCH -t 00:30:00
+#SBATCH -t 00:10:00
 #SBATCH -p rome
 #SBATCH -N 1
 #SBATCH --ntasks=8
