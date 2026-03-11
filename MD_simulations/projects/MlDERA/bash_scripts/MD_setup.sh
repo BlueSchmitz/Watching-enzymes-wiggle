@@ -93,10 +93,10 @@ cd $tmpdir/MD_simulations/projects/$project_dir
 function copy_back_results {
     set +e +u # Disable exit on error for this function
     echo "=== Copying results back to home at $(date). ==="
-    if [[ -d "$tmpdir/MD_simulations/projects/$project_dir/outputs/$output_dir" ]]; then
+    if [[ -d "$tmpdir/MD_simulations/projects/$project_dir/outputs/" ]]; then
         rsync -av --partial --inplace \
-          "$tmpdir/MD_simulations/projects/$project_dir/outputs/$output_dir/" \
-          "$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/$project_dir/outputs/$output_dir/"
+          "$tmpdir/MD_simulations/projects/$project_dir/outputs/" \
+          "$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/$project_dir/outputs/"
         echo "=== Copy complete at $(date) ==="
     else
         echo "Nothing to copy back (outputs directory not found)"
