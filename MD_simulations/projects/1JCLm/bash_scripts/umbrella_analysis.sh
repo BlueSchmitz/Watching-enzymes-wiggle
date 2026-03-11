@@ -68,7 +68,7 @@ tpr_output="umbrella_tpr_paths.dat"
 pullf_output="umbrella_pullf_paths.dat"
 
 # Iterate over matching directories
-for dir in ./COM_*.[0-9][0-9][0-9]; do
+for dir in ./COM_*; do
     # Check if the directory exists
     if [[ -d "$dir" ]]; then
         echo "Checking folder: $dir"
@@ -89,6 +89,7 @@ for dir in ./COM_*.[0-9][0-9][0-9]; do
             echo "Found PULLF: $pullf_file"
         else
             echo "No umbrella*_pullf.xvg found in $dir"
+        fi
         
         if [[ -n "$xtc_file" ]]; then
             echo "Found XTC: $xtc_file"
