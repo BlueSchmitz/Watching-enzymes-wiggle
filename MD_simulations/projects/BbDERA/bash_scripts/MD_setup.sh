@@ -1,6 +1,6 @@
 #!/bin/bash  
 
-#SBATCH -J MlDERA_setup  
+#SBATCH -J BbDERA_setup  
 #SBATCH -t 02:30:00
 #SBATCH -p rome
 #SBATCH -N 1
@@ -8,7 +8,7 @@
 #SBATCH --cpus-per-task 1
 #SBATCH --gpus=0
 #SBATCH --requeue
-#SBATCH --output=./MlDERA_setup_%j.out
+#SBATCH --output=./BbDERA_setup_%j.out
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=blueschmitz@tudelft.nl
 
