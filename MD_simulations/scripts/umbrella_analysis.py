@@ -222,6 +222,65 @@ def overlap_matrix(all_pos,folder):
     plt.savefig(os.path.join(folder,"window_overlap_matrix.png"))
     plt.close()
 
+def plot_residue_vs_com(folder):
+
+    windows = sorted([f for f in os.listdir(folder) if f.startswith("COM_")])
+
+    com_all = []
+    res_all = []
+
+    for w in windows:
+
+        path = os.path.join(folder, w)
+
+        pullx = find_file(path, "_pullx.xvg")
+        atomd = os.path.join(path, "lys167_tyr259_dist.xvg")
+
+        if not os.path.exists(atomd):
+            continue
+
+        _, com = load_xvg_columns(pullx, (0,1))
+        _, res = load_xvg_columns(atomd, (0,1))
+
+        n = min(len(com), len(res))
+
+        com_all.append(com[:n])
+        res_all.append(res[:n])
+
+    com_all = np.concatenate(com_all)
+    res_all = np.concatenate(res_all)
+
+    plt.figure(figsize=(6,6), dpi=200)
+
+    plt.scatter(com_all, res_all, s=3, alpha=0.2, color=cmap(0.5))
+    plt.plot(x, x, '--', linewidth=1, color = "grey", alpha=0.4,  label="d_res = d_COM")
+
+    # linear fit
+    m,b = np.polyfit(com_all, res_all, 1)
+    x = np.linspace(com_all.min(), com_all.max(),100)
+    r = np.corrcoef(com_all, res_all)[0,1]
+    r2 = r**2
+    fit_label = (
+        f"Fit: d_res = {m:.2f} d_COM + {b:.2f} nm\n"
+        f"$R^2$ = {r2:.3f}\n"
+        f"<d_res − d_COM> = {np.mean(diff):.3f} nm"
+    )
+
+    plt.plot(x, m*x+b, linewidth=2, color = cmap(0.5), label=fit_label)
+    plt.legend()
+
+    plt.xlabel("COM distance tail–active site (nm)")
+    plt.ylabel("Tyr259–Lys167 distance (nm)")
+    plt.title("Mapping between COM and residue distance")
+
+    plt.tight_layout()
+    plt.savefig(os.path.join(folder,"residue_vs_COM_distance.png"))
+    plt.close()
+
+    diff = res_all - com_all
+
+    print("Average difference (residue - COM):", np.mean(diff))
+
 
 def main(folder):
 

@@ -111,9 +111,10 @@ echo 23 23 | gmx_mpi rms -s md.tpr -f md_fit.xtc -n index.ndx -o rmsd_tail_backb
 python $scripts/plotxvg.py -i rmsd_tail_backbone.xvg 
 # calculate distance between Lys167 NZ and Tyr259 OH over time, output in xvg format
 gmx_mpi distance -s md.tpr -f md_fit.xtc -n index.ndx -oall lys167_tyr259_distance.xvg -tu ns -select 'com of group 24 plus com of group 25'
-python $scripts/plotxvg.py -i lys167_tyr259_distance.xvg
+python $scripts/plotxvg.py lys167_tyr259_distance.xvg
 # histogram of the distance between Lys167 NZ and Tyr259 OH with bin width of 0.2 nm, output in xvg format
 gmx_mpi analyze -f lys167_tyr259_distance.xvg -dist lys167_tyr259_hist.xvg -bw 0.2
+python $scripts/plotxvg_hist.py lys167_tyr259_hist.xvg
 # RSMF of CA atoms of the whole protein, output in xvg format
 echo 3 | gmx_mpi rmsf -f md_fit.xtc -s md.tpr -o rmsf_Ca.xvg -n index.ndx -b 20000 -res  # start at 20 ns (time in ps)
 python $scripts/plot_RMSF.py rmsf_Ca_10000.xvg

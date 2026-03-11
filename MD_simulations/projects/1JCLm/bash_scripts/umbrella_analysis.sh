@@ -1,12 +1,11 @@
 #!/bin/bash  
 
 #SBATCH -J umbrella_1JCLm_analysis 
-#SBATCH -t 01:00:00
+#SBATCH -t 02:00:00
 #SBATCH -p rome
 #SBATCH -N 1
-#SBATCH --array=1-23%8
 #SBATCH --ntasks=8
-#SBATCH --cpus-per-task 1
+#SBATCH --cpus-per-task 2
 #SBATCH --gpus=0
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=blueschmitz@tudelft.nl
@@ -77,6 +76,7 @@ for dir in ./COM_*.[0-9][0-9][0-9]; do
         # Find the umbrella tpr and pullf files (ignoring backups with '#' in their name)
         tpr_file=$(ls "$dir"/umbrella*.tpr 2>/dev/null | grep -v '#' | head -n 1)
         pullf_file=$(ls "$dir"/umbrella*_pullf.xvg 2>/dev/null | grep -v '#' | head -n 1)
+        xtc_file=$(ls "$dir"/umbrella*.xtc 2>/dev/null | grep -v '#' | head -n 1)
 
         # Debug output
         if [[ -n "$tpr_file" ]]; then
@@ -89,6 +89,11 @@ for dir in ./COM_*.[0-9][0-9][0-9]; do
             echo "Found PULLF: $pullf_file"
         else
             echo "No umbrella*_pullf.xvg found in $dir"
+        
+        if [[ -n "$xtc_file" ]]; then
+            echo "Found XTC: $xtc_file"
+        else
+            echo "No umbrella*.xtc found in $dir"
         fi
 
         # Run gmx energy for each energy term separately
@@ -109,6 +114,10 @@ for dir in ./COM_*.[0-9][0-9][0-9]; do
             energy_out_tot="${tpr_file%.tpr}_total_energy.xvg"
             echo "Extracting Total-Energy..."
             echo Total-Energy | apptainer exec $GROMACS_CONTAINER gmx_mpi energy -s "$tpr_file" -f "$edr_file" -o "$energy_out_tot"
+        
+            # Calculate distance 
+            echo "Calculating distance between Lys167 NZ and Tyr259 OH..."
+            apptainer exec $GROMACS_CONTAINER gmx_mpi distance -s "$tpr_file" -f "$xtc_file" -oall $dir/lys167_tyr259_dist.xvg -select "resid 167 and name NZ plus resid 259 and name OH"
         fi
 
         # Append to output files if both exist
