@@ -64,8 +64,8 @@ def process_window(folder):
 
     center = float(folder.split("_")[-1])
 
-    pullx = find_file(folder, "_pullx.xvg")
-    pullf = find_file(folder, "_pullf.xvg")
+    pullx = find_file(folder, "umbrella*_pullx.xvg")
+    pullf = find_file(folder, "umbrella*_pullf.xvg")
 
     timex, pos = load_xvg_columns(pullx,(0,1))
     timef, force = load_xvg_columns(pullf,(0,1))
@@ -97,13 +97,13 @@ def plot_pmf(folder):
         x, pmf, err = np.loadtxt(bsres, comments=['@','#'], unpack=True)
         pmf -= np.min(pmf)  # Shift PMF to zero minimum
 
-        plt.plot(x, pmf, color=cmap(0.7))
+        plt.plot(x, pmf, color=cmap(0.5))
         plt.fill_between(x, pmf-err, pmf+err,
-                         color=cmap(0.7), alpha=0.3)
+                         color=cmap(0.5), alpha=0.3)
 
     else:
         x, pmf = load_xvg_columns(profile,(0,1))
-        plt.plot(x, pmf, color=cmap(0.7))
+        plt.plot(x, pmf, color=cmap(0.5))
 
     plt.xlabel("COM distance Lys167-Tyr259 (nm)")
     plt.ylabel("PMF (kJ/mol)")
@@ -164,9 +164,9 @@ def center_vs_mean(centers,means,folder):
 
     plt.figure(figsize=(6,6))
 
-    sc = plt.scatter(centers,means,c=centers,cmap="viridis")
+    sc = plt.scatter(centers,means,c=centers,color=cmap(0.5))
 
-    plt.plot(centers,centers,'--',color="black")
+    plt.plot(centers,centers,'--',color="grey", alpha = 0.4, label="Mean = Center")
 
     plt.xlabel("Umbrella center (nm)")
     plt.ylabel("Sampled mean (nm)")
@@ -233,7 +233,7 @@ def plot_residue_vs_com(folder):
 
         path = os.path.join(folder, w)
 
-        pullx = find_file(path, "_pullx.xvg")
+        pullx = find_file(path, "umbrella*_pullx.xvg")
         atomd = os.path.join(path, "lys167_tyr259_dist.xvg")
 
         if not os.path.exists(atomd):
@@ -314,6 +314,7 @@ def main(folder):
     center_vs_mean(centers,means,folder)
     sampling_width(centers,stds,folder)
     overlap_matrix(all_pos,folder)
+    plot_residue_vs_com(folder)
 
 
 if __name__=="__main__":
