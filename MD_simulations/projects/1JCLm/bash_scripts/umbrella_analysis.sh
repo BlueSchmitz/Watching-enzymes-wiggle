@@ -36,6 +36,7 @@ mkdir -p "$tmpdir/MD_simulations/projects/"
 # Load modules:  
 module load 2023
 module load matplotlib/3.7.2-gfbf-2023a
+module load tqdm/4.66.1-GCCcore-12.3.0
 module list
 
 ### Copy project to scratch ###
