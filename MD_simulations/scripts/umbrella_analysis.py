@@ -165,7 +165,7 @@ def center_vs_mean(centers,means,folder):
 
     plt.figure(figsize=(6,6))
 
-    sc = plt.scatter(centers,means,c=centers,color=cmap(0.5))
+    sc = plt.scatter(centers,means,color=cmap(0.5))
 
     plt.plot(centers,centers,'--',color="grey", alpha = 0.4, label="Mean = Center")
 
