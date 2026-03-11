@@ -254,7 +254,6 @@ def plot_residue_vs_com(folder):
     plt.figure(figsize=(6,6), dpi=200)
 
     plt.scatter(com_all, res_all, s=3, alpha=0.2, color=cmap(0.5))
-    plt.plot(x, x, '--', linewidth=1, color = "grey", alpha=0.4,  label="d_res = d_COM")
 
     # linear fit
     m,b = np.polyfit(com_all, res_all, 1)
@@ -266,7 +265,7 @@ def plot_residue_vs_com(folder):
         f"$R^2$ = {r2:.3f}\n"
         f"<d_res − d_COM> = {np.mean(diff):.3f} nm"
     )
-
+    plt.plot(x, x, '--', linewidth=1, color = "grey", alpha=0.4,  label="d_res = d_COM")
     plt.plot(x, m*x+b, linewidth=2, color = cmap(0.5), label=fit_label)
     plt.legend()
 
