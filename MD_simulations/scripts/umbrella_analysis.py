@@ -67,14 +67,14 @@ def process_window(folder):
     pullx = find_file(folder, "_pullx.xvg")
     pullf = find_file(folder, "_pullf.xvg")
 
-    time, pos = load_xvg_columns(pullx,(0,1))
-    _, force = load_xvg_columns(pullf,(0,1))
+    timex, pos = load_xvg_columns(pullx,(0,1))
+    timef, force = load_xvg_columns(pullf,(0,1))
 
-    plot_line(time,pos,"Time (ps)","COM (nm)",
+    plot_line(timex,pos,"Time (ps)","COM (nm)",
               f"Position vs Time (COM {center})",
               os.path.join(folder,"position_vs_time.png"))
 
-    plot_line(time,force,"Time (ps)","Pull force (kJ/mol/nm)",
+    plot_line(timef,force,"Time (ps)","Pull force (kJ/mol/nm)",
               f"Pull Force vs Time (COM {center})",
               os.path.join(folder,"pull_force_vs_time.png"))
 
