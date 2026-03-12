@@ -111,7 +111,7 @@ tpr="../rep1.00/topol.tpr"
 xtc="../rep1.00/traj_comp.xtc"
 
 # make index file with default + custom groups
-gmx_mpi make_ndx -f $tpr -o index.ndx << EOF
+apptainer exec $GROMACS_CONTAINER gmx_mpi make_ndx -f $tpr -o index.ndx << EOF
 r 1-248
 name 18 TIM_barrel
 r 1-248 & a CA
