@@ -1,15 +1,15 @@
 #!/bin/bash  
 
-#SBATCH --job-name="analyse 5EKYm trajectory"   
-#SBATCH --time=01:00:00
-#SBATCH --ntasks=1 
-#SBATCH --cpus-per-task=8
-#SBATCH --gpus-per-task=1
-#SBATCH --partition=gpu-a100
-#SBATCH --mem-per-cpu=1GB
-#SBATCH --account=Research-AS-BN
-#SBATCH --output=/scratch/blueschmitz/Watching-enzymes-wiggle/MD_simulations/projects/5EKY_monomeric/5EKYm_analysis_%j.out
-#SBATCH --mail-type=ALL ##you can also set BEGIN/END
+#SBATCH -J EcDERA_HREX_analysis
+#SBATCH -t 10:00:00
+#SBATCH -p rome
+#SBATCH -N 1
+#SBATCH --ntasks=16
+#SBATCH --cpus-per-task 1
+#SBATCH --gpus=0
+#SBATCH --mail-type=BEGIN,END,FAIL
+#SBATCH --mail-user=blueschmitz@tudelft.nl
+#SBATCH --output=hrex_analysis_%j.out
 
 : '
 Folder structure:
@@ -53,32 +53,65 @@ Run this script from the projects/5EKY_monomeric/ directory, it contains relativ
 '
 # Exit immediately on errors, undefined vars, or failed pipes
 set -euo pipefail
+set -o errtrace
+
+### Project-specific settings ###
+project_dir=1JCLm
+output_dir=6_HREX/analysis
+pH=7
+
+export GMXLIB=$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/force_fields
+export GROMACS_CONTAINER=$HOME/Blue/software/apptainer_2021/gromacs_plumed.sif
+export PDB2PQR_CONTAINER=$HOME/Blue/software/apptainer_pdb2pqr/pdb2pqr.sif
+export PLUMED_CONTAINER=$HOME/Blue/software/apptainer_plumed/plumed.sif
+
+mdp=$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/mdp_templates
+scripts=$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/scripts
+pdb=$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/$project_dir/inputs/*.pdb
+
+# Create temporary directory on scratch for this job
+tmpdir=$(mktemp -d /gpfs/scratch1/shared/rleveson/Blue/tmp.XXXXXX)
+mkdir -p "$tmpdir/MD_simulations/projects/"
 
 # Load modules:  
-module load 2025
-module load openmpi/4.1.7
-module load cuda
-module load gromacs 
-module load python/3.11.9
-module load py-matplotlib/3.9.2
-module load py-numpy/1.26.4
-
-# Print modules 
+module load 2023
+module load matplotlib/3.7.2-gfbf-2023a
 module list
 
-# Set paths for mdp_templates, force_fields and pdb file (to change quickly)
-export GMXLIB=../../../../force_fields # make sure this is correct
-mdp=../../../../mdp_templates
-scripts=../../../../scripts
-pdb=../../inputs/5EKY_fill.BL00440001.pdb # Input PDB file (with correct protonation states)
+### Copy project to scratch ###
+echo "=== Copying project to scratch ==="
+cp -r $HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/$project_dir "$tmpdir/MD_simulations/projects/"
+cd $tmpdir/MD_simulations/projects/$project_dir
 
-# cd to outputs
-cd ./outputs/7_simple_MD
+# Function to copy back results when error occurs and before the script exits
+function copy_back_results {
+    set +e +u # Disable exit on error for this function
+    echo "=== Copying results back to home at $(date). ==="
+    if [[ -d "$tmpdir/MD_simulations/projects/$project_dir/outputs/$output_dir" ]]; then
+        rsync -av --partial --inplace \
+          "$tmpdir/MD_simulations/projects/$project_dir/outputs/$output_dir/" \
+          "$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/$project_dir/outputs/$output_dir/"
+        echo "=== Copy complete at $(date) ==="
+    else
+        echo "Nothing to copy back (outputs directory not found)"
+    fi
+    # Clean up temporary directory
+    rm -rf "$tmpdir"
+}
+trap copy_back_results EXIT
+
+mkdir -p ./outputs/$output_dir
+cd ./outputs/$output_dir/
 
 ### Analysis ###
 echo "============= Analysis of trajectory ============="
+
+# quick access
+tpr="../rep1.00/topol.tpr"
+xtc="../rep1.00/traj_comp.xtc"
+
 # make index file with default + custom groups
-gmx_mpi make_ndx -f md.tpr -o index.ndx << EOF
+gmx_mpi make_ndx -f $tpr -o index.ndx << EOF
 r 1-248
 name 18 TIM_barrel
 r 1-248 & a CA
@@ -100,56 +133,58 @@ q
 EOF
 
 # center the trajectory on the whole protein and remove PBC artifacts, output in compact format
-echo 1 0 | gmx_mpi trjconv -s md.tpr -f md.xtc -o md_center_mol.xtc -center -pbc mol -ur compact
+echo 1 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s $tpr -f $xtc -o md_center_mol.xtc -center -pbc mol -ur compact
 # fit trajectory to reference (TIM barrel backbone) to remove overall rotation and translation, keep whole system
-echo 20 0 | gmx_mpi trjconv -s md.tpr -f md_center_mol.xtc -o md_fit.xtc -fit rot+trans -n index.ndx
+echo 20 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s $tpr -f md_center_mol.xtc -o md_fit.xtc -fit rot+trans -n index.ndx
 # calculate RMSD of TIM barrel backbone over time, output in xvg format
-echo 20 20 | gmx_mpi rms -s md.tpr -f md_fit.xtc -n index.ndx -o rmsd_tim_barrel_backbone.xvg -tu ns
+echo 20 20 | apptainer exec $GROMACS_CONTAINER gmx_mpi rms -s $tpr -f md_fit.xtc -n index.ndx -o rmsd_tim_barrel_backbone.xvg -tu ns
 python $scripts/plotxvg.py -i rmsd_tim_barrel_backbone.xvg 
 # calculate RMSD of tail backbone over time, output in xvg format
-echo 23 23 | gmx_mpi rms -s md.tpr -f md_fit.xtc -n index.ndx -o rmsd_tail_backbone.xvg -tu ns
+echo 23 23 | apptainer exec $GROMACS_CONTAINER gmx_mpi rms -s $tpr -f md_fit.xtc -n index.ndx -o rmsd_tail_backbone.xvg -tu ns
 python $scripts/plotxvg.py -i rmsd_tail_backbone.xvg 
 # calculate distance between Lys167 NZ and Tyr259 OH over time, output in xvg format
-gmx_mpi distance -s md.tpr -f md_fit.xtc -n index.ndx -oall lys167_tyr259_distance.xvg -tu ns -select 'com of group 24 plus com of group 25'
+apptainer exec $GROMACS_CONTAINER gmx_mpi distance -s $tpr -f md_fit.xtc -n index.ndx -oall lys167_tyr259_distance.xvg -tu ns -select 'com of group 24 plus com of group 25'
 python $scripts/plotxvg.py lys167_tyr259_distance.xvg
 # histogram of the distance between Lys167 NZ and Tyr259 OH with bin width of 0.2 nm, output in xvg format
-gmx_mpi analyze -f lys167_tyr259_distance.xvg -dist lys167_tyr259_hist.xvg -bw 0.2
+apptainer exec $GROMACS_CONTAINER gmx_mpi analyze -f lys167_tyr259_distance.xvg -dist lys167_tyr259_hist.xvg -bw 0.2
 python $scripts/plotxvg_hist.py lys167_tyr259_hist.xvg
 # RSMF of CA atoms of the whole protein, output in xvg format
-echo 3 | gmx_mpi rmsf -f md_fit.xtc -s md.tpr -o rmsf_Ca.xvg -n index.ndx -b 20000 -res  # start at 20 ns (time in ps)
+echo 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi rmsf -f md_fit.xtc -s $tpr -o rmsf_Ca.xvg -n index.ndx -b 20000 -res  # start at 20 ns (time in ps)
 python $scripts/plot_RMSF.py rmsf_Ca_10000.xvg
 ### define frames with distance between Lys167 NZ and Tyr259 OH < 0.6 nm as "closed" and >= 0.6 nm as "open", output in xvg format
 # Compute distance time series (ps)
-gmx_mpi distance -f md_fit.xtc -s md.tpr -n index.ndx -select 'com of group 24 plus com of group 25' -oall dist_k167_y259_ps.xvg
+apptainer exec $GROMACS_CONTAINER gmx_mpi distance -f md_fit.xtc -s $tpr -n index.ndx -select 'com of group 24 plus com of group 25' -oall dist_k167_y259_ps.xvg
 # Create new trajectory with selected frames where distance < 0.6 nm
-echo 0 | gmx_mpi trjconv -f md_fit.xtc -s md.tpr -o md_closed.xtc -drop dist_k167_y259_ps.xvg -dropover 0.6
+echo 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_fit.xtc -s $tpr -o md_closed.xtc -drop dist_k167_y259_ps.xvg -dropover 0.6
 # number of h-bonds over time between protein and tail (DHA angle > 120 degrees --> HDA angle > 60 degrees, distance < 0.35 nm), output in xvg format
-echo 18 21 | gmx_mpi hbond -s md.tpr -f md_closed.xtc -n index.ndx -num hbond_time_closed_60_25.xvg -tu ns -a 60 -r 0.35
+echo 18 21 | apptainer exec $GROMACS_CONTAINER gmx_mpi hbond -s $tpr -f md_closed.xtc -n index.ndx -num hbond_time_closed_60_25.xvg -tu ns -a 60 -r 0.35
 # 2024
-echo 18 21 | gmx_mpi hbond-legacy -s md.tpr -f md_closed.xtc -n index.ndx -num hbond_time_closed_60_25.xvg -tu ns -a 60 -r 0.35
+echo 18 21 | apptainer exec $GROMACS_CONTAINER gmx_mpi hbond-legacy -s $tpr -f md_closed.xtc -n index.ndx -num hbond_time_closed_60_25.xvg -tu ns -a 60 -r 0.35
 
 
 # PCA
 # Compute covariance matrix
-echo 19 3 | gmx_mpi covar -s md.tpr -f md_fit.xtc -n index.ndx -b 20000 -o eigenvalues.xvg -v eigenvectors.trr
+echo 19 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi covar -s $tpr -f md_fit.xtc -n index.ndx -b 20000 -o eigenvalues.xvg -v eigenvectors.trr
     # fit to CA TIM, covariance of whole protein CA (so side-chains do not contribute to covariance)
     # eigenvalues.xvg contains the eigenvalues (variance along each PC as mean square fluctuation captured by that PC in nm^2), eigenvectors.trr contains the eigenvectors (PCs) as a trajectory
 # Project trajectory onto PCs
-echo 19 3 | gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s md.tpr -n index.ndx -proj proj.xvg -first 1 -last 2
-echo 19 3 | gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s md.tpr -n index.ndx -proj proj_20_pcs.xvg -first 1 -last 20
+echo 19 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s $tpr -n index.ndx -proj proj.xvg -first 1 -last 2
+echo 19 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s $tpr -n index.ndx -proj proj_20_pcs.xvg -first 1 -last 20
 # Extract extreme projections along PC1 and PC2
-echo 19 3 | gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s md.tpr -n index.ndx -extr extremes.pdb -first 1 -last 2
+echo 19 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s $tpr -n index.ndx -extr extremes.pdb -first 1 -last 2
 # Eigenvector components per atom (which residues dominate the motion)
-echo 3 | gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s md.tpr -n index.ndx -rmsf PC_rmsf_per_atom.xvg -first 1 -last 2
+echo 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s $tpr -n index.ndx -rmsf PC_rmsf_per_atom.xvg -first 1 -last 2
 
 python $scripts/PCA.py proj.xvg eigenvalues.xvg
 
 # Extract extreme projections (from python script)
 min_pc1=$(awk '/min_pc1/ {print $2}' pc_extreme_frames.dat)
-echo 1 | gmx_mpi trjconv -f md_fit.xtc -s md.tpr -dump $min_pc1 -o min_pc1.pdb
+echo 1 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_fit.xtc -s $tpr -dump $min_pc1 -o min_pc1.pdb
 max_pc1=$(awk '/max_pc1/ {print $2}' pc_extreme_frames.dat)
-echo 1 | gmx_mpi trjconv -f md_fit.xtc -s md.tpr -dump $max_pc1 -o max_pc1.pdb
+echo 1 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_fit.xtc -s $tpr -dump $max_pc1 -o max_pc1.pdb
 min_pc2=$(awk '/min_pc2/ {print $2}' pc_extreme_frames.dat)
-echo 1 | gmx_mpi trjconv -f md_fit.xtc -s md.tpr -dump $min_pc2 -o min_pc2.pdb
+echo 1 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_fit.xtc -s $tpr -dump $min_pc2 -o min_pc2.pdb
 max_pc2=$(awk '/max_pc2/ {print $2}' pc_extreme_frames.dat)
-echo 1 | gmx_mpi trjconv -f md_fit.xtc -s md.tpr -dump $max_pc2 -o max_pc2.pdb
+echo 1 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_fit.xtc -s $tpr -dump $max_pc2 -o max_pc2.pdb
+
+echo "Analysis complete. Results will be copied back to home directory."
