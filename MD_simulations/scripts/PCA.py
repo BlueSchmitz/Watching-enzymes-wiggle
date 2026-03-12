@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
-# usage: python PCA.py proj.xvg eigenvalues.xvg
+# usage: python PCA.py proj.xvg eigenvalues.xvg distance.xvg proj_20_pcs.xvg
 '''Visualisation of the PCA analysis.'''
 
 import sys
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use("Agg")
 from scipy.stats import gaussian_kde
 from scipy.ndimage import gaussian_filter
 
@@ -47,12 +50,175 @@ np.savetxt(
 )
 
 plt.figure(figsize=(6, 4))
-plt.scatter(pc1, pc2, s=5, color = "#287c8e", alpha=0.5)
+plt.scatter(pc1, pc2, s=5, color = "#287c8e", alpha=0.7)
 plt.xlabel("PC1")
 plt.ylabel("PC2")
 plt.tight_layout()
 plt.savefig("pc1_vs_pc2.png", dpi=300)
 plt.close()
+
+### Plot PC1 and PC2 vs distance ###
+dist_file = sys.argv[3]
+dist_time = []
+distance = []
+
+with open(dist_file) as f:
+    for line in f:
+        if line.startswith("@") or line.startswith("#"):
+            continue
+
+        t, d = map(float, line.split())
+        dist_time.append(t * 1000)  # convert ns --> ps
+        distance.append(d)
+
+dist_time = np.array(dist_time)
+distance = np.array(distance)
+
+# match frames by time
+common_times = np.intersect1d(time, dist_time)
+
+pc1_match = []
+pc2_match = []
+dist_match = []
+
+for t in common_times:
+    i = np.where(time == t)[0][0]
+    j = np.where(dist_time == t)[0][0]
+
+    pc1_match.append(pc1[i])
+    pc2_match.append(pc2[i])
+    dist_match.append(distance[j])
+
+pc1_match = np.array(pc1_match)
+pc2_match = np.array(pc2_match)
+dist_match = np.array(dist_match)
+
+corr_pc1 = np.corrcoef(pc1_match, dist_match)[0,1]
+corr_pc2 = np.corrcoef(pc2_match, dist_match)[0,1]
+
+### Plot distance vs PC1 ###
+plt.figure(figsize=(6,4))
+plt.scatter(pc1_match, dist_match, s=5, color = "#287c8e", alpha=0.7)
+plt.xlabel("PC1")
+plt.ylabel("Lys167-Tyr259 distance (nm)")
+plt.text(
+    0.05, 0.95,
+    f"r = {corr_pc1:.2f}",
+    transform=plt.gca().transAxes,
+    verticalalignment='top'
+)
+plt.tight_layout()
+plt.savefig("distance_vs_PC1.png", dpi=300)
+plt.close()
+
+### Plot distance vs PC2 ###
+plt.figure(figsize=(6,4))
+plt.scatter(pc2_match, dist_match, s=5, color = "#287c8e", alpha=0.7)
+plt.xlabel("PC2")
+plt.ylabel("Lys167-Tyr259 distance (nm)")
+plt.text(
+    0.05, 0.95,
+    f"r = {corr_pc2:.2f}",
+    transform=plt.gca().transAxes,
+    verticalalignment='top'
+)
+plt.tight_layout()
+plt.savefig("distance_vs_PC2.png", dpi=300)
+plt.close()
+
+### Plot PC1 vs PC2 colored by distance ###
+plt.figure(figsize=(6,4))
+plt.scatter(pc1, pc2, c=distance, cmap='viridis', s=5)
+plt.colorbar(label="Lys167-Tyr259 distance (nm)")
+plt.xlabel("PC1")
+plt.ylabel("PC2")
+plt.tight_layout()
+plt.savefig("pc1_pc2_colored_by_distance.png", dpi=300)
+plt.close()
+
+### Calculate correlation between distance and PCs
+proj_20_file = sys.argv[4]
+
+time = []
+pcs = []  
+current_pc = []
+
+mode = 0  
+
+with open(proj_20_file) as f:
+    for line in f:
+        line = line.strip()
+        if not line or line.startswith("#") or line.startswith("@"):
+            continue
+        if line.startswith("&"):
+            if current_pc:
+                pcs.append(current_pc)
+            current_pc = []
+            mode += 1
+            continue
+
+        parts = line.split()
+        t = float(parts[0])
+        val = float(parts[1])
+
+        if mode == 0:
+            time.append(t)
+
+        current_pc.append(val)
+
+# Append the last PC block
+if current_pc:
+    pcs.append(current_pc)
+
+# Convert to numpy arrays
+time = np.array(time)
+pcs = [np.array(pc) for pc in pcs]
+
+# Stack into a single array: first column = time, then PCs
+data = np.column_stack([time] + pcs)
+pcs_array = np.column_stack(pcs)  # shape: (n_timepoints, 20)
+
+# Read distance data
+dist_time = []
+distance = []
+
+with open(dist_file) as f:
+    for line in f:
+        if line.startswith("@") or line.startswith("#"):
+            continue
+
+        t, d = map(float, line.split())
+
+        dist_time.append(t * 1000)  # ns --> ps
+        distance.append(d)
+
+dist_time = np.array(dist_time)
+distance = np.array(distance)
+
+
+# Match time points between PCs and distance
+common_times = np.intersect1d(time, dist_time)
+
+pc_match = np.array([pcs_array[np.where(time == t)[0][0]] for t in common_times])
+dist_match = np.array([distance[np.where(dist_time == t)[0][0]] for t in common_times])
+
+correlations = [np.corrcoef(pc_match[:, i], dist_match)[0,1] for i in range(pcs_array.shape[1])]
+correlations = np.array(correlations)
+
+
+# Save correlations to file
+n_pcs = pcs_array.shape[1]
+out = np.column_stack((np.arange(1, n_pcs+1), correlations))
+
+np.savetxt(
+    "pc_distance_correlations.dat",
+    out,
+    header="PC  Pearson_r",
+    fmt=["%d", "%.5f"]
+)
+
+print("Saved correlations to pc_distance_correlations.dat")
+
 
 ### 2 Free energy landscape ###
 kB = 0.008314  # kJ/mol/K
