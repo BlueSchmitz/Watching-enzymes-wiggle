@@ -76,6 +76,7 @@ mkdir -p "$tmpdir/MD_simulations/projects/"
 # Load modules:  
 module load 2023
 module load matplotlib/3.7.2-gfbf-2023a
+module load Python/3.11.3-GCCcore-12.3.0
 module list
 
 ### Copy project to scratch ###
@@ -150,17 +151,14 @@ apptainer exec $GROMACS_CONTAINER gmx_mpi analyze -f lys167_tyr259_distance.xvg 
 python $scripts/plotxvg_hist.py lys167_tyr259_hist.xvg
 # RSMF of CA atoms of the whole protein, output in xvg format
 echo 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi rmsf -f md_fit.xtc -s $tpr -o rmsf_Ca.xvg -n index.ndx -b 20000 -res  # start at 20 ns (time in ps)
-python $scripts/plot_RMSF.py rmsf_Ca_10000.xvg
+python $scripts/plot_RMSF.py rmsf_Ca.xvg
 ### define frames with distance between Lys167 NZ and Tyr259 OH < 0.6 nm as "closed" and >= 0.6 nm as "open", output in xvg format
 # Compute distance time series (ps)
 apptainer exec $GROMACS_CONTAINER gmx_mpi distance -f md_fit.xtc -s $tpr -n index.ndx -select 'com of group 24 plus com of group 25' -oall dist_k167_y259_ps.xvg
 # Create new trajectory with selected frames where distance < 0.6 nm
 echo 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_fit.xtc -s $tpr -o md_closed.xtc -drop dist_k167_y259_ps.xvg -dropover 0.6
-# number of h-bonds over time between protein and tail (DHA angle > 120 degrees --> HDA angle > 60 degrees, distance < 0.35 nm), output in xvg format
-echo 18 21 | apptainer exec $GROMACS_CONTAINER gmx_mpi hbond -s $tpr -f md_closed.xtc -n index.ndx -num hbond_time_closed_60_25.xvg -tu ns -a 60 -r 0.35
-# 2024
-echo 18 21 | apptainer exec $GROMACS_CONTAINER gmx_mpi hbond-legacy -s $tpr -f md_closed.xtc -n index.ndx -num hbond_time_closed_60_25.xvg -tu ns -a 60 -r 0.35
-
+# h-bonds and hydrophobic contacts analysis with MDAnalysis
+python $scripts/contact_matrices.py $tpr md_closed.xtc
 
 # PCA
 # Compute covariance matrix
