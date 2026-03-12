@@ -97,6 +97,7 @@ function copy_back_results {
     fi
     # Clean up temporary directory
     rm -rf "$tmpdir"
+    echo "Temporary directory cleaned up."
 }
 trap copy_back_results EXIT
 
