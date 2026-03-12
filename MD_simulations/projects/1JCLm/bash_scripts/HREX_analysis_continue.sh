@@ -113,13 +113,6 @@ tpr="../rep1.00/topol.tpr"
 xtc="../rep1.00/traj_comp.xtc"
 
 # Continue 
-python $scripts/plot_RMSF.py rmsf_Ca.xvg
-python $scripts/plotxvg_hist.py lys167_tyr259_hist.xvg
-### define frames with distance between Lys167 NZ and Tyr259 OH < 0.6 nm as "closed" and >= 0.6 nm as "open", output in xvg format
-# Compute distance time series (ps)
-apptainer exec $GROMACS_CONTAINER gmx_mpi distance -f md_fit.xtc -s $tpr -n index.ndx -select 'com of group 24 plus com of group 25' -oall dist_k167_y259_ps.xvg
-# Create new trajectory with selected frames where distance < 0.6 nm
-echo 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_fit.xtc -s $tpr -o md_closed.xtc -drop dist_k167_y259_ps.xvg -dropover 0.6
 # h-bonds and hydrophobic contacts analysis with MDAnalysis
 python $scripts/contact_matrices.py $tpr md_closed.xtc
 
