@@ -11,6 +11,8 @@ matplotlib.use("Agg")
 from scipy.stats import gaussian_kde
 from scipy.ndimage import gaussian_filter
 
+cmap = plt.get_cmap("viridis")
+
 ### 1 Plot PC1 vs. PC2 ###
 # Load projection file (skip comments)
 proj_file = sys.argv[1]
@@ -50,7 +52,7 @@ np.savetxt(
 )
 
 plt.figure(figsize=(6, 4))
-plt.scatter(pc1, pc2, s=5, color = "#287c8e", alpha=0.7)
+plt.scatter(pc1, pc2, s=5, color=cmap(0.5), alpha=0.7)
 plt.xlabel("PC1")
 plt.ylabel("PC2")
 plt.tight_layout()
@@ -98,7 +100,7 @@ corr_pc2 = np.corrcoef(pc2_match, dist_match)[0,1]
 
 ### Plot distance vs PC1 ###
 plt.figure(figsize=(6,4))
-plt.scatter(pc1_match, dist_match, s=5, color = "#287c8e", alpha=0.7)
+plt.scatter(pc1_match, dist_match, s=5, color=cmap(0.5), alpha=0.7)
 plt.xlabel("PC1")
 plt.ylabel("Lys167-Tyr259 distance (nm)")
 plt.text(
@@ -113,7 +115,7 @@ plt.close()
 
 ### Plot distance vs PC2 ###
 plt.figure(figsize=(6,4))
-plt.scatter(pc2_match, dist_match, s=5, color = "#287c8e", alpha=0.7)
+plt.scatter(pc2_match, dist_match, s=5, color=cmap(0.5), alpha=0.7)
 plt.xlabel("PC2")
 plt.ylabel("Lys167-Tyr259 distance (nm)")
 plt.text(
@@ -316,7 +318,7 @@ variance_percent = variance_percent[:10]  # show only first 10 PCs
 pc_index = np.arange(1, len(variance_percent) + 1)
 
 plt.figure(figsize=(8, 4))
-plt.bar(pc_index, variance_percent, color = "#287c8e", edgecolor = "black")
+plt.bar(pc_index, variance_percent, color=cmap(0.5), edgecolor = "black")
 plt.xlabel("PC index")
 plt.ylabel("Variance explained (%)")
 plt.xticks(pc_index)

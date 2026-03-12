@@ -138,10 +138,10 @@ echo 1 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s $tpr -f $xtc -o 
 echo 20 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s $tpr -f md_center_mol.xtc -o md_fit.xtc -fit rot+trans -n index.ndx
 # calculate RMSD of TIM barrel backbone over time, output in xvg format
 echo 20 20 | apptainer exec $GROMACS_CONTAINER gmx_mpi rms -s $tpr -f md_fit.xtc -n index.ndx -o rmsd_tim_barrel_backbone.xvg -tu ns
-python $scripts/plotxvg.py -i rmsd_tim_barrel_backbone.xvg 
+python $scripts/plotxvg.py rmsd_tim_barrel_backbone.xvg 
 # calculate RMSD of tail backbone over time, output in xvg format
 echo 23 23 | apptainer exec $GROMACS_CONTAINER gmx_mpi rms -s $tpr -f md_fit.xtc -n index.ndx -o rmsd_tail_backbone.xvg -tu ns
-python $scripts/plotxvg.py -i rmsd_tail_backbone.xvg 
+python $scripts/plotxvg.py rmsd_tail_backbone.xvg 
 # calculate distance between Lys167 NZ and Tyr259 OH over time, output in xvg format
 apptainer exec $GROMACS_CONTAINER gmx_mpi distance -s $tpr -f md_fit.xtc -n index.ndx -oall lys167_tyr259_distance.xvg -tu ns -select 'com of group 24 plus com of group 25'
 python $scripts/plotxvg.py lys167_tyr259_distance.xvg
@@ -175,7 +175,7 @@ echo 19 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr
 # Eigenvector components per atom (which residues dominate the motion)
 echo 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s $tpr -n index.ndx -rmsf PC_rmsf_per_atom.xvg -first 1 -last 2
 
-python $scripts/PCA.py proj.xvg eigenvalues.xvg
+python $scripts/PCA.py proj.xvg eigenvalues.xvg lys167_tyr259_distance.xvg proj_20_pcs.xvg
 
 # Extract extreme projections (from python script)
 min_pc1=$(awk '/min_pc1/ {print $2}' pc_extreme_frames.dat)

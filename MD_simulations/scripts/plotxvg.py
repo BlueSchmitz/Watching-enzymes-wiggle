@@ -8,6 +8,7 @@ import re
 
 # Get xvg file.
 xvg_filename = sys.argv[1]
+cmap = plt.get_cmap("viridis")
 
 # Print help command.
 if xvg_filename == "-h" or xvg_filename == "--help":
@@ -44,9 +45,9 @@ for line in f:
 f.close()
 
 # Plot x and y with labels.
-plt.plot(x,y)
+plt.plot(x,y, color = cmap(0.5))
 plt.xlabel(res_x.group(1))
 plt.ylabel(res_y.group(1))
-# plt.show()
-
+plt.tight_layout()
 plt.savefig(xvg_filename.split(".")[0] + "_" + 'plot.png')
+plt.close()
