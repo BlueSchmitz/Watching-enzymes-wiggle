@@ -172,9 +172,6 @@ def center_vs_mean(centers,means,folder):
     plt.xlabel("Umbrella center (nm)")
     plt.ylabel("Sampled mean (nm)")
     plt.title("Center vs Sampled Mean")
-
-    plt.colorbar(sc,label="Window center (nm)")
-
     plt.tight_layout()
     plt.savefig(os.path.join(folder,"center_vs_sampled_mean.png"))
     plt.close()
@@ -189,7 +186,6 @@ def sampling_width(centers,stds,folder):
     plt.xlabel("Umbrella center (nm)")
     plt.ylabel("Sampling width (nm)")
     plt.title("Window Sampling Width")
-
     plt.tight_layout()
     plt.savefig(os.path.join(folder,"window_sampling_width.png"))
     plt.close()
