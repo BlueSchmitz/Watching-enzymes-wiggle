@@ -7,6 +7,7 @@ import numpy as np
 import re
 from matplotlib.ticker import MultipleLocator, FormatStrFormatter
 
+cmap = plt.get_cmap("viridis")
 # Get xvg file
 xvg_filename = sys.argv[1]
 
@@ -30,6 +31,7 @@ x_centers = x + bin_width / 2
 plt.bar(
     x_centers,
     y,
+    color=cmap(0.5),
     width=bin_width,
     align="center",
     edgecolor="black",

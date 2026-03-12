@@ -12,6 +12,7 @@ if len(sys.argv) < 2:
     print("Usage: python plot_RMSF.py <rmsf.xvg>.")
     sys.exit(1)
 
+cmap = plt.get_cmap("viridis")
 # Input / output
 rmsf_file = Path(sys.argv[1])
 out_png = "rmsf.png"
@@ -33,10 +34,9 @@ rmsf = np.array(rmsf)
 
 # Plot
 plt.figure(figsize=(8, 4))
-plt.plot(resid, rmsf, linewidth=2)
+plt.plot(resid, rmsf, color=cmap(0.5), linewidth=2)
 plt.xlabel("Residue number")
 plt.ylabel("RMSF (nm)")
-plt.grid(alpha=0.3)
 plt.tight_layout()
 
 plt.savefig(out_png, dpi=300)
