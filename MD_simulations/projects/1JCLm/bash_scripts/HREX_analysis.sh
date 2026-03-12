@@ -151,7 +151,7 @@ apptainer exec $GROMACS_CONTAINER gmx_mpi analyze -f lys167_tyr259_distance.xvg 
 python $scripts/plotxvg_hist.py lys167_tyr259_hist.xvg
 # RSMF of CA atoms of the whole protein, output in xvg format
 echo 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi rmsf -f md_fit.xtc -s $tpr -o rmsf_Ca.xvg -n index.ndx -b 20000 -res  # start at 20 ns (time in ps)
-python $scripts/plot_RMSF.py rmsf_Ca.xvg
+python $scripts/plot_RMSF_red.py rmsf_Ca.xvg
 ### define frames with distance between Lys167 NZ and Tyr259 OH < 0.6 nm as "closed" and >= 0.6 nm as "open", output in xvg format
 # Compute distance time series (ps)
 apptainer exec $GROMACS_CONTAINER gmx_mpi distance -f md_fit.xtc -s $tpr -n index.ndx -select 'com of group 24 plus com of group 25' -oall dist_k167_y259_ps.xvg

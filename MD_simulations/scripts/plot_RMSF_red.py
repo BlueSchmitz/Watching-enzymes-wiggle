@@ -12,6 +12,8 @@ if len(sys.argv) < 2:
     print("Usage: python plot_RMSF.py <rmsf.xvg>.")
     sys.exit(1)
 
+cmap = plt.get_cmap("viridis")
+
 # Input / output
 rmsf_file = Path(sys.argv[1])
 out_png = "rmsf.png"
@@ -44,7 +46,7 @@ rmsf = np.array(rmsf)
 plt.figure(figsize=(8, 4))
 
 # First: plot entire line in blue (provides connections)
-plt.plot(resid, rmsf, color='tab:blue', linewidth=2)
+plt.plot(resid, rmsf, color=cmap(0.5), linewidth=2)
 
 # Then: overplot ONLY the specified red residues
 red_mask = np.isin(resid, list(residues_to_scale))
