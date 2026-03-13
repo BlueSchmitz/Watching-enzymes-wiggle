@@ -23,7 +23,14 @@ sheet_name = 0
 df = pd.read_excel(file_name, sheet_name=sheet_name)
 
 t = (df["time"].values)/60  # convert seconds to minutes
-y = df["ratio"].values
+try:
+    y = df["ratio"].values
+except:
+    y=df["integrals"].values
+    print("min of y:", np.min(y))
+    print("max of y:", np.max(y))
+    # convert to percentage of max value
+    #y = y / np.max(y)
 
 # Monoexponential decay model
 # y(t) = y0 * exp(-R0 * t) + C (with offset)
