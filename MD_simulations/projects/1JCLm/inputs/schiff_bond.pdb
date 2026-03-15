@@ -1,0 +1,73 @@
+SEQRES   1 A  259  MET THR ASP LEU LYS ALA SER SER LEU ARG ALA LEU LYS
+SEQRES   2 A  259  LEU MET ASP LEU THR THR LEU ASN ASP ASP ASP THR ASP
+SEQRES   3 A  259  GLU LYS VAL ILE ALA LEU CYS HIS GLN ALA LYS THR PRO
+SEQRES   4 A  259  VAL GLY ASN THR ALA ALA ILE CYS ILE TYR PRO ARG PHE
+SEQRES   5 A  259  ILE PRO ILE ALA ARG LYS THR LEU LYS GLU GLN GLY THR
+SEQRES   6 A  259  PRO GLU ILE ARG ILE ALA THR VAL THR ASN PHE PRO HIS
+SEQRES   7 A  259  GLY ASN ASP ASP ILE ASP ILE ALA LEU ALA GLU THR ARG
+SEQRES   8 A  259  ALA ALA ILE ALA TYR GLY ALA ASP GLU VAL ASP VAL VAL
+SEQRES   9 A  259  PHE PRO TYR ARG ALA LEU MET ALA GLY ASN GLU GLN VAL
+SEQRES  10 A  259  GLY PHE ASP LEU VAL LYS ALA CYS LYS GLU ALA CYS ALA
+SEQRES  11 A  259  ALA ALA ASN VAL LEU LEU LYS VAL ILE ILE GLU THR GLY
+SEQRES  12 A  259  GLU LEU LYS ASP GLU ALA LEU ILE ARG LYS ALA SER GLU
+SEQRES  13 A  259  ILE SER ILE LYS ALA GLY ALA ASP PHE ILE LYS THR SER
+SEQRES  14 A  259  THR GLY LYS VAL ALA VAL ASN ALA THR PRO GLU SER ALA
+SEQRES  15 A  259  ARG ILE MET MET GLU VAL ILE ARG ASP MET GLY VAL GLU
+SEQRES  16 A  259  LYS THR VAL GLY PHE LYS PRO ALA GLY GLY VAL ARG THR
+SEQRES  17 A  259  ALA GLU ASP ALA GLN LYS TYR LEU ALA ILE ALA ASP GLU
+SEQRES  18 A  259  LEU PHE GLY ALA ASP TRP ALA ASP ALA ARG HIS TYR ARG
+SEQRES  19 A  259  PHE GLY ALA SER SER LEU LEU ALA SER LEU LEU LYS ALA
+SEQRES  20 A  259  LEU GLY HIS GLY ASP GLY LYS SER ALA SER SER TYR
+HELIX    1   1 ASP A    3  LEU A   14  1                                  12
+HELIX    2   2 ASP A   26  ALA A   36  1                                  11
+HELIX    3   3 PRO A   50  PHE A   52  1                                   3
+HELIX    4   4 ILE A   53  GLN A   63  1                                  11
+HELIX    5   5 ILE A   83  TYR A   96  1                                  14
+HELIX    6   6 TYR A  107  ALA A  112  1                                   6
+HELIX    7   7 GLN A  116  ALA A  132  1                                  17
+HELIX    8   8 THR A  142  LEU A  145  1                                   4
+HELIX    9   9 GLU A  148  ALA A  161  1                                  14
+HELIX   10  10 PRO A  179  MET A  192  1                                  14
+HELIX   11  11 ALA A  209  PHE A  223  1                                  15
+HELIX   12  12 LEU A  241  LEU A  248  1                                   8
+SHEET    1   1 1 MET A  15  THR A  18  0
+SHEET    2   2 1 ALA A  45  CYS A  47  0
+SHEET    3   3 1 ARG A  69  THR A  74  0
+SHEET    4   4 1 GLU A 100  VAL A 104  0
+SHEET    5   5 1 LEU A 135  ILE A 139  0
+SHEET    6   6 1 PHE A 165  LYS A 167  0
+SHEET    7   7 1 GLY A 199  LYS A 201  0
+SHEET    8   8 1 PHE A 235  ALA A 237  0
+LINK        NZ   LYS A 167                C3   UNL     1     1555   1555  1.49
+HETATM    1  O1  UNL     1      28.269   4.297  20.805  1.00  0.00           O
+HETATM    2  C1  UNL     1      27.027   2.487  19.771  1.00  0.00           C
+HETATM    3  C2  UNL     1      28.258   1.616  19.927  1.00  0.00           C
+HETATM    4  C3  UNL     1      27.225   3.880  20.315  1.00  0.00           C
+HETATM    5  H1  UNL     1      26.759   2.575  18.713  1.00  0.00           H
+HETATM    6  H2  UNL     1      26.181   2.038  20.303  1.00  0.00           H
+HETATM    7  H3  UNL     1      28.538   1.515  20.981  1.00  0.00           H
+HETATM    8  H4  UNL     1      29.113   2.045  19.394  1.00  0.00           H
+HETATM    9  H5  UNL     1      28.072   0.616  19.525  1.00  0.00           H
+HETATM   10  H6  UNL     1      26.342   4.538  20.240  1.00  0.00           H
+TER     177      ILE A 166
+ATOM    178  N   LYS A 167      24.296   7.760  12.999  1.00 64.65           N
+ATOM    179  CA  LYS A 167      24.839   6.489  13.403  1.00 64.65           C
+ATOM    180  CB  LYS A 167      25.214   6.512  14.896  1.00 64.65           C
+ATOM    181  CG  LYS A 167      25.806   5.231  15.487  1.00 64.65           C
+ATOM    182  CD  LYS A 167      26.400   5.467  16.882  1.00 64.65           C
+ATOM    183  CE  LYS A 167      26.737   4.191  17.656  1.00 64.65           C
+ATOM    184  NZ  LYS A 167      27.297   4.540  18.980  1.00 64.65           N
+ATOM    185  C   LYS A 167      23.777   5.447  13.217  1.00 64.65           C
+ATOM    186  O   LYS A 167      22.601   5.676  13.491  1.00 64.65           O
+CONECT    1    4
+CONECT    2    3    4    5    6
+CONECT    3    2    7    8    9
+CONECT    4    1    2   10  184
+CONECT    5    2
+CONECT    6    2
+CONECT    7    3
+CONECT    8    3
+CONECT    9    3
+CONECT   10    4
+CONECT  184  183    4
+END
