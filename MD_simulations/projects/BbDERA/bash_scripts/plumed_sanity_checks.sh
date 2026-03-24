@@ -53,7 +53,7 @@ function copy_back_results {
     if [[ -d "$tmpdir/MD_simulations/projects/$project_dir/outputs" ]]; then
         rsync -av --partial --inplace \
           "$tmpdir/MD_simulations/projects/$project_dir/outputs" \
-          "$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/$project_dir/outputs"
+          "$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/$project_dir"
         echo "=== Copy complete at $(date) ==="
     else
         echo "Nothing to copy back (outputs directory not found)"
