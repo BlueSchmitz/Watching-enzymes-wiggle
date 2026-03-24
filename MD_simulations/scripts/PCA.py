@@ -10,6 +10,8 @@ import matplotlib
 matplotlib.use("Agg")
 from scipy.stats import gaussian_kde
 from scipy.ndimage import gaussian_filter
+from scipy.spatial import ConvexHull
+from matplotlib.path import Path
 
 cmap = plt.get_cmap("viridis")
 
@@ -254,6 +256,7 @@ H_smooth = gaussian_filter(H, sigma=sigma)
 F = -kB * T * np.log(H_smooth + 1e-12)  # avoid log(0)
 # shift minimum free energy to zero
 F = F - np.nanmin(F)
+
 plt.figure(figsize=(8, 4))
 plt.imshow(F.T, origin='lower',
            extent=[xedges[0], xedges[-1],
@@ -277,18 +280,71 @@ X, Y = np.meshgrid(xgrid, ygrid)
 grid_points = np.vstack([X.ravel(), Y.ravel()])
 
 P = kde(grid_points).reshape(100, 100)  # probability density
+cutoff = np.percentile(P, 1)  # bottom 1%
+mask_lowP = P < cutoff # mask low-probability regions
+
+# optional: convex hull mask
+points = np.vstack([pc1, pc2]).T
+hull = ConvexHull(points)
+hull_path = Path(points[hull.vertices])
+grid_points_2d = np.vstack([X.ravel(), Y.ravel()]).T
+inside = hull_path.contains_points(grid_points_2d).reshape(X.shape)
+mask = mask_lowP | (~inside)
+
 F = -kB * T * np.log(P + 1e-12)
 F = F - np.nanmin(F)  # normalize to min=0
-F[P < 1e-10] = np.nan  # mask very low probabilities
+# Apply mask
+F_masked = np.ma.masked_where(mask, F)
+
+# marginals
+dx = xgrid[1] - xgrid[0]
+dy = ygrid[1] - ygrid[0]
+P_x = np.sum(P, axis=0) * dy
+P_y = np.sum(P, axis=1) * dx
+# Normalize
+P_x /= np.max(P_x)
+P_y /= np.max(P_y)
+
 
 # Contour plot (standard for FEL)
-plt.figure(figsize=(6, 5))
-cs = plt.contourf(X, Y, F, levels=20)
-plt.colorbar(cs, label="Free energy (kJ/mol)")
-plt.xlabel("PC1")
-plt.ylabel("PC2")
-plt.tight_layout()
-plt.savefig("fel_kde.png", dpi=300)
+fig = plt.figure(figsize=(7, 7))
+# Grid layout
+gs = fig.add_gridspec(
+    2, 2,
+    width_ratios=[4, 1],
+    height_ratios=[1, 4],
+    hspace=0.05,
+    wspace=0.05
+)
+ax_fel = fig.add_subplot(gs[1, 0])
+ax_top = fig.add_subplot(gs[0, 0], sharex=ax_fel)
+ax_right = fig.add_subplot(gs[1, 1], sharey=ax_fel)
+
+# FEL 
+cs = ax_fel.contourf(X, Y, F, levels=20)
+cbar = fig.colorbar(cs, ax=ax_fel)
+cbar.set_label("Free energy (kJ/mol)")
+
+ax_fel.set_xlabel("PC1")
+ax_fel.set_ylabel("PC2")
+
+# Top marginal (PC1)
+ax_top.plot(xgrid, P_x)
+ax_top.set_ylabel("P(PC1)")
+ax_top.tick_params(labelbottom=False)
+
+# Right marginal (PC2)
+ax_right.plot(P_y, ygrid)
+ax_right.set_xlabel("P(PC2)")
+ax_right.tick_params(labelleft=False)
+
+# Clean up spines
+ax_top.spines["right"].set_visible(False)
+ax_top.spines["top"].set_visible(False)
+ax_right.spines["right"].set_visible(False)
+ax_right.spines["top"].set_visible(False)
+
+plt.savefig("fel_with_marginals.png", dpi=300, bbox_inches="tight")
 plt.close()
 
 ### 3 Extract timepoints of representative structures ###

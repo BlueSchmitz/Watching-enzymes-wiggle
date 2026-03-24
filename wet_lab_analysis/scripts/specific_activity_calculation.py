@@ -115,6 +115,7 @@ def plot_activity_boxplot(df_summary, df_replicates, tukey_df, outfile_png):
     ax.set_ylabel("Specific activity (U/mg)")
     ax.set_title("Enzyme activities")
 
+    '''
     # Add significance stars from Tukey
     legend_handles = []
     if not tukey_df.empty and "reject" in tukey_df.columns:
@@ -147,7 +148,7 @@ def plot_activity_boxplot(df_summary, df_replicates, tukey_df, outfile_png):
         ]
 
         ax.legend(handles=legend_handles, loc='upper right', fontsize='small', handlelength=0, handletextpad=0.2)
-
+    '''
     fig.tight_layout()
     fig.savefig(outfile_png, dpi=300)
     plt.close(fig)
