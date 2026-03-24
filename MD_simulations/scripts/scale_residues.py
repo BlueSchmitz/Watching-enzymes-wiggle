@@ -10,13 +10,11 @@ import sys
 # Residues to scale (per chain, local numbering;
 # in case of multiple chains the residue number of chain A will be added automatically)
 residues_to_scale = set().union(
-    range(1,11),
-    range(26,33),
-    range(77,85),
-    range(169,180),
-    range(198,205),
-    range(222,225),
-    range(233,239)
+    range(1,7),
+    range(11,18),
+    range(62,70),
+    range(181,188),
+    range(201,213)
 )
 
 chain_filter = sys.argv[1] if len(sys.argv) == 2 else None
