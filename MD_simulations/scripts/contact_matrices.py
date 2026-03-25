@@ -126,7 +126,7 @@ heatmap_data.index = [res_lookup[i] for i in heatmap_data.index]
 heatmap_data.columns = [res_lookup[i] for i in heatmap_data.columns]
 
 # Plot heatmap of hbond occupancy
-plt.figure(figsize=(8,3))
+plt.figure(figsize=(8,6))
 
 #mask = heatmap_data == 0  # True where occupancy = 0
 sns.heatmap(
@@ -145,7 +145,7 @@ plt.savefig("hbonds_heatmap.png", dpi=300)
 plt.close()
 
 # Plot hydrogen bonds over time 
-plt.figure(figsize=(8, 4))
+plt.figure(figsize=(8, 6))
 plt.plot(h.times, h.count_by_time(), lw=2)
 plt.xlabel("Time (ps)")
 plt.ylabel("Number of hydrogen bonds")

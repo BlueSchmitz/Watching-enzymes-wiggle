@@ -231,9 +231,9 @@ T = 298  # K
 H, xedges, yedges = np.histogram2d(pc1, pc2, bins=50)
 P = H / np.max(H) # normalize to max bin count --> most populated bin F=0, others F>0
 F = -kB * T * np.log(P + 1e-12)  # avoid log(0)
-#F[P == 0] = np.nan               # hide unsampled regions
+F[P == 0] = np.nan               # hide unsampled regions
 
-plt.figure(figsize=(8, 4))
+plt.figure(figsize=(5, 4))
 plt.imshow(F.T, origin='lower',
            extent=[xedges[0], xedges[-1],
                    yedges[0], yedges[-1]],
@@ -256,8 +256,9 @@ H_smooth = gaussian_filter(H, sigma=sigma)
 F = -kB * T * np.log(H_smooth + 1e-12)  # avoid log(0)
 # shift minimum free energy to zero
 F = F - np.nanmin(F)
+F[P == 0] = np.nan # hide unsampled regions
 
-plt.figure(figsize=(8, 4))
+plt.figure(figsize=(5, 5))
 plt.imshow(F.T, origin='lower',
            extent=[xedges[0], xedges[-1],
                    yedges[0], yedges[-1]],
@@ -272,29 +273,29 @@ plt.close()
 
 ### Optional: KDE-based free energy landscape ###
 data_kde = np.vstack([pc1, pc2])
-kde = gaussian_kde(data_kde)
+kde = gaussian_kde(data_kde, bw_method=0.2)
 # Evaluate on a regular grid
-xgrid = np.linspace(min(pc1), max(pc1), 100)
-ygrid = np.linspace(min(pc2), max(pc2), 100)
+x_low, x_high = np.percentile(pc1, [1, 99])
+y_low, y_high = np.percentile(pc2, [1, 99])
+xgrid = np.linspace(x_low, x_high, 100)
+ygrid = np.linspace(y_low, y_high, 100)
 X, Y = np.meshgrid(xgrid, ygrid)
 grid_points = np.vstack([X.ravel(), Y.ravel()])
-
-P = kde(grid_points).reshape(100, 100)  # probability density
-cutoff = np.percentile(P, 1)  # bottom 1%
-mask_lowP = P < cutoff # mask low-probability regions
-
-# optional: convex hull mask
-points = np.vstack([pc1, pc2]).T
-hull = ConvexHull(points)
-hull_path = Path(points[hull.vertices])
-grid_points_2d = np.vstack([X.ravel(), Y.ravel()]).T
-inside = hull_path.contains_points(grid_points_2d).reshape(X.shape)
-mask = mask_lowP | (~inside)
-
+P = kde(grid_points).reshape(100, 100) # probability density
 F = -kB * T * np.log(P + 1e-12)
-F = F - np.nanmin(F)  # normalize to min=0
-# Apply mask
-F_masked = np.ma.masked_where(mask, F)
+F = F - np.nanmin(F) # normalize to min=0
+threshold = np.percentile(P, 10)  # keep top 95% density
+F[P < threshold] = np.nan
+
+# Contour plot
+plt.figure(figsize=(6, 5))
+cs = plt.contourf(X, Y, F, levels=20)
+plt.colorbar(cs, label="Free energy (kJ/mol)")
+plt.xlabel("PC1")
+plt.ylabel("PC2")
+plt.tight_layout()
+plt.savefig("fel_kde.png", dpi=300)
+plt.close()
 
 # marginals
 dx = xgrid[1] - xgrid[0]
@@ -307,7 +308,7 @@ P_y /= np.max(P_y)
 
 
 # Contour plot (standard for FEL)
-fig = plt.figure(figsize=(7, 7))
+fig = plt.figure(figsize=(8, 7))
 # Grid layout
 gs = fig.add_gridspec(
     2, 2,

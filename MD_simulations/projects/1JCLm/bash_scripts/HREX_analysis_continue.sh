@@ -115,31 +115,31 @@ xtc="../rep1.00/traj_comp.xtc"
 # Continue 
 # h-bonds and hydrophobic contacts analysis with MDAnalysis
 python $scripts/contact_matrices.py $tpr md_closed.xtc
-python $scripts/plot_RMSF_red.py rmsf_Ca.xvg
+#python $scripts/plot_RMSF_red.py rmsf_Ca.xvg
 
 # PCA
 # Compute covariance matrix
-echo 19 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi covar -s $tpr -f md_fit.xtc -n index.ndx -b 20000 -o eigenvalues.xvg -v eigenvectors.trr
+#echo 19 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi covar -s $tpr -f md_fit.xtc -n index.ndx -b 20000 -o eigenvalues.xvg -v eigenvectors.trr
     # fit to CA TIM, covariance of whole protein CA (so side-chains do not contribute to covariance)
     # eigenvalues.xvg contains the eigenvalues (variance along each PC as mean square fluctuation captured by that PC in nm^2), eigenvectors.trr contains the eigenvectors (PCs) as a trajectory
 # Project trajectory onto PCs
-echo 19 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s $tpr -n index.ndx -proj proj.xvg -first 1 -last 2
-echo 19 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s $tpr -n index.ndx -proj proj_20_pcs.xvg -first 1 -last 20
+#echo 19 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s $tpr -n index.ndx -proj proj.xvg -first 1 -last 2
+#echo 19 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s $tpr -n index.ndx -proj proj_20_pcs.xvg -first 1 -last 20
 # Extract extreme projections along PC1 and PC2
-echo 19 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s $tpr -n index.ndx -extr extremes.pdb -first 1 -last 2
+#echo 19 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s $tpr -n index.ndx -extr extremes.pdb -first 1 -last 2
 # Eigenvector components per atom (which residues dominate the motion)
-echo 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s $tpr -n index.ndx -rmsf PC_rmsf_per_atom.xvg -first 1 -last 2
+#echo 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s $tpr -n index.ndx -rmsf PC_rmsf_per_atom.xvg -first 1 -last 2
 
 python $scripts/PCA.py proj.xvg eigenvalues.xvg lys167_tyr259_distance.xvg proj_20_pcs.xvg
 
 # Extract extreme projections (from python script)
-min_pc1=$(awk '/min_pc1/ {print $2}' pc_extreme_frames.dat)
-echo 1 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_fit.xtc -s $tpr -dump $min_pc1 -o min_pc1.pdb
-max_pc1=$(awk '/max_pc1/ {print $2}' pc_extreme_frames.dat)
-echo 1 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_fit.xtc -s $tpr -dump $max_pc1 -o max_pc1.pdb
-min_pc2=$(awk '/min_pc2/ {print $2}' pc_extreme_frames.dat)
-echo 1 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_fit.xtc -s $tpr -dump $min_pc2 -o min_pc2.pdb
-max_pc2=$(awk '/max_pc2/ {print $2}' pc_extreme_frames.dat)
-echo 1 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_fit.xtc -s $tpr -dump $max_pc2 -o max_pc2.pdb
+#min_pc1=$(awk '/min_pc1/ {print $2}' pc_extreme_frames.dat)
+#echo 1 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_fit.xtc -s $tpr -dump $min_pc1 -o min_pc1.pdb
+#max_pc1=$(awk '/max_pc1/ {print $2}' pc_extreme_frames.dat)
+#echo 1 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_fit.xtc -s $tpr -dump $max_pc1 -o max_pc1.pdb
+#min_pc2=$(awk '/min_pc2/ {print $2}' pc_extreme_frames.dat)
+#echo 1 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_fit.xtc -s $tpr -dump $min_pc2 -o min_pc2.pdb
+#max_pc2=$(awk '/max_pc2/ {print $2}' pc_extreme_frames.dat)
+#echo 1 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_fit.xtc -s $tpr -dump $max_pc2 -o max_pc2.pdb
 
 echo "Analysis complete. Results will be copied back to home directory."
