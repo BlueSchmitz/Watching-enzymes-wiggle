@@ -229,7 +229,7 @@ hydrophobic_data_plot.index = [res_lookup[i] for i in hydrophobic_data_plot.inde
 hydrophobic_data_plot.columns = [res_lookup[i] for i in hydrophobic_data_plot.columns]
 
 # Plot heatmap of hydrophobic contact occupancy
-plt.figure(figsize=(8,3))
+plt.figure(figsize=(8,6))
 
 #mask = hydrophobic_data_plot == 0
 sns.heatmap(
