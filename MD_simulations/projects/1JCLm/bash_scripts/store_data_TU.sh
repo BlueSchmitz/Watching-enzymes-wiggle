@@ -1,7 +1,7 @@
 #!/bin/bash  
 
 #SBATCH -J copy_to_TU
-#SBATCH -t 10:00:00
+#SBATCH -t 01:00:00
 #SBATCH -p rome
 #SBATCH -N 1
 #SBATCH --ntasks=1
@@ -11,11 +11,12 @@
 #SBATCH --mail-user=blueschmitz@tudelft.nl
 #SBATCH --output=copy_to_TU_%j.out
 
-SRC="./outputs/*"
-DEST="tudelft_sftp:/staff-umbrella/biocat dera"
+SRC="./outputs/1_parametrization"
+DEST="tudelft_sftp:/staff-umbrella/biocat dera/MD_simulations/EcDERA"
 
 rclone copy "$SRC" "$DEST" \
     -P \
+    -vv \
     --transfers=8 \
     --checkers=16 \
     --timeout=1h \
