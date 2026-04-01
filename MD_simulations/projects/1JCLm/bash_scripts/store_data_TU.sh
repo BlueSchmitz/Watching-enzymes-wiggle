@@ -11,7 +11,7 @@
 #SBATCH --mail-user=blueschmitz@tudelft.nl
 #SBATCH --output=copy_to_TU_%j.out
 
-SRC="./outputs/1_protonation"
+SRC="/home/rleveson/Blue/Watching-enzymes-wiggle/MD_simulations/projects/1JCLm/outputs/1_protonation"
 DEST="tudelft_sftp:/staff-umbrella/biocat dera/MD_simulations/EcDERA"
 
 rclone copy "$SRC" "$DEST" \
