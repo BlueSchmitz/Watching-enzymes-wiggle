@@ -137,6 +137,7 @@ EOF
 echo 1 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s $tpr -f $xtc -o md_center_mol.xtc -center -pbc mol -ur compact
 # fit trajectory to reference (TIM barrel backbone) to remove overall rotation and translation, keep whole system
 echo 20 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s $tpr -f md_center_mol.xtc -o md_fit.xtc -fit rot+trans -n index.ndx
+rm md_center_mol.xtc
 # calculate RMSD of TIM barrel backbone over time, output in xvg format
 echo 20 20 | apptainer exec $GROMACS_CONTAINER gmx_mpi rms -s $tpr -f md_fit.xtc -n index.ndx -o rmsd_tim_barrel_backbone.xvg -tu ns
 python $scripts/plotxvg.py rmsd_tim_barrel_backbone.xvg 
