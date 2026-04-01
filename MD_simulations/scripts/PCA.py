@@ -223,6 +223,22 @@ np.savetxt(
 
 print("Saved correlations to pc_distance_correlations.dat")
 
+### 4 Plot variance explained by PCs ###
+eig = np.loadtxt(eigen_file, comments=["@", "#"])
+variance = eig[:,1]
+
+variance_percent = variance / np.sum(variance) * 100
+variance_percent = variance_percent[:10]  # show only first 10 PCs
+pc_index = np.arange(1, len(variance_percent) + 1)
+
+plt.figure(figsize=(8, 4))
+plt.bar(pc_index, variance_percent, color=cmap(0.5), edgecolor = "black")
+plt.xlabel("PC index")
+plt.ylabel("Variance explained (%)")
+plt.xticks(pc_index)
+plt.tight_layout()
+plt.savefig("variance_explained.png", dpi=300)
+plt.close()
 
 ### 2 Free energy landscape ###
 kB = 0.008314  # kJ/mol/K
@@ -291,8 +307,10 @@ F[P < threshold] = np.nan
 plt.figure(figsize=(6, 5))
 cs = plt.contourf(X, Y, F, levels=20)
 plt.colorbar(cs, label="Free energy (kJ/mol)")
-plt.xlabel("PC1")
-plt.ylabel("PC2")
+pc1_var = variance_percent[0]
+pc2_var = variance_percent[1]
+plt.xlabel(f"PC1 ({pc1_var:.1f}%)")
+plt.ylabel(f"PC2 ({pc2_var:.1f}%)")
 plt.tight_layout()
 plt.savefig("fel_kde.png", dpi=300)
 plt.close()
@@ -326,8 +344,14 @@ cs = ax_fel.contourf(X, Y, F, levels=20)
 cbar = fig.colorbar(cs, ax=ax_fel)
 cbar.set_label("Free energy (kJ/mol)")
 
-ax_fel.set_xlabel("PC1")
-ax_fel.set_ylabel("PC2")
+pc1_var = variance_percent[0]
+pc2_var = variance_percent[1]
+ax_fel.set_xlabel(f"PC1 ({pc1_var:.1f}%)")
+ax_fel.set_ylabel(f"PC2 ({pc2_var:.1f}%)")
+ax_fel.set_xlim(-4, 4)
+ax_fel.set_ylim(-4, 4)
+ax_fel.set_aspect('equal')
+ax_fel.tick_params(direction='in')
 
 # Top marginal (PC1)
 ax_top.plot(xgrid, P_x)
@@ -348,6 +372,71 @@ ax_right.spines["top"].set_visible(False)
 plt.savefig("fel_with_marginals.png", dpi=300, bbox_inches="tight")
 plt.close()
 
+### Outline plot
+fig = plt.figure(figsize=(8, 7))
+# Grid layout
+gs = fig.add_gridspec(
+    2, 2,
+    width_ratios=[4.5, 1],
+    height_ratios=[1, 4.5],
+    hspace=0.05,
+    wspace=0.05
+)
+ax_fel = fig.add_subplot(gs[1, 0])
+ax_top = fig.add_subplot(gs[0, 0])
+ax_right = fig.add_subplot(gs[1, 1])
+
+# FEL 
+xgrid = np.linspace(-4, 4, 100)
+ygrid = np.linspace(-4, 4, 100)
+X, Y = np.meshgrid(xgrid, ygrid)
+grid_points = np.vstack([X.ravel(), Y.ravel()])
+P = kde(grid_points).reshape(100, 100) # probability density
+F = -kB * T * np.log(P + 1e-12)
+F = F - np.nanmin(F) # normalize to min=0
+threshold = np.percentile(P, 10)  # keep top 95% density
+F[P < threshold] = np.nan
+
+cs = ax_fel.contourf(X, Y, F, levels=15, cmap="viridis")
+ax_fel.contour(X, Y, F, levels=15, colors="black", linewidths=0.3)
+cbar = fig.colorbar(cs, ax=ax_fel, fraction=0.05, pad=0.03)
+fig.subplots_adjust(right=0.88)
+cbar.set_label("Free energy (kJ/mol)")
+
+pc1_var = variance_percent[0]
+pc2_var = variance_percent[1]
+ax_fel.set_xlabel(f"PC1 ({pc1_var:.1f}%)")
+ax_fel.set_ylabel(f"PC2 ({pc2_var:.1f}%)")
+ax_fel.set_xlim(-4, 4)
+ax_fel.set_ylim(-4, 4)
+ax_fel.set_aspect('equal')
+ax_fel.tick_params(direction='in')
+
+# Top marginal (PC1)
+ax_top.plot(xgrid, P_x, color="black", alpha=0.1, linewidth=1)
+ax_top.fill_between(xgrid, P_x, color="black", alpha=0.1)
+ax_top.set_ylabel("P(PC1)")
+ax_top.tick_params(labelbottom=False)
+ax_top.set_yticks([])
+ax_top.set_xlim(ax_fel.get_xlim())
+
+# Right marginal (PC2)
+ax_right.plot(P_y, ygrid, color="black", alpha=0.1, linewidth=1)
+ax_right.fill_betweenx(ygrid, P_y, color="black", alpha=0.1)
+ax_right.set_xlabel("P(PC2)")
+ax_right.tick_params(labelleft=False)
+ax_right.set_xticks([])
+ax_right.set_ylim(ax_fel.get_ylim())
+
+# Clean up spines
+ax_top.spines["right"].set_visible(False)
+ax_top.spines["top"].set_visible(False)
+ax_right.spines["right"].set_visible(False)
+ax_right.spines["top"].set_visible(False)
+
+plt.savefig("fel_with_marginals_lines.png", dpi=300, bbox_inches="tight")
+plt.close()
+
 ### 3 Extract timepoints of representative structures ###
 min_pc1 = np.argmin(pc1)
 max_pc1 = np.argmax(pc1)
@@ -365,20 +454,3 @@ with open("pc_extreme_frames.dat", "w") as f:
     f.write(f"max_pc1 {max_pc1_time}\n")
     f.write(f"min_pc2 {min_pc2_time}\n")
     f.write(f"max_pc2 {max_pc2_time}\n")
-
-### 4 Plot variance explained by PCs ###
-eig = np.loadtxt(eigen_file, comments=["@", "#"])
-variance = eig[:,1]
-
-variance_percent = variance / np.sum(variance) * 100
-variance_percent = variance_percent[:10]  # show only first 10 PCs
-pc_index = np.arange(1, len(variance_percent) + 1)
-
-plt.figure(figsize=(8, 4))
-plt.bar(pc_index, variance_percent, color=cmap(0.5), edgecolor = "black")
-plt.xlabel("PC index")
-plt.ylabel("Variance explained (%)")
-plt.xticks(pc_index)
-plt.tight_layout()
-plt.savefig("variance_explained.png", dpi=300)
-plt.close()
