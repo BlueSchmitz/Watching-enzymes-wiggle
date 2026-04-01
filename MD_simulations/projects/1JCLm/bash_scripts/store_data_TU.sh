@@ -27,5 +27,3 @@ rclone copy "$SRC" "$DEST" \
     --timeout=1h \
     --retries=10 \
     --retries-sleep=30s \
-    --log-file=rclone_${SLURM_JOB_ID}.log \
-    --log-level=INFO
