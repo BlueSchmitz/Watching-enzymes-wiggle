@@ -418,6 +418,7 @@ ax_top.fill_between(xgrid, P_x, color="black", alpha=0.1)
 ax_top.set_ylabel("P(PC1)")
 ax_top.tick_params(labelbottom=False)
 ax_top.set_yticks([])
+ax_top.set_xticks([])
 ax_top.set_xlim(ax_fel.get_xlim())
 
 # Right marginal (PC2)
@@ -426,6 +427,7 @@ ax_right.fill_betweenx(ygrid, P_y, color="black", alpha=0.1)
 ax_right.set_xlabel("P(PC2)")
 ax_right.tick_params(labelleft=False)
 ax_right.set_xticks([])
+ax_right.set_yticks([])
 ax_right.set_ylim(ax_fel.get_ylim())
 
 # Clean up spines
