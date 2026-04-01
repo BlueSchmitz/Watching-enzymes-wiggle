@@ -87,8 +87,8 @@ plt.text(
     bbox=dict(boxstyle="round", facecolor="white", alpha=0.8)
 )
 
-output_figure = f"HD_exchange_fit_{file_name.split('.')[0]}.png"
+output_figure = f"HD_exchange_fit_{file_name.split('.')[0]}.pdf"
 plt.legend()
 plt.tight_layout()
-plt.savefig(output_figure, dpi=300)
+plt.savefig(output_figure)
 plt.close()
