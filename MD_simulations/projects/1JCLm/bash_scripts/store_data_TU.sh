@@ -5,7 +5,7 @@
 #SBATCH -p rome
 #SBATCH -N 1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task 16
+#SBATCH --cpus-per-task=16
 #SBATCH --gpus=0
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=blueschmitz@tudelft.nl
