@@ -14,6 +14,11 @@
 SRC="/home/rleveson/Blue/Watching-enzymes-wiggle/MD_simulations/projects/1JCLm/outputs/1_protonation"
 DEST="tudelft_sftp:/staff-umbrella/biocat dera/MD_simulations/EcDERA"
 
+echo "HOSTNAME: $(hostname)"
+echo "PATH: $PATH"
+which rclone || echo "RCLONE NOT FOUND"
+rclone version || echo "RCLONE NOT RUNNING"
+
 rclone copy "$SRC" "$DEST" \
     -P \
     -vv \
