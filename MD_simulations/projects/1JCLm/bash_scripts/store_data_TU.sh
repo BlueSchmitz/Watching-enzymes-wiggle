@@ -1,7 +1,7 @@
 #!/bin/bash  
 
 #SBATCH -J copy_to_TU
-#SBATCH -t 10:00:00
+#SBATCH -t 00:20:00
 #SBATCH -p rome
 #SBATCH -N 1
 #SBATCH --ntasks=1
@@ -11,8 +11,8 @@
 #SBATCH --mail-user=blueschmitz@tudelft.nl
 #SBATCH --output=copy_to_TU_%j.out
 
-SRC="/home/rleveson/Blue/Watching-enzymes-wiggle/MD_simulations/projects/1JCLm/outputs/"
-DEST="tudelft_sftp:/staff-umbrella/biocat dera/MD_simulations/EcDERA"
+SRC="/home/rleveson/Blue/Watching-enzymes-wiggle/MD_simulations/projects/1JCLd/outputs/"
+DEST="tudelft_sftp:/staff-umbrella/biocat dera/MD_simulations/EcDERA/Dimer"
 
 echo "HOSTNAME: $(hostname)"
 echo "PATH: $PATH"
