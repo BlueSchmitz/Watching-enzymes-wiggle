@@ -294,7 +294,7 @@ def main(folder):
         path=os.path.join(folder,w)
 
         if os.path.isdir(path):
-
+            print(f"Processing window: {w}")
             c,pos=process_window(path)
 
             centers.append(c)

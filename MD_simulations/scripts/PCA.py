@@ -377,23 +377,38 @@ fig = plt.figure(figsize=(8, 7))
 # Grid layout
 gs = fig.add_gridspec(
     2, 2,
-    width_ratios=[4.5, 1],
-    height_ratios=[1, 4.5],
+    width_ratios=[4, 1],
+    height_ratios=[1, 4],
     hspace=0.05,
     wspace=0.05
 )
 ax_fel = fig.add_subplot(gs[1, 0])
-ax_top = fig.add_subplot(gs[0, 0])
-ax_right = fig.add_subplot(gs[1, 1])
+ax_top = fig.add_subplot(gs[0, 0], sharex=ax_fel)
+ax_right = fig.add_subplot(gs[1, 1], sharey=ax_fel)
 
 # FEL 
-xgrid = np.linspace(-4, 4, 100)
-ygrid = np.linspace(-4, 4, 100)
+# Use KDE-based FEL for smoother contours
+# Define domain from data percentiles to avoid outliers dominating the plot
+x_low, x_high = np.percentile(pc1, [1, 99])
+y_low, y_high = np.percentile(pc2, [1, 99])
+# Padding to avoid cutting off contours at edges
+pad_x = 0.1 * (x_high - x_low)
+pad_y = 0.1 * (y_high - y_low)
+x_low -= pad_x
+x_high += pad_x
+y_low -= pad_y
+y_high += pad_y
+# Build grid 
+xgrid = np.linspace(x_low, x_high, 100)
+ygrid = np.linspace(y_low, y_high, 100)
 X, Y = np.meshgrid(xgrid, ygrid)
+# Evaluate KDE
 grid_points = np.vstack([X.ravel(), Y.ravel()])
 P = kde(grid_points).reshape(100, 100) # probability density
+# Free energy
 F = -kB * T * np.log(P + 1e-12)
 F = F - np.nanmin(F) # normalize to min=0
+# Masking
 threshold = np.percentile(P, 10)  # keep top 95% density
 F[P < threshold] = np.nan
 
@@ -438,6 +453,11 @@ ax_right.spines["top"].set_visible(False)
 
 plt.savefig("fel_with_marginals_lines.png", dpi=300, bbox_inches="tight")
 plt.close()
+
+print(pc1.min(), pc1.max())
+print(pc2.min(), pc2.max())
+print(x_low, x_high)
+print(y_low, y_high)
 
 ### 3 Extract timepoints of representative structures ###
 min_pc1 = np.argmin(pc1)
