@@ -67,6 +67,9 @@ def process_window(folder):
 
     pullx = find_file(folder, start_str="umbrella", end_str="_pullx.xvg")
     pullf = find_file(folder, start_str="umbrella", end_str="_pullf.xvg")
+    
+    print(f"  pullx: {pullx}")
+    print(f"  pullf: {pullf}")
 
     timex, pos = load_xvg_columns(pullx,(0,1))
     timef, force = load_xvg_columns(pullf,(0,1))
