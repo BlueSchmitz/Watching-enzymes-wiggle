@@ -130,7 +130,7 @@ xtc="../rep1.00/traj_comp.xtc"
 # Eigenvector components per atom (which residues dominate the motion)
 #echo 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s $tpr -n index.ndx -rmsf PC_rmsf_per_atom.xvg -first 1 -last 2
 
-python $scripts/PCA.py proj.xvg eigenvalues.xvg lys167_tyr259_distance.xvg proj_20_pcs.xvg
+python $scripts/PCA_try.py proj.xvg eigenvalues.xvg lys167_tyr259_distance.xvg proj_20_pcs.xvg
 
 # Extract extreme projections (from python script)
 #min_pc1=$(awk '/min_pc1/ {print $2}' pc_extreme_frames.dat)
