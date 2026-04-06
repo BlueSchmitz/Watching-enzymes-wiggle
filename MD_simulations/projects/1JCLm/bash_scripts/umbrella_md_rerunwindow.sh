@@ -67,4 +67,4 @@ cd ./outputs/$output_dir/
 
 cd ./COM_0.661
 
-apptainer exec $GROMACS_CONTAINER mpirun -np 16 gmx_mpi mdrun -deffnm umbrella214 -v -cpi umbrella214.cpt
+apptainer exec $GROMACS_CONTAINER mpirun -np 16 gmx_mpi mdrun -deffnm umbrella214 -v -px umbrella214_pullx -pf umbrella214_pullf -cpi umbrella214.cpt
