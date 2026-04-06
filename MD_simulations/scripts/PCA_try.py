@@ -7,8 +7,9 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib
-matplotlib.use("Agg")
+#matplotlib.use("Agg")
 from scipy.stats import gaussian_kde
+from scipy.ndimage import gaussian_filter
 
 cmap = plt.get_cmap("viridis")
 
@@ -107,7 +108,7 @@ plt.close()
 kB = 0.008314  # kJ/mol/K
 T = 298  # K
 
-H, xedges, yedges = np.histogram2d(pc1, pc2, bins=50)
+H, xedges, yedges = np.histogram2d(pc1, pc2, bins=200)
 P = H / np.max(H) # normalize to max bin count --> most populated bin F=0, others F>0
 F = -kB * T * np.log(P + 1e-12)  # avoid log(0)
 F[P == 0] = np.nan               # hide unsampled regions
@@ -119,13 +120,12 @@ yc = 0.5 * (yedges[:-1] + yedges[1:])
 # Contour plot
 fig, ax = plt.subplots(figsize=(7, 5))
 
-levels = np.linspace(np.nanmin(F), np.nanpercentile(F, 95), 15)
+levels = np.linspace(0, 15, 5)
 
 cf = ax.contourf(xc, yc, F.T, levels=levels, cmap="viridis")
 c = ax.contour(xc, yc, F.T, levels=levels, colors="k", linewidths=0.4, alpha=0.5)
 
 fig, ax = plt.subplots(figsize=(7, 5))
-levels = np.linspace(np.nanmin(F), np.nanpercentile(F, 95), 15)
 cf = ax.contourf(xc, yc, F.T, levels=levels, cmap="viridis")
 c = ax.contour(xc, yc, F.T, levels=levels, colors="k", linewidths=0.4, alpha=0.5)
 ax.set_xlabel("PC1")
