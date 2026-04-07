@@ -12,6 +12,8 @@ from scipy.stats import gaussian_kde
 from scipy.ndimage import gaussian_filter
 from scipy.spatial import ConvexHull
 from matplotlib.path import Path
+from sklearn.cluster import AgglomerativeClustering
+import hdbscan
 
 cmap = plt.get_cmap("viridis")
 
@@ -230,6 +232,12 @@ variance = eig[:,1]
 variance_percent = variance / np.sum(variance) * 100
 variance_percent = variance_percent[:10]  # show only first 10 PCs
 pc_index = np.arange(1, len(variance_percent) + 1)
+
+df = pd.DataFrame({
+    "PC": pc_index,
+    "variance_percent": variance_percent
+})
+df.to_csv("pc_variance.csv", index=False)
 
 plt.figure(figsize=(8, 4))
 plt.bar(pc_index, variance_percent, color=cmap(0.5), edgecolor = "black")
@@ -458,6 +466,33 @@ print(pc1.min(), pc1.max())
 print(pc2.min(), pc2.max())
 print(x_low, x_high)
 print(y_low, y_high)
+
+# Cluster 
+X = np.vstack([pc1, pc2]).T
+
+for i in range(2, 10):
+    clustering = AgglomerativeClustering(n_clusters=5)
+    labels = clustering.fit_predict(X)
+    # plot pc1 vs pc2 colored by cluster
+    plt.figure(figsize=(6, 4))
+    plt.scatter(pc1, pc2, s=5, color=cmap(labels), alpha=0.7)
+    plt.xlabel(f"PC1 ({pc1_var:.1f}%)")
+    plt.ylabel(f"PC2 ({pc2_var:.1f}%)")
+    plt.tight_layout()
+    plt.savefig(f"pc1_vs_pc2_clusters{i}.png", dpi=300)
+    plt.close()
+
+#hdbscan
+clusterer = hdbscan.HDBSCAN(min_cluster_size=100)
+labels = clusterer.fit_predict(X)
+# plot pc1 vs pc2 colored by cluster
+plt.figure(figsize=(6, 4))
+plt.scatter(pc1, pc2, s=5, color=cmap(labels), alpha=0.7)
+plt.xlabel(f"PC1 ({pc1_var:.1f}%)")
+plt.ylabel(f"PC2 ({pc2_var:.1f}%)")
+plt.tight_layout()
+plt.savefig(f"pc1_vs_pc2_clusters_hdbscan.png", dpi=300)
+plt.close()
 
 ### 3 Extract timepoints of representative structures ###
 min_pc1 = np.argmin(pc1)

@@ -75,8 +75,9 @@ mkdir -p "$tmpdir/MD_simulations/projects/"
 
 # Load modules:  
 module load 2023
-module load matplotlib/3.7.2-gfbf-2023a
 module load Python/3.11.3-GCCcore-12.3.0
+module load matplotlib/3.7.2-gfbf-2023a
+module load scikit-learn/1.3.1-gfbf-2023a
 module list
 
 ### Copy project to scratch ###
@@ -186,4 +187,6 @@ echo 1 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_fit.xtc -s $tpr
 max_pc2=$(awk '/max_pc2/ {print $2}' pc_extreme_frames.dat)
 echo 1 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_fit.xtc -s $tpr -dump $max_pc2 -o max_pc2.pdb
 
+# Clustering 
+python $scripts/clustering.py $tpr md_fit.xtc
 echo "Analysis complete. Results will be copied back to home directory."

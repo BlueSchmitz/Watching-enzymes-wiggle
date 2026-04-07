@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# usage: python contact_matrices.py topol.tpr traj.xtc
+# usage: python clustering.py topol.tpr traj.xtc
 '''Visualisation of hbonds, hydrophobic contacts and salt bridges.'''
 
 import sys
@@ -20,8 +20,7 @@ import hdbscan
 tpr = sys.argv[1]
 trj = sys.argv[2]
 u = mda.Universe(tpr, trj)
-
-res_lookup = {r.resid: "{}{}".format(r.resname, r.resid) for r in u.residues}
+u.trajectory[::10]  # every 10th frame
 
 # Define tail and barrel selections
 tail = u.select_atoms("resid 249:259")
@@ -121,3 +120,38 @@ store(hdb_labels_tail, "hdbscan", "tail", None)
 
 df = pd.DataFrame(records)
 df.to_csv("cluster_assignments.csv", index=False)
+
+# Plotting
+df = pd.read_csv("pca_data.dat", delim_whitespace=True)
+pc1 = df["PC1"].values
+pc2 = df["PC2"].values
+
+df2 = pd.read_csv("pc_variance.csv")
+pc1_var = df2[df2["PC"] == 1]["variance_percent"].values[0]
+pc2_var = df2[df2["PC"] == 2]["variance_percent"].values[0]
+
+# plot pc1 vs pc2 colored by cluster
+def plot_clustering(labels, method):
+    plt.figure(figsize=(6, 4))
+    plt.scatter(pc1, pc2, s=5, c=labels,cmap="viridis", alpha=0.7)
+    plt.xlabel(f"PC1 ({pc1_var:.1f}%)")
+    plt.ylabel(f"PC2 ({pc2_var:.1f}%)")
+    plt.tight_layout()
+    plt.savefig(f"pc1_vs_pc2_clusters_{method}.png", dpi=300)
+    plt.close()
+
+plots = [
+    (labels_protein_1, "protein_hierarchical_1"),
+    (labels_tail_1, "tail_hierarchical_1"),
+    (labels_protein_2, "protein_hierarchical_2"),
+    (labels_tail_2, "tail_hierarchical_2"),
+    (labels_protein_2_5, "protein_hierarchical_2_5"),
+    (labels_tail_2_5, "tail_hierarchical_2_5"),
+    (labels_protein_3, "protein_hierarchical_3"),
+    (labels_tail_3, "tail_hierarchical_3"),
+    (hdb_labels_protein, "protein_hdbscan"),
+    (hdb_labels_tail, "tail_hdbscan")
+]
+
+for labels, name in plots:
+    plot_clustering(labels, name)
