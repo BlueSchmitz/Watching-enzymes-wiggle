@@ -493,21 +493,3 @@ plt.ylabel(f"PC2 ({pc2_var:.1f}%)")
 plt.tight_layout()
 plt.savefig(f"pc1_vs_pc2_clusters_hdbscan.png", dpi=300)
 plt.close()
-
-### 3 Extract timepoints of representative structures ###
-min_pc1 = np.argmin(pc1)
-max_pc1 = np.argmax(pc1)
-min_pc2 = np.argmin(pc2)
-max_pc2 = np.argmax(pc2)
-
-# corresponding times
-min_pc1_time = int(time[min_pc1])
-max_pc1_time = int(time[max_pc1])
-min_pc2_time = int(time[min_pc2])
-max_pc2_time = int(time[max_pc2])
-
-with open("pc_extreme_frames.dat", "w") as f:
-    f.write(f"min_pc1 {min_pc1_time}\n")
-    f.write(f"max_pc1 {max_pc1_time}\n")
-    f.write(f"min_pc2 {min_pc2_time}\n")
-    f.write(f"max_pc2 {max_pc2_time}\n")

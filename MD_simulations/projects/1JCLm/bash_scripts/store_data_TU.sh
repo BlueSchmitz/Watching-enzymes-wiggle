@@ -11,8 +11,8 @@
 #SBATCH --mail-user=blueschmitz@tudelft.nl
 #SBATCH --output=copy_to_TU_%j.out
 
-SRC="/home/rleveson/Blue/Watching-enzymes-wiggle/MD_simulations/projects/5EKY_monomeric/outputs/"
-DEST="tudelft_sftp:/staff-umbrella/biocat dera/MD_simulations/EcDERA/Old_5EKY"
+SRC="/home/rleveson/Blue/Watching-enzymes-wiggle/MD_simulations/projects/"
+DEST="tudelft_sftp:/staff-umbrella/biocat dera/MD_simulations/EcDERA/"
 
 echo "HOSTNAME: $(hostname)"
 echo "PATH: $PATH"

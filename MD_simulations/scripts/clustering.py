@@ -132,6 +132,7 @@ pc2_var = df2[df2["PC"] == 2]["variance_percent"].values[0]
 
 # plot pc1 vs pc2 colored by cluster
 def plot_clustering(labels, method):
+    assert len(labels) == len(pc1)
     plt.figure(figsize=(6, 4))
     plt.scatter(pc1, pc2, s=5, c=labels,cmap="viridis", alpha=0.7)
     plt.xlabel(f"PC1 ({pc1_var:.1f}%)")

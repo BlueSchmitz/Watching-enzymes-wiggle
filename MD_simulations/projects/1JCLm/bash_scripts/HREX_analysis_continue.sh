@@ -1,15 +1,15 @@
 #!/bin/bash  
 
-#SBATCH -J EcDERA_HREX_analysis
-#SBATCH -t 00:30:00
+#SBATCH -J EcDERA_HREX_clustering
+#SBATCH -t 06:00:00
 #SBATCH -p rome
 #SBATCH -N 1
-#SBATCH --ntasks=16
-#SBATCH --cpus-per-task 1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task 16
 #SBATCH --gpus=0
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=blueschmitz@tudelft.nl
-#SBATCH --output=hrex_analysis_%j.out
+#SBATCH --output=hrex_clustering_%j.out
 
 : '
 Folder structure:
@@ -130,7 +130,7 @@ xtc="../rep1.00/traj_comp.xtc"
 # Eigenvector components per atom (which residues dominate the motion)
 #echo 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s $tpr -n index.ndx -rmsf PC_rmsf_per_atom.xvg -first 1 -last 2
 
-python $scripts/PCA_try.py proj.xvg eigenvalues.xvg lys167_tyr259_distance.xvg proj_20_pcs.xvg
+#python $scripts/PCA_try.py proj.xvg eigenvalues.xvg lys167_tyr259_distance.xvg proj_20_pcs.xvg
 
 # Extract extreme projections (from python script)
 #min_pc1=$(awk '/min_pc1/ {print $2}' pc_extreme_frames.dat)
@@ -141,5 +141,7 @@ python $scripts/PCA_try.py proj.xvg eigenvalues.xvg lys167_tyr259_distance.xvg p
 #echo 1 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_fit.xtc -s $tpr -dump $min_pc2 -o min_pc2.pdb
 #max_pc2=$(awk '/max_pc2/ {print $2}' pc_extreme_frames.dat)
 #echo 1 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_fit.xtc -s $tpr -dump $max_pc2 -o max_pc2.pdb
+
+python $scripts/clustering.py $tpr md_fit.xtc
 
 echo "Analysis complete. Results will be copied back to home directory."
