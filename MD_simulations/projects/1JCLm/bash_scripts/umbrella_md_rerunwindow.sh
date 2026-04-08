@@ -68,5 +68,5 @@ cd ./outputs/$output_dir/
 cd ./COM_1.084
 apptainer exec $GROMACS_CONTAINER mpirun -np 16 gmx_mpi mdrun -deffnm umbrella173 -v -px umbrella173_pullx -pf umbrella173_pullf -cpi umbrella173.cpt
 
-cd ./COM_1.151
+cd ../COM_1.151
 apptainer exec $GROMACS_CONTAINER mpirun -np 16 gmx_mpi mdrun -deffnm umbrella146 -v -px umbrella146_pullx -pf umbrella146_pullf -cpi umbrella146.cpt
