@@ -1,7 +1,7 @@
 #!/bin/bash  
 
-#SBATCH -J umbrella_1JCLm_COM_1.038
-#SBATCH -t 02:00:00
+#SBATCH -J umbrella_1JCLm_2windows
+#SBATCH -t 04:00:00
 #SBATCH -p rome
 #SBATCH -N 1
 #SBATCH --ntasks=16
@@ -9,7 +9,7 @@
 #SBATCH --gpus=0
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=blueschmitz@tudelft.nl
-#SBATCH --output=umbrella_MD1.038_%j.out
+#SBATCH --output=umbrella_2windows_%j.out
 
 # Exit immediately on errors, undefined vars, or failed pipes
 set -euo pipefail
@@ -63,8 +63,10 @@ trap copy_back_results EXIT
 mkdir -p ./outputs/$output_dir
 cd ./outputs/$output_dir/
 
-# 4 Run umbrella sampling window
+# 4 Run umbrella sampling windows
 
-cd ./COM_1.038
+cd ./COM_1.084
+apptainer exec $GROMACS_CONTAINER mpirun -np 16 gmx_mpi mdrun -deffnm umbrella173 -v -px umbrella173_pullx -pf umbrella173_pullf -cpi umbrella173.cpt
 
-apptainer exec $GROMACS_CONTAINER mpirun -np 16 gmx_mpi mdrun -deffnm umbrella193 -v -px umbrella193_pullx -pf umbrella193_pullf -cpi umbrella193.cpt
+cd ./COM_1.151
+apptainer exec $GROMACS_CONTAINER mpirun -np 16 gmx_mpi mdrun -deffnm umbrella146 -v -px umbrella146_pullx -pf umbrella146_pullf -cpi umbrella146.cpt
