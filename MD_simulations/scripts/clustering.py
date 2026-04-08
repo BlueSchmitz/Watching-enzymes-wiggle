@@ -60,7 +60,7 @@ def compute_rmsd_matrix(universe, selection, frame_indices):
 
     print(f"Building RMSD matrix of size {n} x {n}")
 
-    dist_matrix = np.zeros((n, n), dtype=np.float32)
+    dist_matrix = np.zeros((n, n), dtype=np.float64)
 
     for i in range(n):
         for j in range(i + 1, n):
