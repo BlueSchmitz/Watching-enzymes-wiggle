@@ -20,7 +20,6 @@ import hdbscan
 tpr = sys.argv[1]
 trj = sys.argv[2]
 u = mda.Universe(tpr, trj)
-u.trajectory[::10]  # every 10th frame
 
 # Define tail and barrel selections
 tail = u.select_atoms("resid 249:259")
@@ -29,33 +28,53 @@ n_tail = len(tail.residues)
 n_barrel = len(barrel.residues)
 
 # Align trajectory to core (TIM barrel-like region)
-align.AlignTraj(u, u, select="backbone and not resid 249:259", in_memory=True).run()
+align.AlignTraj(u, u, select="backbone and not resid 249:259", in_memory=False).run()
+
+# Downsample trajectory for clustering
+stride = 10
+max_frames = 5000
+sampled_frames = []
+times = []
+
+for i, ts in enumerate(u.trajectory[::stride]):
+    if i >= max_frames:
+        break
+    sampled_frames.append(ts.frame)
+    times.append(ts.time)
+
+n_frames = len(sampled_frames)
+print(f"Using {n_frames} frames for clustering")
 
 # Build RMSD distance matrices
-def compute_rmsd_matrix(universe, selection):
+def compute_rmsd_matrix(universe, selection, frame_indices):
     sel = universe.select_atoms(selection)
-    n_frames = len(universe.trajectory)
+
     coords = []
 
-    for ts in universe.trajectory:
+    for idx in frame_indices:
+        universe.trajectory[idx]
         coords.append(sel.positions.copy())
 
     coords = np.array(coords)
     n = len(coords)
-    dist_matrix = np.zeros((n, n))
+
+    print(f"Building RMSD matrix of size {n} x {n}")
+
+    dist_matrix = np.zeros((n, n), dtype=np.float32)
 
     for i in range(n):
-        for j in range(i+1, n):
-            val = rmsd(coords[i], coords[j], center=True, superposition=True)
+        for j in range(i + 1, n):
+            val = rmsd(coords[i], coords[j],
+                       center=True, superposition=True)
             dist_matrix[i, j] = dist_matrix[j, i] = val
 
     return dist_matrix
 
 # Whole protein
-dist_protein = compute_rmsd_matrix(u, "protein")
+dist_protein = compute_rmsd_matrix(u, "protein", sampled_frames)
 
 # Tail only
-dist_tail = compute_rmsd_matrix(u, "resid 150:200")
+dist_tail = compute_rmsd_matrix(u, "resid 150:200", sampled_frames)
 
 # Hierarchical clustering
 def hierarchical_clustering(dist_matrix, cutoff=2.5):
@@ -138,7 +157,7 @@ def plot_clustering(labels, method):
     plt.xlabel(f"PC1 ({pc1_var:.1f}%)")
     plt.ylabel(f"PC2 ({pc2_var:.1f}%)")
     plt.tight_layout()
-    plt.savefig(f"pc1_vs_pc2_clusters_{method}.png", dpi=300)
+    plt.savefig(f"pc1_vs_pc2_clusters_{method}.pdf")
     plt.close()
 
 plots = [
