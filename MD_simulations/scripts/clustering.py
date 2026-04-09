@@ -141,7 +141,7 @@ df = pd.DataFrame(records)
 df.to_csv("cluster_assignments.csv", index=False)
 
 # Plotting
-df = pd.read_csv("pca_data.dat", delim_whitespace=True)
+df = pd.read_csv("pca_projection.dat", delim_whitespace=True)
 pc1 = df["PC1"].values
 pc2 = df["PC2"].values
 
