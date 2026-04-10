@@ -114,52 +114,52 @@ tpr="../rep1.00/topol.tpr"
 xtc="../rep1.00/traj_comp.xtc"
 
 # make index file with default + custom groups
-apptainer exec $GROMACS_CONTAINER gmx_mpi make_ndx -f $tpr -o index.ndx << EOF
-r 1-212
-name 18 TIM_barrel
-r 1-212 & a CA
-name 19 CA_TIM
-4 & 18 
-name 20 TIM_barrel_backbone
-r 213-221
-name 21 tail
-r 213-221 & a CA
-name 22 CA_tail
-4 & 21 
-name 23 tail_backbone
-r 151 & a NZ
-name 24 Lys151_NZ
-r 221 & a OH
-name 25 Tyr221_OH
+#apptainer exec $GROMACS_CONTAINER gmx_mpi make_ndx -f $tpr -o index.ndx << EOF
+#r 1-212
+#name 18 TIM_barrel
+#r 1-212 & a CA
+#name 19 CA_TIM
+#4 & 18 
+#name 20 TIM_barrel_backbone
+#r 213-221
+#name 21 tail
+#r 213-221 & a CA
+#name 22 CA_tail
+#4 & 21 
+#name 23 tail_backbone
+#r 151 & a NZ
+#name 24 Lys151_NZ
+#r 221 & a OH
+#name 25 Tyr221_OH
 
-q
-EOF
+#q
+#EOF
 
 # center the trajectory on the whole protein and remove PBC artifacts, output in compact format
-echo 1 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s $tpr -f $xtc -o md_center_mol.xtc -center -pbc mol -ur compact
+#echo 1 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s $tpr -f $xtc -o md_center_mol.xtc -center -pbc mol -ur compact
 # fit trajectory to reference (TIM barrel backbone) to remove overall rotation and translation, keep whole system
-echo 20 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s $tpr -f md_center_mol.xtc -o md_fit.xtc -fit rot+trans -n index.ndx
-rm md_center_mol.xtc
+#echo 20 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s $tpr -f md_center_mol.xtc -o md_fit.xtc -fit rot+trans -n index.ndx
+#rm md_center_mol.xtc
 # calculate RMSD of TIM barrel backbone over time, output in xvg format
-echo 20 20 | apptainer exec $GROMACS_CONTAINER gmx_mpi rms -s $tpr -f md_fit.xtc -n index.ndx -o rmsd_tim_barrel_backbone.xvg -tu ns
-python $scripts/plotxvg.py rmsd_tim_barrel_backbone.xvg 
+#echo 20 20 | apptainer exec $GROMACS_CONTAINER gmx_mpi rms -s $tpr -f md_fit.xtc -n index.ndx -o rmsd_tim_barrel_backbone.xvg -tu ns
+#python $scripts/plotxvg.py rmsd_tim_barrel_backbone.xvg 
 # calculate RMSD of tail backbone over time, output in xvg format
-echo 23 23 | apptainer exec $GROMACS_CONTAINER gmx_mpi rms -s $tpr -f md_fit.xtc -n index.ndx -o rmsd_tail_backbone.xvg -tu ns
-python $scripts/plotxvg.py rmsd_tail_backbone.xvg 
+#echo 23 23 | apptainer exec $GROMACS_CONTAINER gmx_mpi rms -s $tpr -f md_fit.xtc -n index.ndx -o rmsd_tail_backbone.xvg -tu ns
+#python $scripts/plotxvg.py rmsd_tail_backbone.xvg 
 # calculate distance between Lys151 NZ and Tyr221 OH over time, output in xvg format
-apptainer exec $GROMACS_CONTAINER gmx_mpi distance -s $tpr -f md_fit.xtc -n index.ndx -oall lys151_tyr221_distance.xvg -tu ns -select 'com of group 24 plus com of group 25'
-python $scripts/plotxvg.py lys151_tyr221_distance.xvg
+#apptainer exec $GROMACS_CONTAINER gmx_mpi distance -s $tpr -f md_fit.xtc -n index.ndx -oall lys151_tyr221_distance.xvg -tu ns -select 'com of group 24 plus com of group 25'
+#python $scripts/plotxvg.py lys151_tyr221_distance.xvg
 # histogram of the distance between Lys151 NZ and Tyr221 OH with bin width of 0.2 nm, output in xvg format
-apptainer exec $GROMACS_CONTAINER gmx_mpi analyze -f lys151_tyr221_distance.xvg -dist lys151_tyr221_hist.xvg -bw 0.2
-python $scripts/plotxvg_hist.py lys151_tyr221_hist.xvg
+#apptainer exec $GROMACS_CONTAINER gmx_mpi analyze -f lys151_tyr221_distance.xvg -dist lys151_tyr221_hist.xvg -bw 0.2
+#python $scripts/plotxvg_hist.py lys151_tyr221_hist.xvg
 # RSMF of CA atoms of the whole protein, output in xvg format
-echo 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi rmsf -f md_fit.xtc -s $tpr -o rmsf_Ca.xvg -n index.ndx -b 20000 -res  # start at 20 ns (time in ps)
-python $scripts/plot_RMSF_red.py rmsf_Ca.xvg
+#echo 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi rmsf -f md_fit.xtc -s $tpr -o rmsf_Ca.xvg -n index.ndx -b 20000 -res  # start at 20 ns (time in ps)
+python $scripts/plot_RMSF.py rmsf_Ca.xvg
 ### define frames with distance between Lys151 NZ and Tyr221 OH < 0.6 nm as "closed" and >= 0.6 nm as "open", output in xvg format
 # Compute distance time series (ps)
-apptainer exec $GROMACS_CONTAINER gmx_mpi distance -f md_fit.xtc -s $tpr -n index.ndx -select 'com of group 24 plus com of group 25' -oall dist_k151_y221_ps.xvg
+#apptainer exec $GROMACS_CONTAINER gmx_mpi distance -f md_fit.xtc -s $tpr -n index.ndx -select 'com of group 24 plus com of group 25' -oall dist_k151_y221_ps.xvg
 # Create new trajectory with selected frames where distance < 0.6 nm
-echo 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_fit.xtc -s $tpr -o md_closed.xtc -drop dist_k151_y221_ps.xvg -dropover 0.6
+#echo 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_fit.xtc -s $tpr -o md_closed.xtc -drop dist_k151_y221_ps.xvg -dropover 0.6
 # how many frames in closed trajectory vs full?
 apptainer exec $GROMACS_CONTAINER gmx_mpi check -f md_fit.xtc
 apptainer exec $GROMACS_CONTAINER gmx_mpi check -f md_closed.xtc
