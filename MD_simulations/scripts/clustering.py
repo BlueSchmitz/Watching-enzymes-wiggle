@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # usage: python clustering.py topol.tpr traj.xtc
-'''Visualisation of hbonds, hydrophobic contacts and salt bridges.'''
+'''Visualisation of clustering results.'''
 
 import sys
 import numpy as np
@@ -74,7 +74,7 @@ def compute_rmsd_matrix(universe, selection, frame_indices):
 dist_protein = compute_rmsd_matrix(u, "protein", sampled_frames)
 
 # Tail only
-dist_tail = compute_rmsd_matrix(u, "resid 150:200", sampled_frames)
+dist_tail = compute_rmsd_matrix(u, "resid 249:259", sampled_frames)
 
 # Hierarchical clustering
 def hierarchical_clustering(dist_matrix, cutoff=2.5):
@@ -107,12 +107,11 @@ hdb_labels_tail, hdb_tail = run_hdbscan(dist_tail)
 
 records = []
 
-times = [ts.time for ts in u.trajectory]
-
 def store(labels, method, selection, cutoff):
     for i, lab in enumerate(labels):
         records.append({
-            "frame": i,
+            "index": i,
+            "frame": sampled_frames[i],
             "time_ps": times[i],
             "method": method,
             "selection": selection,
@@ -140,10 +139,44 @@ store(hdb_labels_tail, "hdbscan", "tail", None)
 df = pd.DataFrame(records)
 df.to_csv("cluster_assignments.csv", index=False)
 
+def compute_medoids(pc1, pc2, labels):
+    medoids = {}
+
+    for c in np.unique(labels):
+        if c == -1:  # skip noise (HDBSCAN)
+            continue
+
+        mask = labels == c
+        idx = np.where(mask)[0]
+
+        # cluster points
+        x = pc1[mask]
+        y = pc2[mask]
+
+        # centroid
+        cx = x.mean()
+        cy = y.mean()
+
+        # distance to centroid
+        dists = (x - cx)**2 + (y - cy)**2
+
+        # index of closest point
+        medoid_local = np.argmin(dists)
+        medoid_global = idx[medoid_local]
+
+        medoids[c] = medoid_global
+
+    return medoids
+
 # Plotting
-df = pd.read_csv("pca_projection.dat", delim_whitespace=True)
-pc1 = df["PC1"].values
-pc2 = df["PC2"].values
+df_pca = pd.read_csv("pca_projection.dat", delim_whitespace=True)
+time_pca = df_pca["time"].values
+pc1_all = df_pca["PC1"].values
+pc2_all = df_pca["PC2"].values
+# Find indices in PCA corresponding to sampled times
+indices = np.searchsorted(time_pca, times)
+pc1 = pc1_all[indices]
+pc2 = pc2_all[indices]
 
 df2 = pd.read_csv("pc_variance.csv")
 pc1_var = df2[df2["PC"] == 1]["variance_percent"].values[0]
@@ -153,12 +186,21 @@ pc2_var = df2[df2["PC"] == 2]["variance_percent"].values[0]
 def plot_clustering(labels, method):
     assert len(labels) == len(pc1)
     plt.figure(figsize=(6, 4))
-    plt.scatter(pc1, pc2, s=5, c=labels,cmap="viridis", alpha=0.7)
+    plt.scatter(pc1, pc2, s=5, c=labels, cmap="viridis", alpha=0.7)
+        # medoids
+    medoids = compute_medoids(pc1, pc2, labels)
+    for c, idx in medoids.items():
+        plt.scatter(pc1[idx], pc2[idx],
+                    s=120,
+                    edgecolor='black',
+                    linewidth=1.5,
+                    label=f"C{c}")
     plt.xlabel(f"PC1 ({pc1_var:.1f}%)")
     plt.ylabel(f"PC2 ({pc2_var:.1f}%)")
     plt.tight_layout()
     plt.savefig(f"pc1_vs_pc2_clusters_{method}.pdf")
     plt.close()
+    return medoids
 
 plots = [
     (labels_protein_1, "protein_hierarchical_1"),
@@ -173,5 +215,19 @@ plots = [
     (hdb_labels_tail, "tail_hdbscan")
 ]
 
+medoid_records = []
+
 for labels, name in plots:
-    plot_clustering(labels, name)
+    medoids = compute_medoids(pc1, pc2, labels)
+
+    for c, idx in medoids.items():
+        medoid_records.append({
+            "method": name,
+            "cluster": int(c),
+            "frame_index": int(idx),
+            "frame": int(sampled_frames[idx]),
+            "time_ps": float(times[idx])
+        })
+
+df_medoids = pd.DataFrame(medoid_records)
+df_medoids.to_csv("medoids.csv", index=False)
