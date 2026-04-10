@@ -115,21 +115,21 @@ xtc="../rep1.00/traj_comp.xtc"
 
 # make index file with default + custom groups
 apptainer exec $GROMACS_CONTAINER gmx_mpi make_ndx -f $tpr -o index.ndx << EOF
-r 1-248
+r 1-212
 name 18 TIM_barrel
-r 1-248 & a CA
+r 1-212 & a CA
 name 19 CA_TIM
 4 & 18 
 name 20 TIM_barrel_backbone
-r 249-259
+r 213-221
 name 21 tail
-r 249-259 & a CA
+r 213-221 & a CA
 name 22 CA_tail
 4 & 21 
 name 23 tail_backbone
-r 167 & a NZ
+r 151 & a NZ
 name 24 Lys167_NZ
-r 259 & a OH
+r 221 & a OH
 name 25 Tyr259_OH
 
 q
