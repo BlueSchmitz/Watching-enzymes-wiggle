@@ -170,13 +170,18 @@ def compute_medoids(pc1, pc2, labels):
 
 # Plotting
 df_pca = pd.read_csv("pca_projection.dat", delim_whitespace=True)
-time_pca = df_pca["time"].values
 pc1_all = df_pca["PC1"].values
 pc2_all = df_pca["PC2"].values
-# Find indices in PCA corresponding to sampled times
-indices = np.searchsorted(time_pca, times)
-pc1 = pc1_all[indices]
-pc2 = pc2_all[indices]
+time_all = df_pca["time"].values
+
+df_clust = pd.read_csv("clustering_results.csv")
+frames = df_clust["frame"].values
+labels = df_clust["cluster"].values
+
+# map clustering to PCA indices
+pc1 = pc1_all[frames]
+pc2 = pc2_all[frames]
+times = time_all[frames]
 
 df2 = pd.read_csv("pc_variance.csv")
 pc1_var = df2[df2["PC"] == 1]["variance_percent"].values[0]
@@ -197,6 +202,7 @@ def plot_clustering(labels, method):
                     label=f"C{c}")
     plt.xlabel(f"PC1 ({pc1_var:.1f}%)")
     plt.ylabel(f"PC2 ({pc2_var:.1f}%)")
+    plt.colorbar(label="Cluster")
     plt.tight_layout()
     plt.savefig(f"pc1_vs_pc2_clusters_{method}.pdf")
     plt.close()

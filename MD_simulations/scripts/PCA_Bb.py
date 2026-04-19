@@ -60,7 +60,7 @@ plt.scatter(pc1, pc2, s=5, color=cmap(0.5), alpha=0.7)
 plt.xlabel("PC1")
 plt.ylabel("PC2")
 plt.tight_layout()
-plt.savefig("pc1_vs_pc2.png", dpi=300)
+plt.savefig("pc1_vs_pc2.pdf")
 plt.close()
 
 ### Plot PC1 and PC2 vs distance ###
@@ -114,7 +114,7 @@ plt.text(
     verticalalignment='top'
 )
 plt.tight_layout()
-plt.savefig("distance_vs_PC1.png", dpi=300)
+plt.savefig("distance_vs_PC1.pdf")
 plt.close()
 
 ### Plot distance vs PC2 ###
@@ -129,17 +129,17 @@ plt.text(
     verticalalignment='top'
 )
 plt.tight_layout()
-plt.savefig("distance_vs_PC2.png", dpi=300)
+plt.savefig("distance_vs_PC2.pdf")
 plt.close()
 
 ### Plot PC1 vs PC2 colored by distance ###
-plt.figure(figsize=(6,4))
+plt.figure(figsize=(8,4))
 plt.scatter(pc1, pc2, c=distance, cmap='viridis', s=5)
 plt.colorbar(label="K151-Y221 distance (nm)")
 plt.xlabel("PC1")
 plt.ylabel("PC2")
 plt.tight_layout()
-plt.savefig("pc1_pc2_colored_by_distance.png", dpi=300)
+plt.savefig("pc1_pc2_colored_by_distance.pdf")
 plt.close()
 
 ### Calculate correlation between distance and PCs
@@ -245,7 +245,7 @@ plt.xlabel("PC index")
 plt.ylabel("Variance explained (%)")
 plt.xticks(pc_index)
 plt.tight_layout()
-plt.savefig("variance_explained.png", dpi=300)
+plt.savefig("variance_explained.pdf")
 plt.close()
 
 ### 2 Free energy landscape ###
@@ -267,7 +267,7 @@ plt.colorbar(label="Free Energy (kJ/mol)")
 plt.xlabel("PC1")
 plt.ylabel("PC2")
 plt.tight_layout()
-plt.savefig("free_energy.png", dpi=300)
+plt.savefig("free_energy.pdf")
 plt.close()
 
 ### Optional: Probability density 
@@ -292,7 +292,7 @@ plt.colorbar(label="Free Energy (kJ/mol)")
 plt.xlabel("PC1")
 plt.ylabel("PC2")
 plt.tight_layout()
-plt.savefig("free_energy_density.png", dpi=300)
+plt.savefig("free_energy_density.pdf")
 plt.close()
 
 ### Optional: KDE-based free energy landscape ###
@@ -320,7 +320,7 @@ pc2_var = variance_percent[1]
 plt.xlabel(f"PC1 ({pc1_var:.1f}%)")
 plt.ylabel(f"PC2 ({pc2_var:.1f}%)")
 plt.tight_layout()
-plt.savefig("fel_kde.png", dpi=300)
+plt.savefig("fel_kde.pdf")
 plt.close()
 
 # marginals
@@ -377,7 +377,7 @@ ax_top.spines["top"].set_visible(False)
 ax_right.spines["right"].set_visible(False)
 ax_right.spines["top"].set_visible(False)
 
-plt.savefig("fel_with_marginals.png", dpi=300, bbox_inches="tight")
+plt.savefig("fel_with_marginals.pdf", bbox_inches="tight")
 plt.close()
 
 ### Outline plot
@@ -459,7 +459,7 @@ ax_top.spines["top"].set_visible(False)
 ax_right.spines["right"].set_visible(False)
 ax_right.spines["top"].set_visible(False)
 
-plt.savefig("fel_with_marginals_lines.png", dpi=300, bbox_inches="tight")
+plt.savefig("fel_with_marginals_lines.pdf", bbox_inches="tight")
 plt.close()
 
 print(pc1.min(), pc1.max())
@@ -479,7 +479,7 @@ for i in range(2, 10):
     plt.xlabel(f"PC1 ({pc1_var:.1f}%)")
     plt.ylabel(f"PC2 ({pc2_var:.1f}%)")
     plt.tight_layout()
-    plt.savefig(f"pc1_vs_pc2_clusters{i}.png", dpi=300)
+    plt.savefig(f"pc1_vs_pc2_clusters{i}.pdf")
     plt.close()
 
 #hdbscan
@@ -491,5 +491,5 @@ plt.scatter(pc1, pc2, s=5, color=cmap(labels), alpha=0.7)
 plt.xlabel(f"PC1 ({pc1_var:.1f}%)")
 plt.ylabel(f"PC2 ({pc2_var:.1f}%)")
 plt.tight_layout()
-plt.savefig(f"pc1_vs_pc2_clusters_hdbscan.png", dpi=300)
+plt.savefig(f"pc1_vs_pc2_clusters_hdbscan.pdf")
 plt.close()
