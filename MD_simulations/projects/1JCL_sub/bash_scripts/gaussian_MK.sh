@@ -12,7 +12,8 @@
 #SBATCH --output=MK_charge_calculation_%j.out
 
 # Exit immediately on errors, undefined vars, or failed pipes
-set -euo pipefail
+set -eo pipefail
+set +u # crashed due to undefined variable, so disable for now
 set -o errtrace
 
 ### Project-specific settings ###

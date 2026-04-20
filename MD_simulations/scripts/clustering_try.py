@@ -54,21 +54,33 @@ pc2_var = df2[df2["PC"] == 2]["variance_percent"].values[0]
 
 # map clusters
 unique, counts = np.unique(labels, return_counts=True)
-occupancy = counts / counts.sum()
-cluster_occ = dict(zip(unique, occupancy))
-# keep only clusters >10%
-selected_clusters = [c for c, occ in cluster_occ.items() if occ > 0.10]
+cluster_sizes = dict(zip(unique, counts))
+# keep only top 10 clusters by size
+selected_clusters = sorted(cluster_sizes, key=cluster_sizes.get, reverse=True)[:10]
 cmap = plt.cm.viridis
 colors = cmap(np.linspace(0, 1, len(selected_clusters)))
 
+# new mapping for consistent cluster numbering
+cluster_map = {old: new for new, old in enumerate(selected_clusters, start=1)}
+# Apply mapping
+mapped_labels = np.array([cluster_map.get(l, -1) for l in labels])
+
 # Plot
 plt.figure(figsize=(5, 4))
-for i, c in enumerate(selected_clusters):
-    mask = labels == c
+# Plot noise points in light grey
+noise_mask = mapped_labels == -1
+plt.scatter(pc1[noise_mask], pc2[noise_mask],
+            color="lightgrey",
+            s=5,
+            label="-1",
+            alpha=0.5)
+# Plot clusters 1–10
+for i in range(1, len(selected_clusters) + 1):
+    mask = mapped_labels == i
     plt.scatter(pc1[mask], pc2[mask],
-                color=colors[i],
+                color=colors[i-1],
                 s=5,
-                label=f"{c}",
+                label=f"{i}",
                 alpha=0.7)
 plt.xlabel(f"PC1 ({pc1_var:.1f}%)")
 plt.ylabel(f"PC2 ({pc2_var:.1f}%)")

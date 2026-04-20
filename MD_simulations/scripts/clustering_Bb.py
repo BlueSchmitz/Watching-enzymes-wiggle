@@ -72,9 +72,11 @@ def compute_rmsd_matrix(universe, selection, frame_indices):
 
 # Whole protein
 dist_protein = compute_rmsd_matrix(u, "protein", sampled_frames)
+np.save("dist_protein.npy", dist_protein)
 
 # Tail only
 dist_tail = compute_rmsd_matrix(u, "resid 213:221", sampled_frames)
+np.save("dist_tail.npy", dist_tail)
 
 # Hierarchical clustering
 def hierarchical_clustering(dist_matrix, cutoff=2.5):
@@ -139,101 +141,150 @@ store(hdb_labels_tail, "hdbscan", "tail", None)
 df = pd.DataFrame(records)
 df.to_csv("cluster_assignments.csv", index=False)
 
-def compute_medoids(pc1, pc2, labels):
-    medoids = {}
+# compute medoids for all sets of labels
+all_label_sets = [
+    ("hierarchical", "protein", 1.0, labels_protein_1, dist_protein),
+    ("hierarchical", "tail", 1.0, labels_tail_1, dist_tail),
 
-    for c in np.unique(labels):
-        if c == -1:  # skip noise (HDBSCAN)
-            continue
+    ("hierarchical", "protein", 2.0, labels_protein_2, dist_protein),
+    ("hierarchical", "tail", 2.0, labels_tail_2, dist_tail),
 
-        mask = labels == c
-        idx = np.where(mask)[0]
+    ("hierarchical", "protein", 2.5, labels_protein_2_5, dist_protein),
+    ("hierarchical", "tail", 2.5, labels_tail_2_5, dist_tail),
 
-        # cluster points
-        x = pc1[mask]
-        y = pc2[mask]
+    ("hierarchical", "protein", 3.0, labels_protein_3, dist_protein),
+    ("hierarchical", "tail", 3.0, labels_tail_3, dist_tail),
 
-        # centroid
-        cx = x.mean()
-        cy = y.mean()
-
-        # distance to centroid
-        dists = (x - cx)**2 + (y - cy)**2
-
-        # index of closest point
-        medoid_local = np.argmin(dists)
-        medoid_global = idx[medoid_local]
-
-        medoids[c] = medoid_global
-
-    return medoids
-
-# Plotting
-df_pca = pd.read_csv("pca_projection.dat", delim_whitespace=True)
-pc1_all = df_pca["PC1"].values
-pc2_all = df_pca["PC2"].values
-time_all = df_pca["time"].values
-
-df_clust = pd.read_csv("clustering_results.csv")
-frames = df_clust["frame"].values
-labels = df_clust["cluster"].values
-
-# map clustering to PCA indices
-pc1 = pc1_all[frames]
-pc2 = pc2_all[frames]
-times = time_all[frames]
-
-df2 = pd.read_csv("pc_variance.csv")
-pc1_var = df2[df2["PC"] == 1]["variance_percent"].values[0]
-pc2_var = df2[df2["PC"] == 2]["variance_percent"].values[0]
-
-# plot pc1 vs pc2 colored by cluster
-def plot_clustering(labels, method):
-    assert len(labels) == len(pc1)
-    plt.figure(figsize=(6, 4))
-    plt.scatter(pc1, pc2, s=5, c=labels, cmap="viridis", alpha=0.7)
-        # medoids
-    medoids = compute_medoids(pc1, pc2, labels)
-    for c, idx in medoids.items():
-        plt.scatter(pc1[idx], pc2[idx],
-                    s=120,
-                    edgecolor='black',
-                    linewidth=1.5,
-                    label=f"C{c}")
-    plt.xlabel(f"PC1 ({pc1_var:.1f}%)")
-    plt.ylabel(f"PC2 ({pc2_var:.1f}%)")
-    plt.colorbar(label="Cluster")
-    plt.tight_layout()
-    plt.savefig(f"pc1_vs_pc2_clusters_{method}.pdf")
-    plt.close()
-    return medoids
-
-plots = [
-    (labels_protein_1, "protein_hierarchical_1"),
-    (labels_tail_1, "tail_hierarchical_1"),
-    (labels_protein_2, "protein_hierarchical_2"),
-    (labels_tail_2, "tail_hierarchical_2"),
-    (labels_protein_2_5, "protein_hierarchical_2_5"),
-    (labels_tail_2_5, "tail_hierarchical_2_5"),
-    (labels_protein_3, "protein_hierarchical_3"),
-    (labels_tail_3, "tail_hierarchical_3"),
-    (hdb_labels_protein, "protein_hdbscan"),
-    (hdb_labels_tail, "tail_hdbscan")
+    ("hdbscan", "protein", None, hdb_labels_protein, dist_protein),
+    ("hdbscan", "tail", None, hdb_labels_tail, dist_tail),
 ]
 
-medoid_records = []
+def compute_medoids(dist_matrix, labels):
+    medoids = {}
+    for c in np.unique(labels):
+        if c == -1:
+            continue
+        idx = np.where(labels == c)[0]
+        sub = dist_matrix[np.ix_(idx, idx)]
+        medoids[c] = idx[np.argmin(sub.sum(axis=1))]
+    return medoids
 
-for labels, name in plots:
-    medoids = compute_medoids(pc1, pc2, labels)
+medoid_records = []
+def store_medoids(method, selection, cutoff, labels, dist):
+    medoids = compute_medoids(dist, labels)
 
     for c, idx in medoids.items():
         medoid_records.append({
-            "method": name,
+            "method": method,
+            "selection": selection,
+            "cutoff": cutoff,
             "cluster": int(c),
             "frame_index": int(idx),
             "frame": int(sampled_frames[idx]),
             "time_ps": float(times[idx])
         })
 
+
+for method, selection, cutoff, labels, dist in all_label_sets:
+    store_medoids(method, selection, cutoff, labels, dist)
+
 df_medoids = pd.DataFrame(medoid_records)
 df_medoids.to_csv("medoids.csv", index=False)
+
+### Plotting
+df_clust = pd.read_csv("cluster_assignments.csv")
+
+# Load PCA data
+df_pca = pd.read_csv("pca_projection.dat", delim_whitespace=True,
+                     comment="#", names=["time", "PC1", "PC2"])
+
+pc1_all = df_pca["PC1"].values
+pc2_all = df_pca["PC2"].values
+time_all = df_pca["time"].values
+
+# variance
+df2 = pd.read_csv("pc_variance.csv")
+pc1_var = df2[df2["PC"] == 1]["variance_percent"].values[0]
+pc2_var = df2[df2["PC"] == 2]["variance_percent"].values[0]
+
+# medoids
+df_medoids = pd.read_csv("medoids.csv")
+
+for (method, selection, cutoff), subdf in df_clust.groupby(["method", "selection", "cutoff"], dropna=False):
+
+    frames = subdf["frame"].values
+    labels = subdf["cluster"].values
+    times = subdf["time_ps"].values
+
+    # Map PCA values
+    pc1 = pc1_all[frames]
+    pc2 = pc2_all[frames]
+
+    # Cluster sizes
+    unique, counts = np.unique(labels, return_counts=True)
+    cluster_sizes = dict(zip(unique, counts))
+    cluster_sizes.pop(-1, None) # remove noise from ranking
+
+    selected_clusters = sorted(cluster_sizes,
+                               key=cluster_sizes.get,
+                               reverse=True)[:10]
+    
+    # colors
+    cmap = plt.cm.viridis
+    colors = cmap(np.linspace(0, 1, len(selected_clusters)))
+
+    # mapping
+    cluster_map = {old: new for new, old in enumerate(selected_clusters, start=1)}
+    mapped_labels = np.array([cluster_map.get(l, -1) for l in labels])
+
+    # Plotting
+    plt.figure(figsize=(5, 4))
+
+    # noise
+    noise_mask = mapped_labels == -1
+    plt.scatter(pc1[noise_mask], pc2[noise_mask],
+                color="lightgrey", s=5, alpha=0.5, label="-1")
+
+    # clusters 1–10
+    for i in range(1, len(selected_clusters) + 1):
+        mask = mapped_labels == i
+        plt.scatter(pc1[mask], pc2[mask],
+                    color=colors[i-1],
+                    s=5,
+                    label=f"{i}",
+                    alpha=0.7)
+        
+    # overlay medoids
+    sub_medoids = df_medoids[
+        (df_medoids["method"] == method) &
+        (df_medoids["selection"] == selection) &
+        (df_medoids["cutoff"].fillna(-999) == (cutoff if cutoff == cutoff else -999))
+    ]
+
+    for _, row in sub_medoids.iterrows():
+        x = pc1_all[frames]
+        y = pc2_all[frames]
+
+        i = cluster_map[row["cluster"]] - 1
+
+        plt.scatter(x, y,
+                    color=colors[i],
+                    s=80,
+                    marker="*",
+                    edgecolor="black",
+                    linewidth=0.7,
+                    zorder=10)
+
+    plt.xlabel(f"PC1 ({pc1_var:.1f}%)")
+    plt.ylabel(f"PC2 ({pc2_var:.1f}%)")
+    plt.legend(frameon=True, title="Clusters", fontsize=6)
+    plt.tight_layout()
+
+    # Filename
+    cutoff_str = "none" if pd.isna(cutoff) else str(cutoff).replace(".", "_")
+
+    fname = f"pc1_pc2_{method}_{selection}_cutoff_{cutoff_str}.pdf"
+    plt.savefig(fname)
+    plt.close()
+
+    print(f"Saved {fname}")
