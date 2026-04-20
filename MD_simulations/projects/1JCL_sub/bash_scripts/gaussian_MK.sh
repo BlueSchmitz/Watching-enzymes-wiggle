@@ -17,7 +17,7 @@ set +u # crashed due to undefined variable, so disable for now
 set -o errtrace
 
 ### Project-specific settings ###
-project_dir=1JCLm_sub
+project_dir=1JCL_sub
 output_dir=0_parametrization_bond
 
 # Create temporary directory on scratch for this job
