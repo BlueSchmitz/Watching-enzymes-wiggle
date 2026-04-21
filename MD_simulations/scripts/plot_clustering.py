@@ -107,3 +107,84 @@ for (method, selection, cutoff), subdf in df_clust.groupby(["method", "selection
     plt.close()
 
     print(f"Saved {fname}")
+
+    # Plot cluster count vs cutoff for hierarchical method
+hier = df_clust[df_clust["method"] == "hierarchical"]
+
+cluster_counts = (
+    hier.groupby(["selection", "cutoff"])["cluster"]
+    .nunique()
+    .reset_index(name="n_clusters")
+)
+
+for selection in cluster_counts["selection"].unique():
+    sub = cluster_counts[cluster_counts["selection"] == selection]
+
+    plt.figure()
+    plt.plot(sub["cutoff"], sub["n_clusters"], marker="o")
+    plt.xlabel("RMSD cutoff (Å)")
+    plt.ylabel("Number of clusters")
+    plt.tight_layout()
+    plt.savefig(f"cluster_count_{selection}.pdf")
+    plt.close()
+
+# Plot % of frames in top 10 clusters
+def top10_fraction(subdf):
+    labels = subdf["cluster"].values
+    labels = labels[labels != -1]  # ignore noise
+
+    unique, counts = np.unique(labels, return_counts=True)
+    cluster_sizes = dict(zip(unique, counts))
+
+    top10 = sorted(cluster_sizes.values(), reverse=True)[:10]
+
+    return np.sum(top10) / len(labels)
+
+results = []
+for (selection, cutoff), subdf in hier.groupby(["selection", "cutoff"]):
+    frac = top10_fraction(subdf)
+
+    results.append({
+        "selection": selection,
+        "cutoff": cutoff,
+        "top10_fraction": frac
+    })
+df_top10 = pd.DataFrame(results)
+
+for selection in df_top10["selection"].unique():
+    sub = df_top10[df_top10["selection"] == selection]
+
+    plt.figure()
+    plt.plot(sub["cutoff"], sub["top10_fraction"], marker="o")
+    plt.xlabel("RMSD cutoff (Å)")
+    plt.ylabel("Fraction in top 10 clusters")
+    plt.ylim(0, 1)
+    plt.tight_layout()
+    plt.savefig(f"top10_fraction_{selection}.pdf")
+    plt.close()
+
+# Plot number of singleton clusters
+singleton_counts = (
+    hier.groupby(["selection", "cutoff", "cluster"])
+    .size()
+    .reset_index(name="size")
+)
+
+singleton_counts = singleton_counts[singleton_counts["size"] == 1]
+
+singleton_summary = (
+    singleton_counts.groupby(["selection", "cutoff"])
+    .size()
+    .reset_index(name="n_singletons")
+)
+
+for selection in singleton_summary["selection"].unique():
+    sub = singleton_summary[singleton_summary["selection"] == selection]
+
+    plt.figure()
+    plt.plot(sub["cutoff"], sub["n_singletons"], marker="o")
+    plt.xlabel("RMSD cutoff (Å)")
+    plt.ylabel("Number of singleton clusters")
+    plt.tight_layout()
+    plt.savefig(f"singletons_{selection}.pdf")
+    plt.close()
