@@ -142,15 +142,29 @@ xtc="../rep1.00/traj_comp.xtc"
 #max_pc2=$(awk '/max_pc2/ {print $2}' pc_extreme_frames.dat)
 #echo 1 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_fit.xtc -s $tpr -dump $max_pc2 -o max_pc2.pdb
 
+# how many frames in closed trajectory vs full?
+apptainer exec $GROMACS_CONTAINER gmx_mpi check -f md_fit.xtc
+apptainer exec $GROMACS_CONTAINER gmx_mpi check -f md_closed.xtc
+
 # Clustering 
-python $scripts/clustering.py $tpr md_fit.xtc
+python $scripts/run_clustering_Ec.py $tpr md_fit.xtc
+python $scripts/plot_clustering.py
 
 # Extract representative structures of clusters
-tail -n +2 medoids.csv | while IFS=',' read method cluster frame_index frame time
+tail -n +2 medoids.csv | while IFS=',' read method selection cutoff cluster frame_index frame time_ps
 do
-    name="${method}_c${cluster}"
-    echo "Extracting $name at time $time ps"
-    echo 1 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s $tpr -f md_fit.xtc -dump $time -o "${name}.pdb"
+    cut=${cutoff:-none}
+    name="${method}_${selection}_cutoff${cut}_c${cluster}"
+
+    time_rounded=$(printf "%.3f" "$time_ps")
+
+    echo "Extracting $name at time $time_rounded ps"
+
+    echo 1 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv \
+        -s $tpr \
+        -f md_fit.xtc \
+        -dump $time_rounded \
+        -o "${name}.pdb"
 done
 
 echo "Analysis complete. Results will be copied back to home directory."

@@ -154,43 +154,53 @@ xtc="../rep1.00/traj_comp.xtc"
 #python $scripts/plotxvg_hist.py lys151_tyr221_hist.xvg
 # RSMF of CA atoms of the whole protein, output in xvg format
 #echo 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi rmsf -f md_fit.xtc -s $tpr -o rmsf_Ca.xvg -n index.ndx -b 20000 -res  # start at 20 ns (time in ps)
-python $scripts/plot_RMSF.py rmsf_Ca.xvg
+#python $scripts/plot_RMSF.py rmsf_Ca.xvg
 ### define frames with distance between Lys151 NZ and Tyr221 OH < 0.6 nm as "closed" and >= 0.6 nm as "open", output in xvg format
 # Compute distance time series (ps)
 #apptainer exec $GROMACS_CONTAINER gmx_mpi distance -f md_fit.xtc -s $tpr -n index.ndx -select 'com of group 24 plus com of group 25' -oall dist_k151_y221_ps.xvg
 # Create new trajectory with selected frames where distance < 0.6 nm
 #echo 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_fit.xtc -s $tpr -o md_closed.xtc -drop dist_k151_y221_ps.xvg -dropover 0.6
 # how many frames in closed trajectory vs full?
-apptainer exec $GROMACS_CONTAINER gmx_mpi check -f md_fit.xtc
-apptainer exec $GROMACS_CONTAINER gmx_mpi check -f md_closed.xtc
+#apptainer exec $GROMACS_CONTAINER gmx_mpi check -f md_fit.xtc
+#apptainer exec $GROMACS_CONTAINER gmx_mpi check -f md_closed.xtc
 
 # h-bonds and hydrophobic contacts analysis with MDAnalysis
-python $scripts/contact_matrices_Bb.py $tpr md_closed.xtc
+#python $scripts/contact_matrices_Bb.py $tpr md_closed.xtc
 
 # PCA
 # Compute covariance matrix
-echo 19 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi covar -s $tpr -f md_fit.xtc -n index.ndx -b 20000 -o eigenvalues.xvg -v eigenvectors.trr
+#echo 19 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi covar -s $tpr -f md_fit.xtc -n index.ndx -b 20000 -o eigenvalues.xvg -v eigenvectors.trr
     # fit to CA TIM, covariance of whole protein CA (so side-chains do not contribute to covariance)
     # eigenvalues.xvg contains the eigenvalues (variance along each PC as mean square fluctuation captured by that PC in nm^2), eigenvectors.trr contains the eigenvectors (PCs) as a trajectory
 # Project trajectory onto PCs
-echo 19 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s $tpr -n index.ndx -proj proj.xvg -first 1 -last 2
-echo 19 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s $tpr -n index.ndx -proj proj_20_pcs.xvg -first 1 -last 20
+#echo 19 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s $tpr -n index.ndx -proj proj.xvg -first 1 -last 2
+#echo 19 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s $tpr -n index.ndx -proj proj_20_pcs.xvg -first 1 -last 20
 # Extract extreme projections along PC1 and PC2
-echo 19 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s $tpr -n index.ndx -extr extremes.pdb -first 1 -last 2
+#echo 19 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s $tpr -n index.ndx -extr extremes.pdb -first 1 -last 2
 # Eigenvector components per atom (which residues dominate the motion)
-echo 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s $tpr -n index.ndx -rmsf PC_rmsf_per_atom.xvg -first 1 -last 2
+#echo 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s $tpr -n index.ndx -rmsf PC_rmsf_per_atom.xvg -first 1 -last 2
 
-python $scripts/PCA_Bb.py proj.xvg eigenvalues.xvg lys151_tyr221_distance.xvg proj_20_pcs.xvg
+#python $scripts/PCA_Bb.py proj.xvg eigenvalues.xvg lys151_tyr221_distance.xvg proj_20_pcs.xvg
 
 # Clustering 
-python $scripts/clustering_Bb.py $tpr md_fit.xtc
+python $scripts/run_clustering_Bb.py $tpr md_fit.xtc
+python $scripts/plot_clustering.py
 
 # Extract representative structures of clusters
-tail -n +2 medoids.csv | while IFS=',' read method cluster frame_index frame time
+tail -n +2 medoids.csv | while IFS=',' read method selection cutoff cluster frame_index frame time_ps
 do
-    name="${method}_c${cluster}"
-    echo "Extracting $name at time $time ps"
-    echo 1 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s $tpr -f md_fit.xtc -dump $time -o "${name}.pdb"
+    cut=${cutoff:-none}
+    name="${method}_${selection}_cutoff${cut}_c${cluster}"
+
+    time_rounded=$(printf "%.3f" "$time_ps")
+
+    echo "Extracting $name at time $time_rounded ps"
+
+    echo 1 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv \
+        -s $tpr \
+        -f md_fit.xtc \
+        -dump $time_rounded \
+        -o "${name}.pdb"
 done
 
 echo "Analysis complete. Results will be copied back to home directory."
