@@ -143,11 +143,11 @@ xtc="../rep1.00/traj_comp.xtc"
 #echo 1 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_fit.xtc -s $tpr -dump $max_pc2 -o max_pc2.pdb
 
 # how many frames in closed trajectory vs full?
-apptainer exec $GROMACS_CONTAINER gmx_mpi check -f md_fit.xtc
-apptainer exec $GROMACS_CONTAINER gmx_mpi check -f md_closed.xtc
+#apptainer exec $GROMACS_CONTAINER gmx_mpi check -f md_fit.xtc
+#apptainer exec $GROMACS_CONTAINER gmx_mpi check -f md_closed.xtc
 
 # Clustering 
-python $scripts/run_clustering_Ec.py $tpr md_fit.xtc
+#python $scripts/run_clustering_Ec.py $tpr md_fit.xtc
 python $scripts/plot_clustering.py
 
 # Extract representative structures of clusters

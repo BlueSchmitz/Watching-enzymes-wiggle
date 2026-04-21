@@ -81,8 +81,13 @@ for (method, selection, cutoff), subdf in df_clust.groupby(["method", "selection
     ]
 
     for _, row in sub_medoids.iterrows():
-        x = pc1_all[frames]
-        y = pc2_all[frames]
+
+        if row["cluster"] not in cluster_map:
+            continue
+
+        idx = int(row["frame_index"])
+        x = pc1[idx]
+        y = pc2[idx]
 
         i = cluster_map[row["cluster"]] - 1
 
