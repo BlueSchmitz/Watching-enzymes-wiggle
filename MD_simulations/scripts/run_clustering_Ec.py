@@ -85,16 +85,18 @@ def hierarchical_clustering(dist_matrix, cutoff=2.5):
     labels = fcluster(Z, cutoff, criterion='distance')
     return labels, Z
 
-labels_protein_1, Zp = hierarchical_clustering(dist_protein, cutoff=1)
-labels_tail_1, Zt = hierarchical_clustering(dist_tail, cutoff=1)
 labels_protein_2, Zp = hierarchical_clustering(dist_protein, cutoff=2)
 labels_tail_2, Zt = hierarchical_clustering(dist_tail, cutoff=2)
+labels_protein_2_5, Zp = hierarchical_clustering(dist_protein, cutoff=2.5)
+labels_tail_2_5, Zt = hierarchical_clustering(dist_tail, cutoff=2.5)
 labels_protein_3, Zp = hierarchical_clustering(dist_protein, cutoff=3)
 labels_tail_3, Zt = hierarchical_clustering(dist_tail, cutoff=3)
+labels_protein_3_5, Zp = hierarchical_clustering(dist_protein, cutoff=3.5)
+labels_tail_3_5, Zt = hierarchical_clustering(dist_tail, cutoff=3.5)
 labels_protein_4, Zp = hierarchical_clustering(dist_protein, cutoff=4)
 labels_tail_4, Zt = hierarchical_clustering(dist_tail, cutoff=4)
-labels_protein_5, Zp = hierarchical_clustering(dist_protein, cutoff=5)
 labels_tail_5, Zt = hierarchical_clustering(dist_tail, cutoff=5)
+labels_tail_6, Zt = hierarchical_clustering(dist_tail, cutoff=6)
 
 # HDBSCAN
 def run_hdbscan(dist_matrix):
@@ -124,20 +126,23 @@ def store(labels, method, selection, cutoff):
         })
 
 # Store hierarchical results
-store(labels_protein_1, "hierarchical", "protein", 1.0)
-store(labels_tail_1, "hierarchical", "tail", 1.0)
-
 store(labels_protein_2, "hierarchical", "protein", 2.0)
 store(labels_tail_2, "hierarchical", "tail", 2.0)
+
+store(labels_protein_2_5, "hierarchical", "protein", 2.5)
+store(labels_tail_2_5, "hierarchical", "tail", 2.5)
 
 store(labels_protein_3, "hierarchical", "protein", 3.0)
 store(labels_tail_3, "hierarchical", "tail", 3.0)
 
+store(labels_protein_3_5, "hierarchical", "protein", 3.5)
+store(labels_tail_3_5, "hierarchical", "tail", 3.5)
+
 store(labels_protein_4, "hierarchical", "protein", 4.0)
 store(labels_tail_4, "hierarchical", "tail", 4.0)
 
-store(labels_protein_5, "hierarchical", "protein", 5.0)
 store(labels_tail_5, "hierarchical", "tail", 5.0)
+store(labels_tail_6, "hierarchical", "tail", 6.0)
 
 # Store HDBSCAN
 store(hdb_labels_protein, "hdbscan", "protein", None)
@@ -148,20 +153,23 @@ df.to_csv("cluster_assignments.csv", index=False)
 
 # compute medoids for all sets of labels
 all_label_sets = [
-    ("hierarchical", "protein", 1.0, labels_protein_1, dist_protein),
-    ("hierarchical", "tail", 1.0, labels_tail_1, dist_tail),
-
     ("hierarchical", "protein", 2.0, labels_protein_2, dist_protein),
     ("hierarchical", "tail", 2.0, labels_tail_2, dist_tail),
+
+    ("hierarchical", "protein", 2.5, labels_protein_2_5, dist_protein),
+    ("hierarchical", "tail", 2.5, labels_tail_2_5, dist_tail),
 
     ("hierarchical", "protein", 3.0, labels_protein_3, dist_protein),
     ("hierarchical", "tail", 3.0, labels_tail_3, dist_tail),
 
+    ("hierarchical", "protein", 3.5, labels_protein_3_5, dist_protein),
+    ("hierarchical", "tail", 3.5, labels_tail_3_5, dist_tail),
+
     ("hierarchical", "protein", 4.0, labels_protein_4, dist_protein),
     ("hierarchical", "tail", 4.0, labels_tail_4, dist_tail),
 
-    ("hierarchical", "protein", 5.0, labels_protein_5, dist_protein),
     ("hierarchical", "tail", 5.0, labels_tail_5, dist_tail),
+    ("hierarchical", "tail", 6.0, labels_tail_6, dist_tail),
 
     ("hdbscan", "protein", None, hdb_labels_protein, dist_protein),
     ("hdbscan", "tail", None, hdb_labels_tail, dist_tail),
