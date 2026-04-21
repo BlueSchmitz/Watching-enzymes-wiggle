@@ -1,7 +1,7 @@
 #!/bin/bash  
 
 #SBATCH -J EcDERA_HREX_clustering
-#SBATCH -t 03:00:00
+#SBATCH -t 08:00:00
 #SBATCH -p rome
 #SBATCH -N 1
 #SBATCH --ntasks=1
