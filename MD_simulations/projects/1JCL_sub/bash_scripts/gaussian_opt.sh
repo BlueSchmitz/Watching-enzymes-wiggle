@@ -58,4 +58,4 @@ cd ./outputs/$output_dir/
 # Run Gaussian geometry optimization
 echo "=== Running Gaussian geometry optimization ==="
 
-g16 lys_propanal_opt_loose.com
+g16 lys_propanal_opt_tight.com
