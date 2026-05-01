@@ -49,7 +49,7 @@ cd $tmpdir/MD_simulations/projects/$project_dir
 # Function to copy back results when error occurs and before the script exits
 function copy_back_results {
     set +e +u # Disable exit on error for this function
-    echo "=== Copying results back to home at $(date). ==="
+    echo "=== Copying results back to project folder at $(date). ==="
     if [[ -d "$tmpdir/MD_simulations/projects/$project_dir/outputs/$output_dir" ]]; then
         rsync -av --partial --inplace \
           "$tmpdir/MD_simulations/projects/$project_dir/outputs/$output_dir/" \
