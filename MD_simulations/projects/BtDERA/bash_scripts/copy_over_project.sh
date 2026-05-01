@@ -19,7 +19,7 @@ set -o errtrace
 module load 2023
 module list
 
-project_dir=BtDERA
+project_dir=CbDERA
 output_dir=6_HREX
 
 ### Copy project to scratch ###
