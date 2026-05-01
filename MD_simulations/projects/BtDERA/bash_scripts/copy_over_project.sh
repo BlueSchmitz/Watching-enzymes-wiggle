@@ -24,6 +24,6 @@ output_dir=6_HREX
 
 ### Copy project to scratch ###
 echo "=== Copying project to scratch ==="
-mkdir -p /gpfs/work1/0/prjs2080/$project_dir
+mkdir -p /gpfs/work1/0/prjs2080/$project_dir/outputs/$output_dir/
 cp -r $HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/$project_dir/outputs/$output_dir /gpfs/work1/0/prjs2080/$project_dir/outputs/$output_dir/
 echo "=== Copy complete at $(date). ==="
