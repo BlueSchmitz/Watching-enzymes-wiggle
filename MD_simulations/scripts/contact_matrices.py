@@ -3,6 +3,7 @@
 '''Visualisation of hbonds, hydrophobic contacts and salt bridges.'''
 
 import sys
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
@@ -246,3 +247,13 @@ plt.ylabel("TIM barrel residues")
 plt.tight_layout()
 plt.savefig("hydrophobic_contacts.png", dpi=300)
 plt.close()
+
+### Distance distributions ###
+# output dirs
+os.makedirs("hbond_kdes", exist_ok=True)
+os.makedirs("hydrophobic_kdes", exist_ok=True)
+# Get all hbond pairs 
+hbond_pairs = (
+    df[["tail_resid", "barrel_resid"]]
+    .drop_duplicates()
+)
