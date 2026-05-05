@@ -58,4 +58,4 @@ cd ./outputs/$output_dir/
 # Run Gaussian frequency calculation
 echo "=== Running Gaussian frequency calculation ==="
 
-g16 lys_propanal_freq2.com
+g16 lys_propanal_freq_freeze.com
