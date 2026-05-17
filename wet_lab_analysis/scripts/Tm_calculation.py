@@ -51,8 +51,8 @@ for enzyme in sorted(set(col.split("_")[0] for col in enzymes)):
     
     plt.figure()
     plt.title(enzyme)
-    plt.xlabel("Temperature [°C]")
-    plt.ylabel("Fluorescence [RFU]") # relative fluorescence units
+    plt.xlabel("Temperature (°C)")
+    plt.ylabel("Fluorescence (RFU)") # relative fluorescence units
 
     cmap = plt.get_cmap("viridis", max(1, len(reps)))  # Viridis colormap for replicates
     
