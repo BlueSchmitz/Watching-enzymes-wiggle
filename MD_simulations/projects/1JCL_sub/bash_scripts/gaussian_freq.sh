@@ -1,6 +1,6 @@
 #!/bin/bash  
 
-#SBATCH -J gaussian_freq
+#SBATCH -J gaussian_freq2
 #SBATCH -t 24:00:00
 #SBATCH -p rome
 #SBATCH -N 1
@@ -9,7 +9,7 @@
 #SBATCH --gpus=0
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=blueschmitz@tudelft.nl
-#SBATCH --output=frequency_calculation_%j.out
+#SBATCH --output=frequency2_calculation_%j.out
 
 # Exit immediately on errors, undefined vars, or failed pipes
 set -eo pipefail
@@ -58,4 +58,4 @@ cd ./outputs/$output_dir/
 # Run Gaussian frequency calculation
 echo "=== Running Gaussian frequency calculation ==="
 
-g16 lys_propanal_freq_freeze.com
+g16 lys_propanal_freq2_freeze.com
