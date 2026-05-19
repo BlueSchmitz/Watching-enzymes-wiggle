@@ -1,15 +1,15 @@
 #!/bin/bash  
 
-#SBATCH -J gaussian_MK_charge_calculation
+#SBATCH -J gaussian_checkpoint
 #SBATCH -t 01:00:00
 #SBATCH -p rome
 #SBATCH -N 1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=32
+#SBATCH --cpus-per-task=16
 #SBATCH --gpus=0
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=blueschmitz@tudelft.nl
-#SBATCH --output=MK_charge_calculation_%j.out
+#SBATCH --output=gaussian_checkpoint_%j.out
 
 # Exit immediately on errors, undefined vars, or failed pipes
 set -eo pipefail
@@ -56,6 +56,6 @@ mkdir -p ./outputs/$output_dir
 cd ./outputs/$output_dir/
 
 # Run Gaussian geometry optimization
-echo "=== Running Gaussian geometry optimization ==="
+echo "=== Extracting checkpoint file ==="
 
-formchk lys_propanal_opt_freeze.chk lys_propanal_opt_freeze.fchk
+formchk lys_propanal_freq_freeze.log lys_propanal_freq_freeze.fchk
