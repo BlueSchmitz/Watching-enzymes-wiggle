@@ -58,4 +58,4 @@ cd ./outputs/$output_dir/
 # Run Gaussian geometry optimization
 echo "=== Extracting checkpoint file ==="
 
-formchk lys_propanal_freq_freeze.log lys_propanal_freq_freeze.fchk
+formchk lys_propanal_freq2_freeze.chk lys_propanal_freq2_freeze.fchk
