@@ -116,6 +116,7 @@ xtc="../rep1.00/traj_comp.xtc"
 # h-bonds and hydrophobic contacts analysis with MDAnalysis
 #python $scripts/contact_matrices.py $tpr md_closed.xtc
 #python $scripts/plot_RMSF_red.py rmsf_Ca.xvg
+python $scripts/contact_distributions.py $tpr md_closed.xtc
 
 # PCA
 # Compute covariance matrix
@@ -148,23 +149,23 @@ xtc="../rep1.00/traj_comp.xtc"
 
 # Clustering 
 #python $scripts/run_clustering_Ec.py $tpr md_fit.xtc
-python $scripts/plot_clustering.py
+#python $scripts/plot_clustering.py
 
 # Extract representative structures of clusters
-tail -n +2 medoids.csv | while IFS=',' read method selection cutoff cluster frame_index frame time_ps
-do
-    cut=${cutoff:-none}
-    name="${method}_${selection}_cutoff${cut}_c${cluster}"
+#tail -n +2 medoids.csv | while IFS=',' read method selection cutoff cluster frame_index frame time_ps
+#do
+#    cut=${cutoff:-none}
+#    name="${method}_${selection}_cutoff${cut}_c${cluster}"
 
-    time_rounded=$(printf "%.3f" "$time_ps")
+#    time_rounded=$(printf "%.3f" "$time_ps")
 
-    echo "Extracting $name at time $time_rounded ps"
+#    echo "Extracting $name at time $time_rounded ps"
 
-    echo 1 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv \
-        -s $tpr \
-        -f md_fit.xtc \
-        -dump $time_rounded \
-        -o "${name}.pdb"
-done
+#    echo 1 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv \
+#        -s $tpr \
+#        -f md_fit.xtc \
+#        -dump $time_rounded \
+#        -o "${name}.pdb"
+#done
 
 echo "Analysis complete. Results will be copied back to home directory."
