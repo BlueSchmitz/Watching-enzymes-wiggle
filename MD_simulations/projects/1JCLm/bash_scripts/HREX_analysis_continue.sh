@@ -1,6 +1,6 @@
 #!/bin/bash  
 
-#SBATCH -J EcDERA_HREX_clustering
+#SBATCH -J EcDERA_HREX_dist
 #SBATCH -t 08:00:00
 #SBATCH -p rome
 #SBATCH -N 1
@@ -9,7 +9,7 @@
 #SBATCH --gpus=0
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=blueschmitz@tudelft.nl
-#SBATCH --output=hrex_clustering_%j.out
+#SBATCH --output=hrex_dist_%j.out
 
 : '
 Folder structure:
