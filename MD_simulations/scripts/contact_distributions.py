@@ -92,7 +92,8 @@ for _, row in hbond_pairs.iterrows():
 
     plt.figure(figsize=(5, 4))
 
-    sns.histplot(distances_over_time, bins=50, stat="density", kde=True)
+    bin_edges = np.linspace(0, 10, 51)  # 50 bins between 0 and 10 Å
+    sns.histplot(distances_over_time, bins=bin_edges, stat="density", kde=False)
 
     plt.axvline(3.5, color="grey", linestyle="--", linewidth=2)
 
@@ -148,11 +149,12 @@ for _, row in hydro_pairs.iterrows():
 
     plt.figure(figsize=(5, 5))
 
+    bin_edges = np.linspace(0, 10, 51)  # 50 bins between 0 and 10 Å
     sns.histplot(
         distances_series,
-        bins=50,
+        bins=bin_edges,
         stat="density",
-        kde=True
+        kde=False
     )
 
     plt.axvline(
