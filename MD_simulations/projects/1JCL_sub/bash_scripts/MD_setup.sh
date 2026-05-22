@@ -1,6 +1,6 @@
 #!/bin/bash  
 
-#SBATCH -J BtDERA_setup  
+#SBATCH -J 1JCL_sub_setup  
 #SBATCH -t 02:30:00
 #SBATCH -p rome
 #SBATCH -N 1
@@ -8,7 +8,7 @@
 #SBATCH --cpus-per-task 1
 #SBATCH --gpus=0
 #SBATCH --requeue
-#SBATCH --output=./BtDERA_setup_%j.out
+#SBATCH --output=./1JCL_sub_setup_%j.out
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=blueschmitz@tudelft.nl
 
@@ -128,12 +128,12 @@ cp topol.top ../4_equilibration/topol.top
 cd ../4_equilibration
 
 # NVT Equilibration
+# Restraint file
+echo 1 | apptainer exec $GROMACS_CONTAINER gmx_mpi genrestr -f em.gro -o posre.itp
 apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/nvt.mdp -c em.gro -r em.gro -p topol.top -o nvt.tpr
 apptainer exec $GROMACS_CONTAINER mpirun -np $SLURM_NTASKS gmx_mpi mdrun -deffnm nvt -cpt 15
 echo 16 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi energy -f nvt.edr -o temperature.xvg # choose Temperature (16), 0 terminates input
 python $scripts/plot_xvg.py temperature.xvg
-# Restraint file
-echo 1 | apptainer exec $GROMACS_CONTAINER gmx_mpi genrestr -f em.gro -o posre.itp
 # Preparation for NPT Equilibration
 # Gradually reduce restraints from 1000 to 5 kJ mol−1 nm−2 by running 5 short NPT simulations of 500 ps each (5*500=2.5 ns)
 for i in 1000 500 250 100 5;

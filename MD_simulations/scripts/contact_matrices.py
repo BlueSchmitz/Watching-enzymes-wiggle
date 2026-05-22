@@ -142,7 +142,7 @@ sns.heatmap(
 plt.xlabel("C-terminal tail residues")
 plt.ylabel("TIM barrel residues")
 plt.tight_layout()
-plt.savefig("hbonds_heatmap.png", dpi=300)
+plt.savefig("hbonds_heatmap.pdf")
 plt.close()
 
 # Plot hydrogen bonds over time 
@@ -151,7 +151,7 @@ plt.plot(h.times, h.count_by_time(), lw=2)
 plt.xlabel("Time (ps)")
 plt.ylabel("Number of hydrogen bonds")
 plt.tight_layout()
-plt.savefig("hbonds_over_time.png", dpi=300)
+plt.savefig("hbonds_over_time.pdf")
 plt.close()
 
 ### Hydrophobic contacts and salt bridges ###
@@ -245,7 +245,7 @@ sns.heatmap(
 plt.xlabel("C-terminal tail residues")
 plt.ylabel("TIM barrel residues")
 plt.tight_layout()
-plt.savefig("hydrophobic_contacts.png", dpi=300)
+plt.savefig("hydrophobic_contacts.pdf")
 plt.close()
 
 ### Distance distributions ###
