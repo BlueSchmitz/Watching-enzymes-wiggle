@@ -68,21 +68,11 @@ HYDROPHOBIC_CUTOFF = 4.5
 
 print("Generating H-bond distance distributions...")
 
-hbond_pairs = (
-    hbonds_df[[
-        "tail_resid",
-        "barrel_resid",
-        "donor_idx",
-        "acceptor_idx"
-    ]]
-    .drop_duplicates()
-)
+hbond_pairs = hbonds_df[["pair", "donor_idx", "acceptor_idx"]].drop_duplicates()
 
 for _, row in hbond_pairs.iterrows():
 
-    tail_resid = int(row["tail_resid"])
-    barrel_resid = int(row["barrel_resid"])
-
+    pair_name = row["pair"]
     donor_idx = int(row["donor_idx"])
     acceptor_idx = int(row["acceptor_idx"])
 
@@ -100,41 +90,21 @@ for _, row in hbond_pairs.iterrows():
 
     distances_over_time = np.array(distances_over_time)
 
-    plt.figure(figsize=(5, 5))
+    plt.figure(figsize=(5, 4))
 
-    sns.histplot(
-        distances_over_time,
-        bins=50,
-        stat="density",
-        kde=True
-    )
+    sns.histplot(distances_over_time, bins=50, stat="density", kde=True)
 
-    plt.axvline(
-        HBOND_CUTOFF,
-        color="grey",
-        linestyle=":",
-        linewidth=2
-    )
+    plt.axvline(3.5, color="grey", linestyle="--", linewidth=2)
 
     plt.xlim(0, 10)
 
-    plt.xlabel("Donor-acceptor distance (Å)")
+    plt.xlabel("Donor–acceptor distance (Å)")
     plt.ylabel("Density")
 
-    plt.title(
-        f"{res_lookup[tail_resid]} ↔ "
-        f"{res_lookup[barrel_resid]}"
-    )
+    plt.title(pair_name)
 
     plt.tight_layout()
-
-    outfile = (
-        f"hbond_kdes/"
-        f"{res_lookup[tail_resid]}_"
-        f"{res_lookup[barrel_resid]}.pdf"
-    )
-
-    plt.savefig(outfile)
+    plt.savefig(f"hbond_kdes/{pair_name}.pdf")
     plt.close()
 
 # ---------------------------------------------------------
@@ -153,60 +123,33 @@ tail_hphob = tail.select_atoms(hydrophobic_sel)
 barrel_hphob = barrel.select_atoms(hydrophobic_sel)
 
 # ---------------------------------------------------------
-# Hydrophobic distance distributions
+# Hydrophobic distance distributions (UPDATED)
 # ---------------------------------------------------------
 
 print("Generating hydrophobic distance distributions...")
 
-# rows = barrel residues
-# columns = tail residues
-barrel_resids = hydrophobic_data.index.astype(int)
-tail_resids = hydrophobic_data.columns.astype(int)
+hydro_df = pd.read_csv("hydrophobic_contacts_timeseries.csv")
 
-hydrophobic_pairs = []
+hydro_pairs = hydro_df[["tail_resid", "barrel_resid"]].drop_duplicates()
 
-for barrel_resid in barrel_resids:
+for _, row in hydro_pairs.iterrows():
 
-    for tail_resid in tail_resids:
+    tail_resid = int(row["tail_resid"])
+    barrel_resid = int(row["barrel_resid"])
 
-        occupancy = hydrophobic_data.loc[
-            str(barrel_resid),
-            str(tail_resid)
-        ]
+    pair_df = hydro_df[
+        (hydro_df["tail_resid"] == tail_resid) &
+        (hydro_df["barrel_resid"] == barrel_resid)
+    ]
 
-        if occupancy > 0:
-            hydrophobic_pairs.append(
-                (tail_resid, barrel_resid)
-            )
-
-for tail_resid, barrel_resid in hydrophobic_pairs:
-
-    tail_atoms_pair = tail_hphob.select_atoms(
-        f"resid {tail_resid}"
-    )
-
-    barrel_atoms_pair = barrel_hphob.select_atoms(
-        f"resid {barrel_resid}"
-    )
-
-    min_distances = []
-
-    for ts in u.trajectory:
-
-        d = distances.distance_array(
-            tail_atoms_pair.positions,
-            barrel_atoms_pair.positions,
-            box=u.dimensions
-        )
-
-        min_distances.append(np.min(d))
-
-    min_distances = np.array(min_distances)
+    # reconstruct full trajectory distance series:
+    # (fill missing frames with NaN if needed)
+    distances_series = pair_df.sort_values("frame")["distance"].values
 
     plt.figure(figsize=(5, 5))
 
     sns.histplot(
-        min_distances,
+        distances_series,
         bins=50,
         stat="density",
         kde=True
@@ -215,18 +158,17 @@ for tail_resid, barrel_resid in hydrophobic_pairs:
     plt.axvline(
         HYDROPHOBIC_CUTOFF,
         color="grey",
-        linestyle=":",
+        linestyle="--",
         linewidth=2
     )
 
     plt.xlim(0, 10)
 
-    plt.xlabel("Minimum heavy-atom distance (Å)")
+    plt.xlabel("Heavy-atom distance (Å)")
     plt.ylabel("Density")
 
     plt.title(
-        f"{res_lookup[tail_resid]} ↔ "
-        f"{res_lookup[barrel_resid]}"
+        f"{res_lookup[tail_resid]} ↔ {res_lookup[barrel_resid]}"
     )
 
     plt.tight_layout()
@@ -239,119 +181,3 @@ for tail_resid, barrel_resid in hydrophobic_pairs:
 
     plt.savefig(outfile)
     plt.close()
-
-# ---------------------------------------------------------
-# Per-frame interaction counts
-# ---------------------------------------------------------
-
-print("Calculating per-frame interaction counts...")
-
-# =========================================================
-# H-bonds per frame
-# =========================================================
-
-# Count H-bonds detected in each frame
-hbond_counts = (
-    hbonds_df.groupby("frame")
-    .size()
-    .reindex(
-        range(len(u.trajectory)),
-        fill_value=0
-    )
-)
-
-hbond_counts_df = pd.DataFrame({
-    "frame": hbond_counts.index,
-    "n_hbonds": hbond_counts.values
-})
-
-hbond_counts_df.to_csv(
-    "hbonds_per_frame.csv",
-    index=False
-)
-
-# Plot distribution
-plt.figure(figsize=(5,4))
-
-sns.histplot(
-    hbond_counts_df["n_hbonds"],
-    bins=np.arange(
-        -0.5,
-        hbond_counts_df["n_hbonds"].max() + 1.5,
-        1
-    ),
-    stat="probability"
-)
-
-plt.xlabel("Number of hydrogen bonds")
-plt.ylabel("Probability")
-
-plt.tight_layout()
-plt.savefig("hbonds_count_distribution.pdf")
-plt.close()
-
-
-# =========================================================
-# Hydrophobic contacts per frame
-# =========================================================
-
-hydrophobic_counts = []
-
-for ts in u.trajectory:
-
-    d = distances.distance_array(
-        tail_hphob.positions,
-        barrel_hphob.positions,
-        box=u.dimensions
-    )
-
-    contacts = np.where(d < HYDROPHOBIC_CUTOFF)
-
-    unique_pairs = set()
-
-    for i, j in zip(*contacts):
-
-        tail_resid = tail_hphob[i].resid
-        barrel_resid = barrel_hphob[j].resid
-
-        unique_pairs.add(
-            (tail_resid, barrel_resid)
-        )
-
-    hydrophobic_counts.append(len(unique_pairs))
-
-hydrophobic_counts_df = pd.DataFrame({
-    "frame": np.arange(len(hydrophobic_counts)),
-    "n_hydrophobic_contacts": hydrophobic_counts
-})
-
-hydrophobic_counts_df.to_csv(
-    "hydrophobic_contacts_per_frame.csv",
-    index=False
-)
-
-# Plot distribution
-plt.figure(figsize=(5,4))
-
-sns.histplot(
-    hydrophobic_counts_df["n_hydrophobic_contacts"],
-    bins=np.arange(
-        -0.5,
-        hydrophobic_counts_df[
-            "n_hydrophobic_contacts"
-        ].max() + 1.5,
-        1
-    ),
-    stat="probability"
-)
-
-plt.xlabel("Number of hydrophobic contacts")
-plt.ylabel("Probability")
-
-plt.tight_layout()
-plt.savefig(
-    "hydrophobic_contacts_count_distribution.pdf"
-)
-plt.close()
-
-print("Done.")

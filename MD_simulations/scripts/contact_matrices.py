@@ -165,6 +165,8 @@ def hydrophobic_matrix(u, tail_atoms, barrel_atoms, tail_res, barrel_res, cutoff
     contact_counts = {}
 
     n_frames = len(u.trajectory)
+    
+    hydrophobic_timeseries = []
 
     for ts in u.trajectory:
 
@@ -175,6 +177,7 @@ def hydrophobic_matrix(u, tail_atoms, barrel_atoms, tail_res, barrel_res, cutoff
         )
 
         contacts = np.where(d < cutoff)
+        seen_pairs = set()
 
         for i, j in zip(*contacts):
 
@@ -184,6 +187,16 @@ def hydrophobic_matrix(u, tail_atoms, barrel_atoms, tail_res, barrel_res, cutoff
             pair = (tail_resid, barrel_resid)
 
             contact_counts.setdefault(pair, set()).add(ts.frame)
+
+            # avoid double counting within same frame
+            if pair not in seen_pairs:
+                hydrophobic_timeseries.append({
+                    "frame": ts.frame,
+                    "tail_resid": tail_resid,
+                    "barrel_resid": barrel_resid,
+                    "distance": d[i, j]
+                })
+                seen_pairs.add(pair)
 
     rows = []
 
@@ -206,9 +219,9 @@ def hydrophobic_matrix(u, tail_atoms, barrel_atoms, tail_res, barrel_res, cutoff
         columns=tail_res   # tail columns
     ).fillna(0)
 
-    return matrix
+    return matrix, hydrophobic_timeseries
 
-hydrophobic_data = hydrophobic_matrix(
+hydrophobic_data, hydro_ts = hydrophobic_matrix(
     u,
     tail_hphob,
     barrel_hphob,
@@ -216,6 +229,7 @@ hydrophobic_data = hydrophobic_matrix(
     barrel_res
 )
 hydrophobic_data.to_csv("hydrophobic_contacts_matrix.csv")
+pd.DataFrame(hydro_ts).to_csv("hydrophobic_contacts_timeseries.csv", index=False)
 
 # Only barrel residues that actually have contacts
 barrel_res_with_contacts = hydrophobic_data.index[hydrophobic_data.sum(axis=1) > 0]
