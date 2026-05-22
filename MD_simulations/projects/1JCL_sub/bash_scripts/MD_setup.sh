@@ -107,46 +107,14 @@ function copy_back_results {
 trap copy_back_results EXIT
 
 # mkdir outputs directories 
-mkdir -p ./outputs/1_protonation ./outputs/2_parametrization ./outputs/3_minimization ./outputs/4_equilibration ./outputs/5_sanity_checks ./outputs/6_HREX
-
-### 1 Protonation ###
-echo "============= Protonation states assignment with PDB2PQR and PROPKA 3 ============="
-cd ./outputs/1_protonation
-# Assign protonation states at the desired pH (and pH7) on the basis of the PROPKA 3 estimate
-apptainer exec $PDB2PQR_CONTAINER pdb2pqr --ff=AMBER --titration-state-method=propka --with-ph=$pH $pdb ./${project_dir}_pH${pH}.pqr
-apptainer exec $PDB2PQR_CONTAINER pdb2pqr --ff=AMBER --titration-state-method=propka --with-ph=7 $pdb ./${project_dir}_pH7.pqr
-# Convert .pqr to .pdb
-cp ${project_dir}_pH${pH}.pqr ${project_dir}_pH${pH}.pdb
-cp ${project_dir}_pH7.pqr ${project_dir}_pH7.pdb
-# change the names of the residues with differing H numbers at pH 6.8 in comparison to pH 7 so that GROMACS can rebuild them
-python $scripts/compare_protonation.py ${project_dir}_pH${pH}.pdb ${project_dir}_pH7.pdb differences.txt $pdb ${project_dir}_pro.pdb
-echo "Differences in protonation states (pH ${pH} vs pH 7) written to differences.txt. Modified PDB written to ${project_dir}_pro.pdb."
-cp ./${project_dir}_pro.pdb ../2_parametrization/${project_dir}_pro.pdb
-
-### 2 Parametrize ###
-echo "============= Parametrization with GROMACS =============" 
-cd ../2_parametrization
-# Generate topology and initial structure files
-  # Amber 99SB*-ILDN force field in combination with TIP3P water model
-apptainer exec $GROMACS_CONTAINER gmx_mpi pdb2gmx -f ${project_dir}_pro.pdb -o processed.gro -p topol.top -ff amber99sb-star-ildnp -water tip3p 
-# Define the unit cell: 15 A from protein to box edge = 1.5 nm
-apptainer exec $GROMACS_CONTAINER gmx_mpi editconf -f processed.gro -o boxed.gro -c -d 1.5 -bt cubic
-  # -c: center the protein in the box
-  # -d 1.5: minimum 15 Å distance from protein to box edge 
-  # -bt cubic: cubic box 
-# Solvate
-apptainer exec $GROMACS_CONTAINER gmx_mpi solvate -cp boxed.gro -cs spc216.gro -o solvated.gro -p topol.top
-# Add counterions (neutralize system)
-apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/minim.mdp -c solvated.gro -p topol.top -o ions.tpr -maxwarn 1 # warning ignores net charge 
-echo SOL | apptainer exec $GROMACS_CONTAINER gmx_mpi genion -s ions.tpr -o solv_ions.gro -p topol.top -pname NA -neutral
-  # -pname NA -neutral: add Na⁺ to neutralize (paper)
-cp solv_ions.gro ../3_minimization/solv_ions.gro
-cp topol.top ../3_minimization/topol.top
-cp posre.itp ../4_equilibration/posre.itp
+mkdir -p ./outputs/3_minimization ./outputs/4_equilibration ./outputs/5_sanity_checks ./outputs/6_HREX
+cd ./outputs
 
 ### 3 Energy minimization ###
 echo "============= Energy minimization with GROMACS ============="
-cd ../3_minimization
+cp ./0_parametrization_bond/1JCL_pH7_KPS_QM.gro ./3_minimization/solv_ions.gro
+cp ./0_parametrization_bond/1JCL_pH7_KPS_QM.top ./3_minimization/topol.top
+cd ./3_minimization
 apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/minim.mdp -c solv_ions.gro -p topol.top -o em.tpr
 apptainer exec $GROMACS_CONTAINER mpirun -np $SLURM_NTASKS gmx_mpi mdrun -deffnm em
 echo 10 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi energy -f em.edr -o potential.xvg # choose potential energy (10), 0 terminates input
@@ -164,6 +132,8 @@ apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/nvt.mdp -c em.gro -r em
 apptainer exec $GROMACS_CONTAINER mpirun -np $SLURM_NTASKS gmx_mpi mdrun -deffnm nvt -cpt 15
 echo 16 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi energy -f nvt.edr -o temperature.xvg # choose Temperature (16), 0 terminates input
 python $scripts/plot_xvg.py temperature.xvg
+# Restraint file
+echo 1 | apptainer exec $GROMACS_CONTAINER gmx_mpi genrestr -f em.gro -o posre.itp
 # Preparation for NPT Equilibration
 # Gradually reduce restraints from 1000 to 5 kJ mol−1 nm−2 by running 5 short NPT simulations of 500 ps each (5*500=2.5 ns)
 for i in 1000 500 250 100 5;
