@@ -63,6 +63,120 @@ HBOND_CUTOFF = 3.5
 HYDROPHOBIC_CUTOFF = 4.5
 
 # ---------------------------------------------------------
+# Per-frame interaction counts
+# ---------------------------------------------------------
+
+print("Calculating per-frame interaction counts...")
+
+# =========================================================
+# H-bonds per frame
+# =========================================================
+
+# Count H-bonds detected in each frame
+hbond_counts = (
+    hbonds_df.groupby("frame")
+    .size()
+    .reindex(
+        range(len(u.trajectory)),
+        fill_value=0
+    )
+)
+
+hbond_counts_df = pd.DataFrame({
+    "frame": hbond_counts.index,
+    "n_hbonds": hbond_counts.values
+})
+
+hbond_counts_df.to_csv(
+    "hbonds_per_frame.csv",
+    index=False
+)
+
+# Plot distribution
+plt.figure(figsize=(5,4))
+
+sns.histplot(
+    hbond_counts_df["n_hbonds"],
+    bins=np.arange(
+        -0.5,
+        hbond_counts_df["n_hbonds"].max() + 1.5,
+        1
+    ),
+    stat="probability"
+)
+
+plt.xlabel("Number of hydrogen bonds")
+plt.ylabel("Probability")
+
+plt.tight_layout()
+plt.savefig("hbonds_count_distribution.pdf")
+plt.close()
+
+
+# =========================================================
+# Hydrophobic contacts per frame
+# =========================================================
+
+hydrophobic_counts = []
+
+for ts in u.trajectory:
+
+    d = distances.distance_array(
+        tail_hphob.positions,
+        barrel_hphob.positions,
+        box=u.dimensions
+    )
+
+    contacts = np.where(d < HYDROPHOBIC_CUTOFF)
+
+    unique_pairs = set()
+
+    for i, j in zip(*contacts):
+
+        tail_resid = tail_hphob[i].resid
+        barrel_resid = barrel_hphob[j].resid
+
+        unique_pairs.add(
+            (tail_resid, barrel_resid)
+        )
+
+    hydrophobic_counts.append(len(unique_pairs))
+
+hydrophobic_counts_df = pd.DataFrame({
+    "frame": np.arange(len(hydrophobic_counts)),
+    "n_hydrophobic_contacts": hydrophobic_counts
+})
+
+hydrophobic_counts_df.to_csv(
+    "hydrophobic_contacts_per_frame.csv",
+    index=False
+)
+
+# Plot distribution
+plt.figure(figsize=(5,4))
+
+sns.histplot(
+    hydrophobic_counts_df["n_hydrophobic_contacts"],
+    bins=np.arange(
+        -0.5,
+        hydrophobic_counts_df[
+            "n_hydrophobic_contacts"
+        ].max() + 1.5,
+        1
+    ),
+    stat="probability"
+)
+
+plt.xlabel("Number of hydrophobic contacts")
+plt.ylabel("Probability")
+
+plt.tight_layout()
+plt.savefig(
+    "hydrophobic_contacts_count_distribution.pdf"
+)
+plt.close()
+
+# ---------------------------------------------------------
 # H-bond distance distributions
 # ---------------------------------------------------------
 

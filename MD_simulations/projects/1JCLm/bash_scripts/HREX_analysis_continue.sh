@@ -114,7 +114,7 @@ xtc="../rep1.00/traj_comp.xtc"
 
 # Continue 
 # h-bonds and hydrophobic contacts analysis with MDAnalysis
-#python $scripts/contact_matrices.py $tpr md_closed.xtc
+python $scripts/contact_matrices.py $tpr md_closed.xtc
 #python $scripts/plot_RMSF_red.py rmsf_Ca.xvg
 python $scripts/contact_distributions.py $tpr md_closed.xtc
 
