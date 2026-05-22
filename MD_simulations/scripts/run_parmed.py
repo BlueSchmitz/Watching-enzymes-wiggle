@@ -1,4 +1,4 @@
-import parmed as pmd
+import MD_simulations.scripts.run_parmed as pmd
 
 prmtop = "1JCL_pH7_KPS.prmtop"
 inpcrd = "1JCL_pH7_KPS.inpcrd"
