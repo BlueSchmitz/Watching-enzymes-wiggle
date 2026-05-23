@@ -61,6 +61,11 @@ os.makedirs("hydrophobic_kdes", exist_ok=True)
 
 HBOND_CUTOFF = 3.5
 HYDROPHOBIC_CUTOFF = 4.5
+hydrophobic_sel = "resname ALA VAL LEU ILE MET PHE TRP TYR PRO and not name H*"
+tail = u.select_atoms("resid 249:259")
+barrel = u.select_atoms("protein and not resid 249:259")
+tail_hphob = tail.select_atoms(hydrophobic_sel)
+barrel_hphob = barrel.select_atoms(hydrophobic_sel)
 
 # ---------------------------------------------------------
 # Per-frame interaction counts
