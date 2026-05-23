@@ -108,8 +108,8 @@ sns.histplot(
         1
     ),
     stat="probability",
-    alpha=0.7,
-    kde=True
+    alpha=0.5,
+    kde=False
 )
 
 plt.xlabel("Number of hydrogen bonds")
@@ -173,7 +173,7 @@ sns.histplot(
     ),
     stat="probability",
     alpha=0.7,
-    kde=True
+    kde=False
 )
 
 plt.xlabel("Number of hydrophobic contacts")
@@ -215,7 +215,7 @@ for _, row in hbond_pairs.iterrows():
 
     plt.figure(figsize=(5, 4))
 
-    bin_edges = np.linspace(0, 10, 51)  # 50 bins between 0 and 10 Å
+    bin_edges = np.linspace(0, 10, 26)  # 25 bins between 0 and 10 Å
     sns.histplot(distances_over_time, bins=bin_edges, stat="density", kde=False)
 
     plt.axvline(3.5, color="grey", linestyle="--", linewidth=2)
@@ -272,7 +272,7 @@ for _, row in hydro_pairs.iterrows():
 
     plt.figure(figsize=(5, 5))
 
-    bin_edges = np.linspace(0, 10, 51)  # 50 bins between 0 and 10 Å
+    bin_edges = np.linspace(0, 10, 26)  # 25 bins between 0 and 10 Å
     sns.histplot(
         distances_series,
         bins=bin_edges,
