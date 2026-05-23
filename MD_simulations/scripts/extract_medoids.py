@@ -9,8 +9,8 @@ import numpy as np
 # Input files
 # ---------------------------------------------------------
 
-tpr = "topol.tpr"
-xtc = "md_fit.xtc"
+tpr="../rep1.00/topol.tpr"
+xtc="../rep1.00/traj_comp.xtc"
 
 medoid_table = "medoids.csv"
 

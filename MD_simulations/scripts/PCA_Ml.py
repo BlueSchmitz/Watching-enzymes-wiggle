@@ -8,10 +8,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib
 matplotlib.use("Agg")
-from scipy.stats import gaussian_kde
-from scipy.ndimage import gaussian_filter
-from scipy.spatial import ConvexHull
-from matplotlib.path import Path
 
 cmap = plt.get_cmap("viridis")
 
@@ -130,7 +126,7 @@ corr_pc2 = np.corrcoef(pc2_match, dist_match)[0,1]
 plt.figure(figsize=(6,4))
 plt.scatter(pc1_match, dist_match, s=5, color=cmap(0.5), alpha=0.7)
 plt.xlabel(f"PC1 ({pc1_var:.1f}%)")
-plt.ylabel("K167-Y259 distance (nm)")
+plt.ylabel("Lys167-Tyr259 distance (nm)")
 plt.text(
     0.05, 0.95,
     f"r = {corr_pc1:.2f}",
@@ -145,7 +141,7 @@ plt.close()
 plt.figure(figsize=(6,4))
 plt.scatter(pc2_match, dist_match, s=5, color=cmap(0.5), alpha=0.7)
 plt.xlabel(f"PC2 ({pc2_var:.1f}%)")
-plt.ylabel("K167-Y259 distance (nm)")
+plt.ylabel("Lys167-Tyr259 distance (nm)")
 plt.text(
     0.05, 0.95,
     f"r = {corr_pc2:.2f}",
@@ -159,7 +155,7 @@ plt.close()
 ### Plot PC1 vs PC2 colored by distance ###
 plt.figure(figsize=(5,4))
 plt.scatter(pc1, pc2, c=distance, cmap='viridis', s=5)
-plt.colorbar(label="K167-Y259 distance (nm)")
+plt.colorbar(label="Lys167-Tyr259 distance (nm)")
 plt.xlabel(f"PC1 ({pc1_var:.1f}%)")
 plt.ylabel(f"PC2 ({pc2_var:.1f}%)")
 plt.tight_layout()

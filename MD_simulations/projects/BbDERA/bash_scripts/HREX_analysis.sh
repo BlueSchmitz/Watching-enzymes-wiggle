@@ -166,6 +166,7 @@ apptainer exec $GROMACS_CONTAINER gmx_mpi check -f md_closed.xtc
 
 # h-bonds and hydrophobic contacts analysis with MDAnalysis
 python $scripts/contact_matrices_Bb.py $tpr md_closed.xtc
+python $scripts/contact_distributions_Bb.py $tpr md_closed.xtc
 
 # PCA
 # Compute covariance matrix
@@ -184,13 +185,7 @@ python $scripts/PCA_Bb.py proj.xvg eigenvalues.xvg lys151_tyr221_distance.xvg pr
 
 # Clustering 
 python $scripts/clustering_Bb.py $tpr md_fit.xtc
-
-# Extract representative structures of clusters
-tail -n +2 medoids.csv | while IFS=',' read method cluster frame_index frame time
-do
-    name="${method}_c${cluster}"
-    echo "Extracting $name at time $time ps"
-    echo 1 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s $tpr -f md_fit.xtc -dump $time -o "${name}.pdb"
-done
+# Extract medoids
+python $scripts/extract_medoids.py
 
 echo "Analysis complete. Results will be copied back to home directory."

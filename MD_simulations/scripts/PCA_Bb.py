@@ -12,8 +12,6 @@ from scipy.stats import gaussian_kde
 from scipy.ndimage import gaussian_filter
 from scipy.spatial import ConvexHull
 from matplotlib.path import Path
-from sklearn.cluster import AgglomerativeClustering
-import hdbscan
 
 cmap = plt.get_cmap("viridis")
 
@@ -270,6 +268,7 @@ plt.tight_layout()
 plt.savefig("free_energy.pdf")
 plt.close()
 
+'''
 ### Optional: Probability density 
 # 2D histogram with density=True
 H, xedges, yedges = np.histogram2d(pc1, pc2, bins=50, density=True)
@@ -466,30 +465,4 @@ print(pc1.min(), pc1.max())
 print(pc2.min(), pc2.max())
 print(x_low, x_high)
 print(y_low, y_high)
-
-# Cluster 
-X = np.vstack([pc1, pc2]).T
-
-for i in range(2, 10):
-    clustering = AgglomerativeClustering(n_clusters=5)
-    labels = clustering.fit_predict(X)
-    # plot pc1 vs pc2 colored by cluster
-    plt.figure(figsize=(6, 4))
-    plt.scatter(pc1, pc2, s=5, color=cmap(labels), alpha=0.7)
-    plt.xlabel(f"PC1 ({pc1_var:.1f}%)")
-    plt.ylabel(f"PC2 ({pc2_var:.1f}%)")
-    plt.tight_layout()
-    plt.savefig(f"pc1_vs_pc2_clusters{i}.pdf")
-    plt.close()
-
-#hdbscan
-clusterer = hdbscan.HDBSCAN(min_cluster_size=100)
-labels = clusterer.fit_predict(X)
-# plot pc1 vs pc2 colored by cluster
-plt.figure(figsize=(6, 4))
-plt.scatter(pc1, pc2, s=5, color=cmap(labels), alpha=0.7)
-plt.xlabel(f"PC1 ({pc1_var:.1f}%)")
-plt.ylabel(f"PC2 ({pc2_var:.1f}%)")
-plt.tight_layout()
-plt.savefig(f"pc1_vs_pc2_clusters_hdbscan.pdf")
-plt.close()
+'''
