@@ -61,13 +61,34 @@ function copy_back_results {
 }
 trap copy_back_results EXIT
 
-### Simple MD production run ###
+# Make index file
+apptainer exec $GROMACS_CONTAINER gmx_mpi make_ndx -f $tpr -o index.ndx << EOF
+r 1-248
+name 18 TIM_barrel
+r 1-248 & a CA
+name 19 CA_TIM
+4 & 18 
+name 20 TIM_barrel_backbone
+r 249-259
+name 21 tail
+r 249-259 & a CA
+name 22 CA_tail
+4 & 21 
+name 23 tail_backbone
+r 167 & a NZ
+name 24 Lys167_NZ
+r 259 & a OH
+name 25 Tyr259_OH
+
+q
+EOF
+
 echo "============= Downsizing and Exporting trajectory ============="
 #echo -e "q" | apptainer exec $GROMACS_CONTAINER gmx_mpi make_ndx -f topol.tpr -o index.ndx # make index file with default groups
 # downsample trajectory 
 #echo 1 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s topol.tpr -f traj_comp.xtc -o md_center_mol.xtc -center -pbc mol -ur compact
 # fit trajectory to reference (TIM barrel backbone) to remove overall rotation and translation, keep whole system
-echo 20 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s topol.tpr -f md_center_mol.xtc -o md_fit.xtc -fit rot+trans -n index.ndx
+echo 4 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s topol.tpr -f md_center_mol.xtc -o md_fit.xtc -fit rot+trans -n index.ndx
 rm md_center_mol.xtc
 echo -e "1\n0" | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_fit.xtc -s topol.tpr -n index.ndx -o md_1000.xtc -dt 1000
 echo "Trajectory saved as md_1000.xtc"
