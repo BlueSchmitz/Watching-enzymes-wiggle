@@ -61,28 +61,7 @@ function copy_back_results {
 }
 trap copy_back_results EXIT
 
-# Make index file
-apptainer exec $GROMACS_CONTAINER gmx_mpi make_ndx -f $tpr -o index.ndx << EOF
-r 1-248
-name 18 TIM_barrel
-r 1-248 & a CA
-name 19 CA_TIM
-4 & 18 
-name 20 TIM_barrel_backbone
-r 249-259
-name 21 tail
-r 249-259 & a CA
-name 22 CA_tail
-4 & 21 
-name 23 tail_backbone
-r 167 & a NZ
-name 24 Lys167_NZ
-r 259 & a OH
-name 25 Tyr259_OH
-
-q
-EOF
-
+# Downsample and save trajectory
 echo "============= Downsizing and Exporting trajectory ============="
 #echo -e "q" | apptainer exec $GROMACS_CONTAINER gmx_mpi make_ndx -f topol.tpr -o index.ndx # make index file with default groups
 # downsample trajectory 
