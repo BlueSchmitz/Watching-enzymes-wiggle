@@ -107,7 +107,9 @@ sns.histplot(
         hbond_counts_df["n_hbonds"].max() + 1.5,
         1
     ),
-    stat="probability"
+    stat="probability",
+    alpha=0.7,
+    kde=True
 )
 
 plt.xlabel("Number of hydrogen bonds")
@@ -169,7 +171,9 @@ sns.histplot(
         ].max() + 1.5,
         1
     ),
-    stat="probability"
+    stat="probability",
+    alpha=0.7,
+    kde=True
 )
 
 plt.xlabel("Number of hydrophobic contacts")
