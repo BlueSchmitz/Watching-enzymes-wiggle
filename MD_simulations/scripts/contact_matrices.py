@@ -129,13 +129,13 @@ heatmap_data.columns = [res_lookup[i] for i in heatmap_data.columns]
 # Plot heatmap of hbond occupancy
 plt.figure(figsize=(8,6))
 
-#mask = heatmap_data == 0  # True where occupancy = 0
+mask = heatmap_data == 0  # True where occupancy = 0
 sns.heatmap(
     heatmap_data,
     cmap="viridis",
     vmin=0,
     vmax=1,
-    #mask=mask,
+    mask=mask,
     linewidths=0.2
 )
 
@@ -248,13 +248,13 @@ hydrophobic_data_plot.columns = [res_lookup[i] for i in hydrophobic_data_plot.co
 # Plot heatmap of hydrophobic contact occupancy
 plt.figure(figsize=(8,6))
 
-#mask = hydrophobic_data_plot == 0
+mask = hydrophobic_data_plot == 0
 sns.heatmap(
     hydrophobic_data_plot,
     cmap="viridis",
     vmin=0,
     vmax=1,
-    #mask=mask,
+    mask=mask,
     linewidths=0.2
 )
 
