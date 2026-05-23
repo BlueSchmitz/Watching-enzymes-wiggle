@@ -18,7 +18,7 @@ What this script does:
 - specific_activity = (dAbs * Vreaction) / (ext_coeff * dt * Vprotein * cprotein * l)
 - Saves:
     - Excel: "activity_summary_<inputname>.xlsx" with sheets "Replicate_Slopes" and "Enzyme_Summary"
-    - PNG plots per enzyme in "activity_plots/" showing raw replicates and accepted window fits.
+    - PDF plots per enzyme in "activity_plots/" showing raw replicates and accepted window fits.
 """
 
 import sys
@@ -38,7 +38,7 @@ matplotlib.use("Agg")  # Use non-GUI backend
 # ---------- Configurable variables ----------
 SAMPLING_INTERVAL = 16.0       # seconds between data points
 WINDOW_POINTS = 12             # number of points in sliding window
-R2_THRESHOLD = 0.999           # threshold for accepting a window
+R2_THRESHOLD = 0.99            # threshold for accepting a window
 # Specific activity constants
 Vreaction = 0.0002             # liters
 extinction_coefficient_NADH = 6220.0  # M^-1 cm^-1
@@ -84,7 +84,7 @@ def slope_to_specific_activity(slope, cprotein):
         (extinction_coefficient_NADH * Vprotein * float(cprotein) * 1000 * path_length_l)
     )
 
-def plot_activity_boxplot(df_summary, df_replicates, tukey_df, outfile_png):
+def plot_activity_boxplot(df_summary, df_replicates, tukey_df, outfile_pdf):
     enzymes = df_summary["Enzyme"].astype(str).tolist()
     x = np.arange(len(enzymes))
 
@@ -150,7 +150,7 @@ def plot_activity_boxplot(df_summary, df_replicates, tukey_df, outfile_png):
         ax.legend(handles=legend_handles, loc='upper right', fontsize='small', handlelength=0, handletextpad=0.2)
     '''
     fig.tight_layout()
-    fig.savefig(outfile_png, dpi=300)
+    fig.savefig(outfile_pdf)
     plt.close(fig)
 
 def main(infile):
@@ -312,7 +312,19 @@ def main(infile):
         ax.legend(fontsize="small")
         ax.grid(alpha=0.3)
         fig.tight_layout()
-        fig.savefig(plot_dir / f"{enz}_activity.png", dpi=300)
+        safe_enz = (
+            enz.replace("*", "star")
+            .replace("/", "_")
+            .replace("\\", "_")
+            .replace(":", "_")
+            .replace("?", "_")
+            .replace('"', "_")
+            .replace("<", "_")
+            .replace(">", "_")
+            .replace("|", "_")
+        )
+
+        fig.savefig(plot_dir / f"{safe_enz}_activity.pdf")
         plt.close(fig)
 
     # ---------------- STATISTICS ----------------
@@ -349,12 +361,12 @@ def main(infile):
     else:
         tukey_df = pd.DataFrame()
     
-    # ---- Save barplot as PNG ----
+    # ---- Save barplot as PDF ----
     df_summary = pd.DataFrame(enzyme_summary_rows)
     df_replicates = pd.DataFrame(replicate_rows)
-    boxplot_png = f"enzyme_activity_boxplot_{p.stem}.png"
-    plot_activity_boxplot(df_summary, df_replicates, tukey_df, boxplot_png)
-    print(f"Saved boxplot to {boxplot_png}")
+    boxplot_pdf = f"enzyme_activity_boxplot_{p.stem}.pdf"
+    plot_activity_boxplot(df_summary, df_replicates, tukey_df, boxplot_pdf)
+    print(f"Saved boxplot to {boxplot_pdf}")
 
     out_xlsx = f"activity_summary_{p.stem}.xlsx"
     with pd.ExcelWriter(out_xlsx) as writer:
