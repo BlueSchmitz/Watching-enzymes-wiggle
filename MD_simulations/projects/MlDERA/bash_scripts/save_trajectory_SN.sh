@@ -67,3 +67,7 @@ echo -e "q" | apptainer exec $GROMACS_CONTAINER gmx_mpi make_ndx -f topol.tpr -o
 # downsample trajectory 
 echo -e "0\n0" | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f traj_comp.xtc -s topol.tpr -n index.ndx -o md_1000.xtc -dt 1000
 echo "Trajectory saved as md_1000.xtc"
+
+# extract first frame as pdb
+echo -e "0\n0" | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f traj_comp.xtc -s topol.tpr -n index.ndx -o final_frame.pdb -dump 1
+echo "Final frame saved as final_frame.pdb"
