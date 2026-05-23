@@ -112,10 +112,10 @@ echo "============= Analysis of trajectory ============="
 tpr="../rep1.00/topol.tpr"
 xtc="../rep1.00/traj_comp.xtc"
 
-echo -e "q" | apptainer exec $GROMACS_CONTAINER gmx_mpi make_ndx -f $tpr -o index.ndx # make index file with default groups
+#echo -e "q" | apptainer exec $GROMACS_CONTAINER gmx_mpi make_ndx -f $tpr -o index.ndx # make index file with default groups
 # center the trajectory on the whole protein and remove PBC artifacts, output in compact format
-echo 1 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s $tpr -f $xtc -o md_center_mol.xtc -center -pbc mol -ur compact
+#echo 1 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s $tpr -f $xtc -o md_center_mol.xtc -center -pbc mol -ur compact
 # fit trajectory to reference (TIM barrel backbone) to remove overall rotation and translation, keep whole system
-echo 4 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s $tpr -f md_center_mol.xtc -o md_fit.xtc -fit rot+trans -n index.ndx
-rm md_center_mol.xtc
+#echo 4 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s $tpr -f md_center_mol.xtc -o md_fit.xtc -fit rot+trans -n index.ndx
+#rm md_center_mol.xtc
 python $scripts/potential_residues_distance.py
