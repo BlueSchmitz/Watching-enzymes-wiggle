@@ -45,7 +45,7 @@ for line in f:
 f.close()
 
 # Plot x and y with labels.
-plt.plot(x,y, color = cmap(0.5))
+plt.scatter(x, y, s=3, alpha=0.5, linewidths=0)
 plt.xlabel(res_x.group(1))
 plt.ylabel(res_y.group(1))
 plt.tight_layout()

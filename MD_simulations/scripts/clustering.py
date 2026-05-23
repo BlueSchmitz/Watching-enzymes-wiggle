@@ -16,7 +16,7 @@ from scipy.cluster.hierarchy import linkage, fcluster
 from scipy.spatial.distance import squareform
 import hdbscan
 
-# Load closed trajectory
+# Load trajectory
 tpr = sys.argv[1]
 trj = sys.argv[2]
 u = mda.Universe(tpr, trj)
