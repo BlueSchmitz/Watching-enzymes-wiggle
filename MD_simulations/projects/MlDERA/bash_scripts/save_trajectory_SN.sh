@@ -65,9 +65,13 @@ trap copy_back_results EXIT
 echo "============= Downsizing and Exporting trajectory ============="
 echo -e "q" | apptainer exec $GROMACS_CONTAINER gmx_mpi make_ndx -f topol.tpr -o index.ndx # make index file with default groups
 # downsample trajectory 
-echo -e "0\n0" | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f traj_comp.xtc -s topol.tpr -n index.ndx -o md_1000.xtc -dt 1000
+echo 1 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s topol.tpr -f traj_comp.xtc -o md_center_mol.xtc -center -pbc mol -ur compact
+# fit trajectory to reference (TIM barrel backbone) to remove overall rotation and translation, keep whole system
+echo 20 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s $tpr -f md_center_mol.xtc -o md_fit.xtc -fit rot+trans -n index.ndx
+rm md_center_mol.xtc
+echo -e "1\n0" | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_fit.xtc -s topol.tpr -n index.ndx -o md_1000.xtc -dt 1000
 echo "Trajectory saved as md_1000.xtc"
 
 # extract first frame as pdb
-echo -e "0\n0" | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f traj_comp.xtc -s topol.tpr -n index.ndx -o final_frame.pdb -dump 1
-echo "Final frame saved as final_frame.pdb"
+echo -e "1\n0" | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f traj_comp.xtc -s topol.tpr -n index.ndx -o first_frame.pdb -dump 1
+echo "First frame saved as first_frame.pdb"
