@@ -11,8 +11,8 @@
 #SBATCH --mail-user=blueschmitz@tudelft.nl
 #SBATCH --output=copy_to_TU_%j.out
 
-#SRC="/home/rleveson/Blue/Watching-enzymes-wiggle/MD_simulations/projects/MlDERA"
-SRC="/gpfs/work1/0/prjs2080/CbDERA"
+SRC="/home/rleveson/Blue/Watching-enzymes-wiggle/MD_simulations/projects/CbDERA"
+#SRC="/gpfs/work1/0/prjs2080/CbDERA"
 DEST="tudelft_sftp:/staff-umbrella/biocat dera/MD_simulations/CbDERA"
 
 echo "HOSTNAME: $(hostname)"
