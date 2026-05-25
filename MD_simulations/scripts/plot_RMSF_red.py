@@ -16,7 +16,7 @@ cmap = plt.get_cmap("viridis")
 
 # Input / output
 rmsf_file = Path(sys.argv[1])
-out_png = "rmsf.png"
+out_png = "rmsf.pdf"
 
 # Residues to color red (e.g., DERA tail/active site regions)
 residues_to_scale = set().union(
@@ -74,7 +74,7 @@ plt.ylabel("RMSF (nm)")
 plt.grid(alpha=0.3)
 plt.tight_layout()
 
-plt.savefig(out_png, dpi=300)
+plt.savefig(out_png)
 plt.close()
 
 print(f"Saved RMSF plot to {out_png}")

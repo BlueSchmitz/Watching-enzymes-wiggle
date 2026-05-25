@@ -46,5 +46,5 @@ plt.xlim(left=0)
 
 # Save figure
 plt.tight_layout()
-plt.savefig(xvg_filename.split(".")[0] + "_histogram.png")
-print(f"Histogram saved as {xvg_filename.split('.')[0]}_histogram.png")
+plt.savefig(xvg_filename.split(".")[0] + "_histogram.pdf")
+print(f"Histogram saved as {xvg_filename.split('.')[0]}_histogram.pdf")
