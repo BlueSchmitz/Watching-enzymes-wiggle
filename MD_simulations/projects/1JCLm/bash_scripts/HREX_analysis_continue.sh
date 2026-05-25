@@ -1,6 +1,6 @@
 #!/bin/bash  
 
-#SBATCH -J EcDERA_HREX_medoids
+#SBATCH -J EcDERA_HREX_heatmaps
 #SBATCH -t 01:00:00
 #SBATCH -p rome
 #SBATCH -N 1
@@ -9,7 +9,7 @@
 #SBATCH --gpus=0
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=blueschmitz@tudelft.nl
-#SBATCH --output=hrex_medoids_%j.out
+#SBATCH --output=hrex_heatmaps_%j.out
 
 : '
 Folder structure:
@@ -117,7 +117,7 @@ xtc="../rep1.00/traj_comp.xtc"
 #python $scripts/contact_matrices.py $tpr md_closed.xtc
 #python $scripts/plot_RMSF_red.py rmsf_Ca.xvg
 #python $scripts/contact_distributions.py $tpr md_closed.xtc
-python $scripts/contactmatrices_analysis.py 
+python $scripts/contact_matrices_rerun.py 
 
 # PCA
 # Compute covariance matrix
