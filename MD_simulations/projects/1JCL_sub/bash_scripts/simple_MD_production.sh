@@ -11,6 +11,9 @@
 #SBATCH --mail-user=blueschmitz@tudelft.nl
 #SBATCH --output=simple_MD_%j.out
 
+export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+export OMP_NUM_TASKS=$SLURM_NTASKS
+
 : '
 Folder structure:
 .
@@ -114,5 +117,5 @@ cd ./outputs/$output_dir/
 sed -i '/posre_5.itp/d' topol_pro.top
 # run simple MD production
 apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/classical_MD.mdp -c npt_pro.gro -t npt_pro.cpt -p topol_pro.top -o md.tpr
-apptainer exec $GROMACS_CONTAINER gmx_mpi mdrun -deffnm md -cpt 15
+apptainer exec $GROMACS_CONTAINER mpirun -np $SLURM_NTASKS gmx_mpi mdrun -deffnm md -cpt 15
 echo "Simple MD production run finished."
