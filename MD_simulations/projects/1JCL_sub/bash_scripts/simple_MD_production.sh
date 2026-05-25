@@ -56,7 +56,7 @@ set -euo pipefail
 set -o errtrace
 
 ### Project-specific settings ###
-project_dir=MlDERA
+project_dir=1JCL_sub
 output_dir=7_simple_MD
 pH=7
 
