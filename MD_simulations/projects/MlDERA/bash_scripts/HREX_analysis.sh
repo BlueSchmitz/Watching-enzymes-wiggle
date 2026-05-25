@@ -1,6 +1,6 @@
 #!/bin/bash  
 
-#SBATCH -J EcDERA_HREX_analysis
+#SBATCH -J MlDERA_HREX_analysis
 #SBATCH -t 10:00:00
 #SBATCH -p rome
 #SBATCH -N 1

@@ -113,6 +113,6 @@ cd ./outputs/$output_dir/
 # remove any line that includes the posre file from the topology file
 sed -i '/posre_5.itp/d' topol_pro.top
 # run simple MD production
-gmx_mpi grompp -f $mdp/classical_MD.mdp -c npt_pro.gro -t npt_pro.cpt -p topol_pro.top -o md.tpr
-srun gmx_mpi mdrun -deffnm md -cpt 15
+apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/classical_MD.mdp -c npt_pro.gro -t npt_pro.cpt -p topol_pro.top -o md.tpr
+apptainer exec $GROMACS_CONTAINER gmx_mpi mdrun -deffnm md -cpt 15
 echo "Simple MD production run finished."
