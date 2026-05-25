@@ -181,6 +181,9 @@ EOF
 # Extract medoids
 python $scripts/extract_medoids.py
 
+# find potential residues involved in proton abstraction
+python $scripts/potential_residues_distance_Cb.py
+
 # How many frames in closed trajectory vs full?
 #apptainer exec $GROMACS_CONTAINER gmx_mpi check -f md_fit.xtc
 #apptainer exec $GROMACS_CONTAINER gmx_mpi check -f md_closed.xtc
