@@ -2,7 +2,7 @@ title                   = simple MD run
 ; Run parameters
 integrator              = md
 dt                      = 0.002                ; [ps]
-nsteps                  = 25000                ; 50 ps = --> 50/0.002=25000 steps
+nsteps                  = 25000000             ; 50 ns = --> 50/0.002=25000000 steps
 
 ; Output control 
 nstxout                 = 0                    ; suppress bulky .trr file by specifying 
