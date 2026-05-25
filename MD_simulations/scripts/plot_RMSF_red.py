@@ -20,12 +20,11 @@ out_png = "rmsf.pdf"
 
 # Residues to color red (e.g., DERA tail/active site regions)
 residues_to_scale = set().union(
-    range(1,6),
-    range(18,25),
-    range(69,77),
-    range(167,178),
-    range(196,203),
-    range(220,230)
+    range(19,26),
+    range(75,83),
+    range(168,179),
+    range(202,209),
+    range(249,260)
 )
 
 # Load RMSF data (skip GROMACS comments)

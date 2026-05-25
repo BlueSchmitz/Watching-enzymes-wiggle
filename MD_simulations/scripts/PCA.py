@@ -8,10 +8,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib
 matplotlib.use("Agg")
-from scipy.stats import gaussian_kde
-from scipy.ndimage import gaussian_filter
-from scipy.spatial import ConvexHull
-from matplotlib.path import Path
 
 cmap = plt.get_cmap("viridis")
 

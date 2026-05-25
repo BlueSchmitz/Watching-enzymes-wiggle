@@ -115,7 +115,7 @@ xtc="../rep1.00/traj_comp.xtc"
 # Continue 
 # h-bonds and hydrophobic contacts analysis with MDAnalysis
 #python $scripts/contact_matrices.py $tpr md_closed.xtc
-#python $scripts/plot_RMSF_red.py rmsf_Ca.xvg
+python $scripts/plot_RMSF_red.py rmsf_Ca.xvg
 #python $scripts/contact_distributions.py $tpr md_closed.xtc
 
 # PCA
@@ -131,7 +131,11 @@ xtc="../rep1.00/traj_comp.xtc"
 # Eigenvector components per atom (which residues dominate the motion)
 #echo 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s $tpr -n index.ndx -rmsf PC_rmsf_per_atom.xvg -first 1 -last 2
 
-#python $scripts/PCA_try.py proj.xvg eigenvalues.xvg lys167_tyr259_distance.xvg proj_20_pcs.xvg
+python $scripts/PCA.py proj.xvg eigenvalues.xvg lys167_tyr259_distance.xvg proj_20_pcs.xvg
+python $scripts/plotxvg_hist.py lys167_tyr259_hist.xvg
+python $scripts/plotxvg.py lys167_tyr259_distance.xvg
+python $scripts/plotxvg.py rmsd_tail_backbone.xvg 
+python $scripts/plotxvg.py rmsd_tim_barrel_backbone.xvg
 
 # Extract extreme projections (from python script)
 #min_pc1=$(awk '/min_pc1/ {print $2}' pc_extreme_frames.dat)
@@ -149,7 +153,7 @@ xtc="../rep1.00/traj_comp.xtc"
 
 # Clustering 
 #python $scripts/run_clustering_Ec.py $tpr md_fit.xtc
-#python $scripts/plot_clustering.py
+python $scripts/plot_clustering.py
 # Extract medoids
 python $scripts/extract_medoids.py
 
