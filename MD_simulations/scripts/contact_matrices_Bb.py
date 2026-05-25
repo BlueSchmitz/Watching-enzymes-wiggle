@@ -128,13 +128,13 @@ heatmap_data.columns = [res_lookup[i] for i in heatmap_data.columns]
 # Plot heatmap of hbond occupancy
 plt.figure(figsize=(8,6))
 
-#mask = heatmap_data == 0  # True where occupancy = 0
+mask = heatmap_data == 0  # True where occupancy = 0
 sns.heatmap(
     heatmap_data,
     cmap="viridis",
     vmin=0,
     vmax=1,
-    #mask=mask,
+    mask=mask,
     linewidths=0.2
 )
 
@@ -156,6 +156,8 @@ plt.close()
 ### Hydrophobic contacts and salt bridges ###
 # hydrophobic residues: ALA VAL LEU ILE MET PHE TRP TYR PRO
 hydrophobic_sel = "resname ALA VAL LEU ILE MET PHE TRP TYR PRO and not name H*"
+tail = u.select_atoms("resid 213:221")
+barrel = u.select_atoms("protein and not resid 213:221")
 tail_hphob = tail.select_atoms(hydrophobic_sel)
 barrel_hphob = barrel.select_atoms(hydrophobic_sel)
 
@@ -164,6 +166,8 @@ def hydrophobic_matrix(u, tail_atoms, barrel_atoms, tail_res, barrel_res, cutoff
     contact_counts = {}
 
     n_frames = len(u.trajectory)
+
+    hydrophobic_timeseries = []
 
     for ts in u.trajectory:
 
@@ -174,6 +178,7 @@ def hydrophobic_matrix(u, tail_atoms, barrel_atoms, tail_res, barrel_res, cutoff
         )
 
         contacts = np.where(d < cutoff)
+        seen_pairs = set()
 
         for i, j in zip(*contacts):
 
@@ -183,6 +188,16 @@ def hydrophobic_matrix(u, tail_atoms, barrel_atoms, tail_res, barrel_res, cutoff
             pair = (tail_resid, barrel_resid)
 
             contact_counts.setdefault(pair, set()).add(ts.frame)
+
+            # avoid double counting within same frame
+            if pair not in seen_pairs:
+                hydrophobic_timeseries.append({
+                    "frame": ts.frame,
+                    "tail_resid": tail_resid,
+                    "barrel_resid": barrel_resid,
+                    "distance": d[i, j]
+                })
+                seen_pairs.add(pair)
 
     rows = []
 
@@ -205,9 +220,9 @@ def hydrophobic_matrix(u, tail_atoms, barrel_atoms, tail_res, barrel_res, cutoff
         columns=tail_res   # tail columns
     ).fillna(0)
 
-    return matrix
+    return matrix, hydrophobic_timeseries
 
-hydrophobic_data = hydrophobic_matrix(
+hydrophobic_data, hydro_ts = hydrophobic_matrix(
     u,
     tail_hphob,
     barrel_hphob,
@@ -215,6 +230,7 @@ hydrophobic_data = hydrophobic_matrix(
     barrel_res
 )
 hydrophobic_data.to_csv("hydrophobic_contacts_matrix.csv")
+pd.DataFrame(hydro_ts).to_csv("hydrophobic_contacts_timeseries.csv", index=False)
 
 # Only barrel residues that actually have contacts
 barrel_res_with_contacts = hydrophobic_data.index[hydrophobic_data.sum(axis=1) > 0]
@@ -231,13 +247,13 @@ hydrophobic_data_plot.columns = [res_lookup[i] for i in hydrophobic_data_plot.co
 # Plot heatmap of hydrophobic contact occupancy
 plt.figure(figsize=(8,6))
 
-#mask = hydrophobic_data_plot == 0
+mask = hydrophobic_data_plot == 0
 sns.heatmap(
     hydrophobic_data_plot,
     cmap="viridis",
     vmin=0,
     vmax=1,
-    #mask=mask,
+    mask=mask,
     linewidths=0.2
 )
 

@@ -3,7 +3,6 @@
 '''Visualisation of hbonds, hydrophobic contacts and salt bridges.'''
 
 import sys
-import os
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
