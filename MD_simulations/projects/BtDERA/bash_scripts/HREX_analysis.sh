@@ -161,7 +161,7 @@ apptainer exec $GROMACS_CONTAINER gmx_mpi distance -f md_fit.xtc -s $tpr -n inde
 echo 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_fit.xtc -s $tpr -o md_closed.xtc -drop dist_k168_l238_ps.xvg -dropover 0.6
 
 # find potential residues for proton transfer
-python $scripts/potential_residues_distance.py
+python $scripts/potential_residues_distance_Bt.py
 
 # PCA
 # Compute covariance matrix

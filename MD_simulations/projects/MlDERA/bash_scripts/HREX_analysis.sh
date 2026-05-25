@@ -183,7 +183,10 @@ EOF
 #python $scripts/run_clustering_Ml.py $tpr md_fit.xtc
 #python $scripts/plot_clustering.py
 # Extract medoids
-python $scripts/extract_medoids.py
+#python $scripts/extract_medoids.py
+
+# find potential residues involved in proton abstraction
+python $scripts/potential_residues_distance.py
 
 # h-bonds and hydrophobic contacts analysis with MDAnalysis
 #python $scripts/contact_matrices_Ml.py $tpr md_closed.xtc

@@ -154,7 +154,7 @@ EOF
 # RSMF of CA atoms of the whole protein, output in xvg format
 #echo 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi rmsf -f md_fit.xtc -s $tpr -o rmsf_Ca.xvg -n index.ndx -b 20000 -res  # start at 20 ns (time in ps)
 #python $scripts/plot_RMSF_red_Cb.py rmsf_Ca.xvg
-### define frames with distance between Lys151 NZ and Arg212 NE < 0.6 nm as "closed" and >= 0.6 nm as "open", output in xvg format
+# define frames with distance between Lys151 NZ and Arg212 NE < 0.6 nm as "closed" and >= 0.6 nm as "open", output in xvg format
 # Compute distance time series (ps)
 #apptainer exec $GROMACS_CONTAINER gmx_mpi distance -f md_fit.xtc -s $tpr -n index.ndx -select 'com of group 24 plus com of group 25' -oall dist_k151_y212_ps.xvg
 # Create new trajectory with selected frames where distance < 0.6 nm
