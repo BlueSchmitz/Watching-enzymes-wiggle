@@ -112,10 +112,46 @@ echo "============= Analysis of trajectory ============="
 tpr="../rep1.00/topol.tpr"
 xtc="../rep1.00/traj_comp.xtc"
 
+# make index file with default + custom groups
+apptainer exec $GROMACS_CONTAINER gmx_mpi make_ndx -f $tpr -o index.ndx << EOF
+r 1-219
+name 18 TIM_barrel
+r 1-219 & a CA
+name 19 CA_TIM
+4 & 18 
+name 20 TIM_barrel_backbone
+r 220-229
+name 21 tail
+r 220-229 & a CA
+name 22 CA_tail
+4 & 21 
+name 23 tail_backbone
+r 166 & a NZ
+name 24 Lys166_NZ
+r 229 & a OH
+name 25 Asp229_OH
+
+q
+EOF
+
 #echo -e "q" | apptainer exec $GROMACS_CONTAINER gmx_mpi make_ndx -f $tpr -o index.ndx # make index file with default groups
 # center the trajectory on the whole protein and remove PBC artifacts, output in compact format
 #echo 1 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s $tpr -f $xtc -o md_center_mol.xtc -center -pbc mol -ur compact
 # fit trajectory to reference (TIM barrel backbone) to remove overall rotation and translation, keep whole system
 #echo 4 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s $tpr -f md_center_mol.xtc -o md_fit.xtc -fit rot+trans -n index.ndx
 #rm md_center_mol.xtc
-python $scripts/potential_residues_distance.py
+#python $scripts/potential_residues_distance.py
+# PCA
+# Compute covariance matrix
+echo 19 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi covar -s $tpr -f md_fit.xtc -n index.ndx -b 20000 -o eigenvalues.xvg -v eigenvectors.trr
+    # fit to CA TIM, covariance of whole protein CA (so side-chains do not contribute to covariance)
+    # eigenvalues.xvg contains the eigenvalues (variance along each PC as mean square fluctuation captured by that PC in nm^2), eigenvectors.trr contains the eigenvectors (PCs) as a trajectory
+# Project trajectory onto PCs
+echo 19 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s $tpr -n index.ndx -proj proj.xvg -first 1 -last 2
+echo 19 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s $tpr -n index.ndx -proj proj_20_pcs.xvg -first 1 -last 20
+# Extract extreme projections along PC1 and PC2
+echo 19 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s $tpr -n index.ndx -extr extremes.pdb -first 1 -last 2
+# Eigenvector components per atom (which residues dominate the motion)
+echo 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s $tpr -n index.ndx -rmsf PC_rmsf_per_atom.xvg -first 1 -last 2
+
+python $scripts/PCA_Bb.py proj.xvg eigenvalues.xvg lys166_asp229_distance.xvg proj_20_pcs.xvg

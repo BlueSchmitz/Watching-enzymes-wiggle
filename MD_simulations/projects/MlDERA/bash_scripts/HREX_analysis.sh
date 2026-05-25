@@ -56,7 +56,7 @@ set -euo pipefail
 set -o errtrace
 
 ### Project-specific settings ###
-project_dir=1JCLm
+project_dir=MlDERA
 output_dir=6_HREX/analysis
 pH=7
 
@@ -114,22 +114,22 @@ xtc="../rep1.00/traj_comp.xtc"
 
 # make index file with default + custom groups
 apptainer exec $GROMACS_CONTAINER gmx_mpi make_ndx -f $tpr -o index.ndx << EOF
-r 1-248
+r 1-219
 name 18 TIM_barrel
-r 1-248 & a CA
+r 1-219 & a CA
 name 19 CA_TIM
 4 & 18 
 name 20 TIM_barrel_backbone
-r 249-259
+r 220-229
 name 21 tail
-r 249-259 & a CA
+r 220-229 & a CA
 name 22 CA_tail
 4 & 21 
 name 23 tail_backbone
-r 167 & a NZ
-name 24 Lys167_NZ
-r 259 & a OH
-name 25 Tyr259_OH
+r 166 & a NZ
+name 24 Lys166_NZ
+r 229 & a OH
+name 25 Asp229_OH
 
 q
 EOF
@@ -145,26 +145,22 @@ python $scripts/plotxvg.py rmsd_tim_barrel_backbone.xvg
 # calculate RMSD of tail backbone over time, output in xvg format
 echo 23 23 | apptainer exec $GROMACS_CONTAINER gmx_mpi rms -s $tpr -f md_fit.xtc -n index.ndx -o rmsd_tail_backbone.xvg -tu ns
 python $scripts/plotxvg.py rmsd_tail_backbone.xvg 
-# calculate distance between Lys167 NZ and Tyr259 OH over time, output in xvg format
-apptainer exec $GROMACS_CONTAINER gmx_mpi distance -s $tpr -f md_fit.xtc -n index.ndx -oall lys167_tyr259_distance.xvg -tu ns -select 'com of group 24 plus com of group 25'
-python $scripts/plotxvg.py lys167_tyr259_distance.xvg
-# histogram of the distance between Lys167 NZ and Tyr259 OH with bin width of 0.2 nm, output in xvg format
-apptainer exec $GROMACS_CONTAINER gmx_mpi analyze -f lys167_tyr259_distance.xvg -dist lys167_tyr259_hist.xvg -bw 0.2
-python $scripts/plotxvg_hist.py lys167_tyr259_hist.xvg
+# calculate distance between Lys166 NZ and Asp229 OH over time, output in xvg format
+apptainer exec $GROMACS_CONTAINER gmx_mpi distance -s $tpr -f md_fit.xtc -n index.ndx -oall lys166_asp229_distance.xvg -tu ns -select 'com of group 24 plus com of group 25'
+python $scripts/plotxvg.py lys166_asp229_distance.xvg
+# histogram of the distance between Lys166 NZ and Asp229 OH with bin width of 0.2 nm, output in xvg format
+apptainer exec $GROMACS_CONTAINER gmx_mpi analyze -f lys166_asp229_distance.xvg -dist lys166_asp229_hist.xvg -bw 0.2
+python $scripts/plotxvg_hist.py lys166_asp229_hist.xvg
 # RSMF of CA atoms of the whole protein, output in xvg format
 echo 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi rmsf -f md_fit.xtc -s $tpr -o rmsf_Ca.xvg -n index.ndx -b 20000 -res  # start at 20 ns (time in ps)
 python $scripts/plot_RMSF_red.py rmsf_Ca.xvg
-### define frames with distance between Lys167 NZ and Tyr259 OH < 0.6 nm as "closed" and >= 0.6 nm as "open", output in xvg format
+### define frames with distance between Lys166 NZ and Asp229 OH < 0.6 nm as "closed" and >= 0.6 nm as "open", output in xvg format
 # Compute distance time series (ps)
 apptainer exec $GROMACS_CONTAINER gmx_mpi distance -f md_fit.xtc -s $tpr -n index.ndx -select 'com of group 24 plus com of group 25' -oall dist_k167_y259_ps.xvg
 # Create new trajectory with selected frames where distance < 0.6 nm
 echo 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_fit.xtc -s $tpr -o md_closed.xtc -drop dist_k167_y259_ps.xvg -dropover 0.6
 # how many frames in closed trajectory vs full?
 apptainer exec $GROMACS_CONTAINER gmx_mpi check -f1 md_fit.xtc -f2 md_closed.xtc
-
-# h-bonds and hydrophobic contacts analysis with MDAnalysis
-python $scripts/contact_matrices.py $tpr md_closed.xtc
-python $scripts/contact_distributions.py $tpr md_closed.xtc
 
 # PCA
 # Compute covariance matrix
@@ -179,16 +175,20 @@ echo 19 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr
 # Eigenvector components per atom (which residues dominate the motion)
 echo 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s $tpr -n index.ndx -rmsf PC_rmsf_per_atom.xvg -first 1 -last 2
 
-python $scripts/PCA.py proj.xvg eigenvalues.xvg lys167_tyr259_distance.xvg proj_20_pcs.xvg
+python $scripts/PCA.py proj.xvg eigenvalues.xvg lys166_asp229_distance.xvg proj_20_pcs.xvg
 
 # How many frames in closed trajectory vs full?
 apptainer exec $GROMACS_CONTAINER gmx_mpi check -f md_fit.xtc
 apptainer exec $GROMACS_CONTAINER gmx_mpi check -f md_closed.xtc
 
 # Clustering 
-python $scripts/run_clustering_Ec.py $tpr md_fit.xtc
+python $scripts/run_clustering_Ml.py $tpr md_fit.xtc
 python $scripts/plot_clustering.py
 # Extract medoids
 python $scripts/extract_medoids.py
+
+# h-bonds and hydrophobic contacts analysis with MDAnalysis
+python $scripts/contact_matrices_Ml.py $tpr md_closed.xtc
+python $scripts/contact_distributions_Ml.py $tpr md_closed.xtc
 
 echo "Analysis complete. Results will be copied back to home directory."
