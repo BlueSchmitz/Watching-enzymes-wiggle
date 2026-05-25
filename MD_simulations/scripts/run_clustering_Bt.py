@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# usage: python run_clustering_Bb.py topol.tpr traj.xtc
+# usage: python run_clustering_Bt.py topol.tpr traj.xtc
 '''Run clustering.'''
 
 import sys
@@ -22,13 +22,13 @@ trj = sys.argv[2]
 u = mda.Universe(tpr, trj)
 
 # Define tail and barrel selections
-tail = u.select_atoms("resid 220:229")
-barrel = u.select_atoms("protein and not resid 220:229")
+tail = u.select_atoms("resid 222:238")
+barrel = u.select_atoms("protein and not resid 222:238")
 n_tail = len(tail.residues)
 n_barrel = len(barrel.residues)
 
 # Align trajectory to core (TIM barrel-like region)
-align.AlignTraj(u, u, select="backbone and not resid 220:229", in_memory=False).run()
+align.AlignTraj(u, u, select="backbone and not resid 222:238", in_memory=False).run()
 
 # Downsample trajectory for clustering
 stride = 10
@@ -75,7 +75,7 @@ dist_protein = compute_rmsd_matrix(u, "protein", sampled_frames)
 np.save("dist_protein.npy", dist_protein)
 
 # Tail only
-dist_tail = compute_rmsd_matrix(u, "resid 220:229", sampled_frames)
+dist_tail = compute_rmsd_matrix(u, "resid 222:238", sampled_frames)
 np.save("dist_tail.npy", dist_tail)
 
 # Hierarchical clustering

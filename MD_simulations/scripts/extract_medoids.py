@@ -10,7 +10,7 @@ import numpy as np
 # ---------------------------------------------------------
 
 tpr = "../rep1.00/topol.tpr"
-xtc = "../rep1.00/traj_comp.xtc"
+xtc = "./md_fit.xtc"
 
 medoid_table = "medoids_curated.csv"
 
