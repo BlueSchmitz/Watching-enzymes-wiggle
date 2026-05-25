@@ -32,7 +32,7 @@
 #    --log-file=rclone_${SLURM_JOB_ID}.log \
 
 SRC2="/home/rleveson/Blue/Watching-enzymes-wiggle/MD_simulations/projects/BtDERA"
-DEST="tudelft_sftp:/staff-umbrella/biocat dera/MD_simulations/BtDERA"
+DEST2="tudelft_sftp:/staff-umbrella/biocat dera/MD_simulations/BtDERA"
 
 echo "HOSTNAME: $(hostname)"
 echo "PATH: $PATH"
