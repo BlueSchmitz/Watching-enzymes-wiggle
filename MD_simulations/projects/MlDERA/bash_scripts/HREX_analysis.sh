@@ -159,9 +159,6 @@ EOF
 #apptainer exec $GROMACS_CONTAINER gmx_mpi distance -f md_fit.xtc -s $tpr -n index.ndx -select 'com of group 24 plus com of group 25' -oall dist_k167_y259_ps.xvg
 # Create new trajectory with selected frames where distance < 0.6 nm
 #echo 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_fit.xtc -s $tpr -o md_closed.xtc -drop dist_k167_y259_ps.xvg -dropover 0.6
-# how many frames in closed trajectory vs full?
-apptainer exec $GROMACS_CONTAINER gmx_mpi check -f md_fit.xtc
-apptainer exec $GROMACS_CONTAINER gmx_mpi check -f md_closed.xtc
 
 # PCA
 # Compute covariance matrix
@@ -179,8 +176,8 @@ echo 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f
 python $scripts/PCA.py proj.xvg eigenvalues.xvg lys166_asp229_distance.xvg proj_20_pcs.xvg
 
 # How many frames in closed trajectory vs full?
-apptainer exec $GROMACS_CONTAINER gmx_mpi check -f md_fit.xtc
-apptainer exec $GROMACS_CONTAINER gmx_mpi check -f md_closed.xtc
+#apptainer exec $GROMACS_CONTAINER gmx_mpi check -f md_fit.xtc
+#apptainer exec $GROMACS_CONTAINER gmx_mpi check -f md_closed.xtc
 
 # Clustering 
 python $scripts/run_clustering_Ml.py $tpr md_fit.xtc
@@ -189,7 +186,7 @@ python $scripts/plot_clustering.py
 python $scripts/extract_medoids.py
 
 # h-bonds and hydrophobic contacts analysis with MDAnalysis
-python $scripts/contact_matrices_Ml.py $tpr md_closed.xtc
-python $scripts/contact_distributions_Ml.py $tpr md_closed.xtc
+#python $scripts/contact_matrices_Ml.py $tpr md_closed.xtc
+#python $scripts/contact_distributions_Ml.py $tpr md_closed.xtc
 
 echo "Analysis complete. Results will be copied back to home directory."
