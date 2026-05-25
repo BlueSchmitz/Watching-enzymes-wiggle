@@ -141,19 +141,19 @@ EOF
 #rm md_center_mol.xtc
 # calculate RMSD of TIM barrel backbone over time, output in xvg format
 #echo 20 20 | apptainer exec $GROMACS_CONTAINER gmx_mpi rms -s $tpr -f md_fit.xtc -n index.ndx -o rmsd_tim_barrel_backbone.xvg -tu ns
-python $scripts/plotxvg.py rmsd_tim_barrel_backbone.xvg 
+#python $scripts/plotxvg.py rmsd_tim_barrel_backbone.xvg 
 # calculate RMSD of tail backbone over time, output in xvg format
 #echo 23 23 | apptainer exec $GROMACS_CONTAINER gmx_mpi rms -s $tpr -f md_fit.xtc -n index.ndx -o rmsd_tail_backbone.xvg -tu ns
-python $scripts/plotxvg.py rmsd_tail_backbone.xvg 
+#python $scripts/plotxvg.py rmsd_tail_backbone.xvg 
 # calculate distance between Lys166 NZ and Asp229 OH over time, output in xvg format
 #apptainer exec $GROMACS_CONTAINER gmx_mpi distance -s $tpr -f md_fit.xtc -n index.ndx -oall lys166_asp229_distance.xvg -tu ns -select 'com of group 24 plus com of group 25'
-python $scripts/plotxvg.py lys166_asp229_distance.xvg
+#python $scripts/plotxvg.py lys166_asp229_distance.xvg
 # histogram of the distance between Lys166 NZ and Asp229 OH with bin width of 0.2 nm, output in xvg format
 #apptainer exec $GROMACS_CONTAINER gmx_mpi analyze -f lys166_asp229_distance.xvg -dist lys166_asp229_hist.xvg -bw 0.2
-python $scripts/plotxvg_hist.py lys166_asp229_hist.xvg
+#python $scripts/plotxvg_hist.py lys166_asp229_hist.xvg
 # RSMF of CA atoms of the whole protein, output in xvg format
 #echo 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi rmsf -f md_fit.xtc -s $tpr -o rmsf_Ca.xvg -n index.ndx -b 20000 -res  # start at 20 ns (time in ps)
-python $scripts/plot_RMSF_red.py rmsf_Ca.xvg
+#python $scripts/plot_RMSF_red.py rmsf_Ca.xvg
 ### define frames with distance between Lys166 NZ and Asp229 OH < 0.6 nm as "closed" and >= 0.6 nm as "open", output in xvg format
 # Compute distance time series (ps)
 #apptainer exec $GROMACS_CONTAINER gmx_mpi distance -f md_fit.xtc -s $tpr -n index.ndx -select 'com of group 24 plus com of group 25' -oall dist_k167_y259_ps.xvg

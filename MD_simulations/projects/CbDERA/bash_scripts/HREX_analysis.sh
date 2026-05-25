@@ -135,55 +135,55 @@ q
 EOF
 
 # center the trajectory on the whole protein and remove PBC artifacts, output in compact format
-echo 1 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s $tpr -f $xtc -o md_center_mol.xtc -center -pbc mol -ur compact
+#echo 1 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s $tpr -f $xtc -o md_center_mol.xtc -center -pbc mol -ur compact
 # fit trajectory to reference (TIM barrel backbone) to remove overall rotation and translation, keep whole system
-echo 20 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s $tpr -f md_center_mol.xtc -o md_fit.xtc -fit rot+trans -n index.ndx
-rm md_center_mol.xtc
+#echo 20 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s $tpr -f md_center_mol.xtc -o md_fit.xtc -fit rot+trans -n index.ndx
+#rm md_center_mol.xtc
 # calculate RMSD of TIM barrel backbone over time, output in xvg format
-echo 20 20 | apptainer exec $GROMACS_CONTAINER gmx_mpi rms -s $tpr -f md_fit.xtc -n index.ndx -o rmsd_tim_barrel_backbone.xvg -tu ns
-python $scripts/plotxvg.py rmsd_tim_barrel_backbone.xvg 
+#echo 20 20 | apptainer exec $GROMACS_CONTAINER gmx_mpi rms -s $tpr -f md_fit.xtc -n index.ndx -o rmsd_tim_barrel_backbone.xvg -tu ns
+#python $scripts/plotxvg.py rmsd_tim_barrel_backbone.xvg 
 # calculate RMSD of tail backbone over time, output in xvg format
-echo 23 23 | apptainer exec $GROMACS_CONTAINER gmx_mpi rms -s $tpr -f md_fit.xtc -n index.ndx -o rmsd_tail_backbone.xvg -tu ns
-python $scripts/plotxvg.py rmsd_tail_backbone.xvg 
+#echo 23 23 | apptainer exec $GROMACS_CONTAINER gmx_mpi rms -s $tpr -f md_fit.xtc -n index.ndx -o rmsd_tail_backbone.xvg -tu ns
+#python $scripts/plotxvg.py rmsd_tail_backbone.xvg 
 # calculate distance between Lys151 NZ and Arg212 NE over time, output in xvg format
-apptainer exec $GROMACS_CONTAINER gmx_mpi distance -s $tpr -f md_fit.xtc -n index.ndx -oall lys151_arg212_distance.xvg -tu ns -select 'com of group 24 plus com of group 25'
-python $scripts/plotxvg.py lys151_arg212_distance.xvg
+#apptainer exec $GROMACS_CONTAINER gmx_mpi distance -s $tpr -f md_fit.xtc -n index.ndx -oall lys151_arg212_distance.xvg -tu ns -select 'com of group 24 plus com of group 25'
+#python $scripts/plotxvg.py lys151_arg212_distance.xvg
 # histogram of the distance between Lys151 NZ and Arg212 NE with bin width of 0.2 nm, output in xvg format
-apptainer exec $GROMACS_CONTAINER gmx_mpi analyze -f lys151_arg212_distance.xvg -dist lys151_arg212_hist.xvg -bw 0.2
-python $scripts/plotxvg_hist.py lys151_arg212_hist.xvg
+#apptainer exec $GROMACS_CONTAINER gmx_mpi analyze -f lys151_arg212_distance.xvg -dist lys151_arg212_hist.xvg -bw 0.2
+#python $scripts/plotxvg_hist.py lys151_arg212_hist.xvg
 # RSMF of CA atoms of the whole protein, output in xvg format
-echo 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi rmsf -f md_fit.xtc -s $tpr -o rmsf_Ca.xvg -n index.ndx -b 20000 -res  # start at 20 ns (time in ps)
-python $scripts/plot_RMSF_red_Cb.py rmsf_Ca.xvg
+#echo 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi rmsf -f md_fit.xtc -s $tpr -o rmsf_Ca.xvg -n index.ndx -b 20000 -res  # start at 20 ns (time in ps)
+#python $scripts/plot_RMSF_red_Cb.py rmsf_Ca.xvg
 ### define frames with distance between Lys151 NZ and Arg212 NE < 0.6 nm as "closed" and >= 0.6 nm as "open", output in xvg format
 # Compute distance time series (ps)
-apptainer exec $GROMACS_CONTAINER gmx_mpi distance -f md_fit.xtc -s $tpr -n index.ndx -select 'com of group 24 plus com of group 25' -oall dist_k151_y212_ps.xvg
+#apptainer exec $GROMACS_CONTAINER gmx_mpi distance -f md_fit.xtc -s $tpr -n index.ndx -select 'com of group 24 plus com of group 25' -oall dist_k151_y212_ps.xvg
 # Create new trajectory with selected frames where distance < 0.6 nm
-echo 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_fit.xtc -s $tpr -o md_closed.xtc -drop dist_k151_y212_ps.xvg -dropover 0.6
+#echo 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_fit.xtc -s $tpr -o md_closed.xtc -drop dist_k151_y212_ps.xvg -dropover 0.6
 
 # PCA
 # Compute covariance matrix
-echo 19 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi covar -s $tpr -f md_fit.xtc -n index.ndx -b 20000 -o eigenvalues.xvg -v eigenvectors.trr
+#echo 19 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi covar -s $tpr -f md_fit.xtc -n index.ndx -b 20000 -o eigenvalues.xvg -v eigenvectors.trr
     # fit to CA TIM, covariance of whole protein CA (so side-chains do not contribute to covariance)
     # eigenvalues.xvg contains the eigenvalues (variance along each PC as mean square fluctuation captured by that PC in nm^2), eigenvectors.trr contains the eigenvectors (PCs) as a trajectory
 # Project trajectory onto PCs
-echo 19 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s $tpr -n index.ndx -proj proj.xvg -first 1 -last 2
-echo 19 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s $tpr -n index.ndx -proj proj_20_pcs.xvg -first 1 -last 20
+#echo 19 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s $tpr -n index.ndx -proj proj.xvg -first 1 -last 2
+#echo 19 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s $tpr -n index.ndx -proj proj_20_pcs.xvg -first 1 -last 20
 # Extract extreme projections along PC1 and PC2
-echo 19 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s $tpr -n index.ndx -extr extremes.pdb -first 1 -last 2
+#echo 19 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s $tpr -n index.ndx -extr extremes.pdb -first 1 -last 2
 # Eigenvector components per atom (which residues dominate the motion)
-echo 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s $tpr -n index.ndx -rmsf PC_rmsf_per_atom.xvg -first 1 -last 2
+#echo 3 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f md_fit.xtc -s $tpr -n index.ndx -rmsf PC_rmsf_per_atom.xvg -first 1 -last 2
 
-python $scripts/PCA_Cb.py proj.xvg eigenvalues.xvg lys151_arg212_distance.xvg proj_20_pcs.xvg
+#python $scripts/PCA_Cb.py proj.xvg eigenvalues.xvg lys151_arg212_distance.xvg proj_20_pcs.xvg
 
 # Clustering 
-python $scripts/run_clustering_Cb.py $tpr md_fit.xtc
-python $scripts/plot_clustering.py
+#python $scripts/run_clustering_Cb.py $tpr md_fit.xtc
+#python $scripts/plot_clustering.py
 # Extract medoids
-#python $scripts/extract_medoids.py
+python $scripts/extract_medoids.py
 
 # How many frames in closed trajectory vs full?
-apptainer exec $GROMACS_CONTAINER gmx_mpi check -f md_fit.xtc
-apptainer exec $GROMACS_CONTAINER gmx_mpi check -f md_closed.xtc
+#apptainer exec $GROMACS_CONTAINER gmx_mpi check -f md_fit.xtc
+#apptainer exec $GROMACS_CONTAINER gmx_mpi check -f md_closed.xtc
 
 # h-bonds and hydrophobic contacts analysis with MDAnalysis
 #python $scripts/contact_matrices_Ml.py $tpr md_closed.xtc
