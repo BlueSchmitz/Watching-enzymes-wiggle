@@ -16,7 +16,7 @@ set -euo pipefail
 set -o errtrace
 
 ### Project-specific settings ###
-project_dir=EcDERA
+project_dir=1JCLm
 output_dir=6_HREX/analysis
 pH=7
 
