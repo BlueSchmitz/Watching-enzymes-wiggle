@@ -1,13 +1,13 @@
 #!/bin/bash
 
-#SBATCH -J EcDERA_dump_closed
+#SBATCH -J BbDERA_dump_closed
 #SBATCH -t 01:00:00
 #SBATCH -p rome
 #SBATCH -N 1
 #SBATCH -n 8
 #SBATCH --cpus-per-task=2
 #SBATCH --gpus=0
-#SBATCH --output=./EcDERA_dump_closed_%j.out
+#SBATCH --output=./BbDERA_dump_closed_%j.out
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=blueschmitz@tudelft.nl
 
@@ -16,7 +16,7 @@ set -euo pipefail
 set -o errtrace
 
 ### Project-specific settings ###
-project_dir=1JCLm
+project_dir=BbDERA
 output_dir=6_HREX/analysis
 pH=7
 
