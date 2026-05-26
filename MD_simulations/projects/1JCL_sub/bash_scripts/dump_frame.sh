@@ -72,10 +72,10 @@ EOF
 # downsample trajectory 
 echo 1 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s md.tpr -f md.xtc -o md_center_mol.xtc -center -pbc mol -ur compact
 # fit trajectory to reference (TIM barrel backbone) to remove overall rotation and translation, keep whole system
-echo 22 1 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s md.tpr -f md_center_mol.xtc -o md_fit.xtc -fit rot+trans -n index.ndx
+echo 4 22 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s md.tpr -f md_center_mol.xtc -o md_fit.xtc -fit rot+trans -n index.ndx
 rm md_center_mol.xtc
 #echo -e "1\n0" | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_fit.xtc -s topol.tpr -n index.ndx -o md_1000.xtc -dt 1000
 #echo "Trajectory saved as md_1000.xtc"
 
 # extract closed conformations
-echo -e "22\n0" | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md.xtc -s ./md.tpr -o frame1.pdb -dump 1
+echo -e "22\n0" | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_fit.xtc -s md.tpr -o frame1.pdb -n index.ndx -dump 1
