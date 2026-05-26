@@ -64,7 +64,7 @@ trap copy_back_results EXIT
 # Downsample and save trajectory
 echo "============= Downsizing and Exporting trajectory ============="
 echo -e "q" | apptainer exec $GROMACS_CONTAINER gmx_mpi make_ndx -f md.tpr -o index.ndx << EOF
-1 & 13
+1 | 13
 name 22 Protein_KPS
 
 q
