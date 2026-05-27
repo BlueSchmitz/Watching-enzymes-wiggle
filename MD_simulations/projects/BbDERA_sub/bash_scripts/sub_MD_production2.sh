@@ -1,6 +1,6 @@
 #!/bin/bash  
 
-#SBATCH -J BbDERA_sub1_simple_MD
+#SBATCH -J BbDERA_sub2_simple_MD
 #SBATCH -t 72:00:00
 #SBATCH -p rome
 #SBATCH -N 1
@@ -9,7 +9,7 @@
 #SBATCH --gpus=0
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=blueschmitz@tudelft.nl
-#SBATCH --output=sub_MD1_%j.out
+#SBATCH --output=sub_MD2_%j.out
 
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 export OMP_NUM_TASKS=$SLURM_NTASKS
@@ -60,7 +60,7 @@ set -o errtrace
 
 ### Project-specific settings ###
 project_dir=BbDERA_sub
-output_dir=7_simple_MD/rep1
+output_dir=7_simple_MD/rep2
 pH=7
 
 export GMXLIB=$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/force_fields
@@ -116,6 +116,6 @@ cd ./outputs/$output_dir/
 # remove any line that includes the posre file from the topology file
 sed -i '/posre_5.itp/d' topol_pro.top
 # run simple MD production
-apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/classical_MD.mdp -c npt_pro.gro -p topol_pro.top -o md1.tpr -maxwarn 1
-apptainer exec $GROMACS_CONTAINER mpirun -np $SLURM_NTASKS gmx_mpi mdrun -deffnm md1 -cpt 15 -maxh 71 
-echo "Simple MD production run 1 finished."
+apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/classical_MD.mdp -c npt_pro.gro -p topol_pro.top -o md2.tpr -maxwarn 1
+apptainer exec $GROMACS_CONTAINER mpirun -np $SLURM_NTASKS gmx_mpi mdrun -deffnm md2 -cpt 15 -maxh 71
+echo "Simple MD production run 2 finished."
