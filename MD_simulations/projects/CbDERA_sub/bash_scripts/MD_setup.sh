@@ -1,6 +1,6 @@
 #!/bin/bash  
 
-#SBATCH -J BtDERA_sub_setup  
+#SBATCH -J CbDERA_sub_setup  
 #SBATCH -t 01:30:00
 #SBATCH -p rome
 #SBATCH -N 1
@@ -8,7 +8,7 @@
 #SBATCH --cpus-per-task 1
 #SBATCH --gpus=0
 #SBATCH --requeue
-#SBATCH --output=./BtDERA_sub_setup_%j.out
+#SBATCH --output=./CbDERA_sub_setup_%j.out
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=blueschmitz@tudelft.nl
 
@@ -62,7 +62,7 @@ set -euo pipefail
 set -o errtrace
 
 ### Project-specific settings ###
-project_dir=BtDERA_sub
+project_dir=CbDERA_sub
 pH=7
 
 # Set paths for mdp_templates, force_fields and pdb file (to change paths quickly)
@@ -112,8 +112,8 @@ cd ./outputs
 
 ### 3 Energy minimization ###
 echo "============= Energy minimization with GROMACS ============="
-cp ./0_parametrization_bond/BtDERA_pH7_KPS_QM.gro ./3_minimization/solv_ions.gro
-cp ./0_parametrization_bond/BtDERA_pH7_KPS_QM.top ./3_minimization/topol.top
+cp ./0_parametrization_bond/CbDERA_pH7_KPS_QM.gro ./3_minimization/solv_ions.gro
+cp ./0_parametrization_bond/CbDERA_pH7_KPS_QM.top ./3_minimization/topol.top
 cd ./3_minimization
 apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/minim.mdp -c solv_ions.gro -p topol.top -o em.tpr
 apptainer exec $GROMACS_CONTAINER mpirun -np $SLURM_NTASKS gmx_mpi mdrun -deffnm em
@@ -128,7 +128,7 @@ cp topol.top ../4_equilibration/topol.top
 cd ../4_equilibration
 
 # NVT Equilibration
-# Restraint file
+# Restraint file for posre.itp
 echo -e "q" | apptainer exec $GROMACS_CONTAINER gmx_mpi make_ndx -f md.tpr -o index.ndx << EOF
 1 | 13
 name 22 Protein_KPS
