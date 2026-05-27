@@ -112,8 +112,8 @@ cd ./outputs
 
 ### 3 Energy minimization ###
 echo "============= Energy minimization with GROMACS ============="
-cp ./0_parametrization_bond/CbDERA_pH7_KPS_QM.gro ./3_minimization/solv_ions.gro
-cp ./0_parametrization_bond/CbDERA_pH7_KPS_QM.top ./3_minimization/topol.top
+cp ./0_parametrization_bond/MlDERA_pH7_KPS_QM.gro ./3_minimization/solv_ions.gro
+cp ./0_parametrization_bond/MlDERA_pH7_KPS_QM.top ./3_minimization/topol.top
 cd ./3_minimization
 apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/minim.mdp -c solv_ions.gro -p topol.top -o em.tpr
 apptainer exec $GROMACS_CONTAINER mpirun -np $SLURM_NTASKS gmx_mpi mdrun -deffnm em
