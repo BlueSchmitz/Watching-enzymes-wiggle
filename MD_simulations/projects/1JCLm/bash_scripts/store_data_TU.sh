@@ -11,11 +11,11 @@
 #SBATCH --mail-user=blueschmitz@tudelft.nl
 #SBATCH --output=copy_to_TU_%j.out
 
-SRC="/home/rleveson/Blue/Watching-enzymes-wiggle/MD_simulations/projects/BtDERA_sub/outputs"
+SRC="/home/rleveson/Blue/Watching-enzymes-wiggle/MD_simulations/projects/MlDERA_sub/outputs"
 #SRC="/gpfs/work1/0/prjs2080/BtDERA/outputs/6_HREX/rep1.00"
 #DEST="tudelft_sftp:/staff-umbrella/biocat dera/MD_simulations/BtDERA/outputs/6_HREX/analysis"
 #DEST="/home/rleveson/Blue/Watching-enzymes-wiggle/MD_simulations/projects/BtDERA/outputs/6_HREX/rep1.00"
-DEST="/gpfs/work1/0/prjs2080/BtDERA_sub/outputs"
+DEST="/gpfs/work1/0/prjs2080/MlDERA_sub/outputs"
 
 echo "HOSTNAME: $(hostname)"
 echo "PATH: $PATH"
