@@ -111,20 +111,21 @@ mkdir -p ./outputs/3_minimization ./outputs/4_equilibration ./outputs/7_simple_M
 cd ./outputs
 
 ### 3 Energy minimization ###
-echo "============= Energy minimization with GROMACS ============="
-cp ./0_parametrization_bond/1JCL_pH7_KPS_QM.gro ./3_minimization/solv_ions.gro
-cp ./0_parametrization_bond/1JCL_pH7_KPS_QM.top ./3_minimization/topol.top
+#echo "============= Energy minimization with GROMACS ============="
+#cp ./0_parametrization_bond/1JCL_pH7_KPS_QM.gro ./3_minimization/solv_ions.gro
+#cp ./0_parametrization_bond/1JCL_pH7_KPS_QM.top ./3_minimization/topol.top
 cd ./3_minimization
-apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/minim.mdp -c solv_ions.gro -p topol.top -o em.tpr
-apptainer exec $GROMACS_CONTAINER mpirun -np $SLURM_NTASKS gmx_mpi mdrun -deffnm em
-echo 10 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi energy -f em.edr -o potential.xvg # choose potential energy (10), 0 terminates input
-python $scripts/plot_xvg.py potential.xvg
+#apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/minim.mdp -c solv_ions.gro -p topol.top -o em.tpr
+#apptainer exec $GROMACS_CONTAINER mpirun -np $SLURM_NTASKS gmx_mpi mdrun -deffnm em
+#echo 10 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi energy -f em.edr -o potential.xvg # choose potential energy (10), 0 terminates input
+#python $scripts/plot_xvg.py potential.xvg
 
 ### 4 Equilibration ###
-echo "============= Equilibration with GROMACS ============="
-mkdir -p ../4_equilibration
-cp em.gro ../4_equilibration/em.gro
-cp topol.top ../4_equilibration/topol.top
+#echo "============= Equilibration with GROMACS ============="
+#mkdir -p ../4_equilibration
+#cp em.gro ../4_equilibration/em.gro
+#cp topol.top ../4_equilibration/topol.top
+cp em.tpr ../4_equilibration/em.tpr
 cd ../4_equilibration
 
 # NVT Equilibration
