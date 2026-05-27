@@ -107,7 +107,7 @@ function copy_back_results {
 trap copy_back_results EXIT
 
 # mkdir outputs directories 
-mkdir -p ./outputs/3_minimization ./outputs/4_equilibration ./outputs/5_sanity_checks ./outputs/6_HREX
+mkdir -p ./outputs/3_minimization ./outputs/4_equilibration ./outputs/7_simple_MD
 cd ./outputs
 
 ### 3 Energy minimization ###
