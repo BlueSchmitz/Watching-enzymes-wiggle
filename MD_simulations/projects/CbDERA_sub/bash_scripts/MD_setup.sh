@@ -125,11 +125,12 @@ echo "============= Equilibration with GROMACS ============="
 mkdir -p ../4_equilibration
 cp em.gro ../4_equilibration/em.gro
 cp topol.top ../4_equilibration/topol.top
+cp em.tpr ../4_equilibration/em.tpr
 cd ../4_equilibration
 
 # NVT Equilibration
-# Restraint file for posre.itp
-echo -e "q" | apptainer exec $GROMACS_CONTAINER gmx_mpi make_ndx -f md.tpr -o index.ndx << EOF
+# Restraint file
+echo -e "q" | apptainer exec $GROMACS_CONTAINER gmx_mpi make_ndx -f em.tpr -o index.ndx << EOF
 1 | 13
 name 22 Protein_KPS
 
@@ -137,23 +138,29 @@ q
 EOF
 
 echo 22 | apptainer exec $GROMACS_CONTAINER gmx_mpi genrestr -f em.gro -o posre.itp -n index.ndx
-apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/nvt.mdp -c em.gro -r em.gro -p topol.top -o nvt.tpr
-apptainer exec $GROMACS_CONTAINER mpirun -np $SLURM_NTASKS gmx_mpi mdrun -deffnm nvt -cpt 15
-echo 16 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi energy -f nvt.edr -o temperature.xvg # choose Temperature (16), 0 terminates input
-python $scripts/plot_xvg.py temperature.xvg
+
+### include posre.itp in the topology file!
+
+#cd ./4_equilibration
+#apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/nvt.mdp -c em.gro -r em.gro -p topol.top -o nvt.tpr
+#apptainer exec $GROMACS_CONTAINER mpirun -np $SLURM_NTASKS gmx_mpi mdrun -deffnm nvt -cpt 15
+#echo 16 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi energy -f nvt.edr -o temperature.xvg # choose Temperature (16), 0 terminates input
+#python $scripts/plot_xvg.py temperature.xvg
 # Preparation for NPT Equilibration
 # Gradually reduce restraints from 1000 to 5 kJ mol−1 nm−2 by running 5 short NPT simulations of 500 ps each (5*500=2.5 ns)
-for i in 1000 500 250 100 5;
-do
+#for i in 1000 500 250 100 5;
+#do
   # Copy posre.itp 5 times and modify the force constant in each file
-  cp posre.itp posre_$i.itp
-  sed -i "s/\b1000\b/$i/g" posre_$i.itp # \b for whole word match
-  echo "Modified posre.itp to posre_$i.itp."
+#  cp posre.itp posre_$i.itp
+#  sed -i "s/\b1000\b/$i/g" posre_$i.itp # \b for whole word match
+#  echo "Modified posre.itp to posre_$i.itp."
   # Modify topol.top to include the correct posre file for each run
-  cp topol.top topol_$i.top
-  sed -i "s/posre.itp/posre_$i.itp/g" topol_$i.top
-  echo "Modified topol.top to topol_$i.top."
-done
+#  cp topol.top topol_$i.top
+#  sed -i "s/posre.itp/posre_$i.itp/g" topol_$i.top
+#  echo "Modified topol.top to topol_$i.top."
+#done
+
+### fix NPT topol files 
 
 # NPT Equilibration
 #for i in 1000 500 250 100 5;
