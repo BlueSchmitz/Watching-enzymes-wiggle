@@ -14,7 +14,7 @@ nstxout-compressed      = 1000                 ; save compressed coordinates eve
 compressed-x-grps       = System               ; save the whole system
 
 ; Bond parameters
-continuation            = yes                  ; Restarting after NPT 
+continuation            = no                   ; Restarting after NPT 
 constraint_algorithm    = lincs                ; holonomic constraints 
 constraints             = h-bonds              ; bonds involving H are constrained
 lincs_iter              = 1                    ; accuracy of LINCS

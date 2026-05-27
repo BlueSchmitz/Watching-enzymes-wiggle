@@ -117,5 +117,5 @@ cd ./outputs/$output_dir/
 sed -i '/posre_5.itp/d' topol_pro.top
 # run simple MD production
 apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/classical_MD.mdp -c npt_pro.gro -p topol_pro.top -o md2.tpr 
-apptainer exec $GROMACS_CONTAINER mpirun -np $SLURM_NTASKS gmx_mpi mdrun -deffnm md2 -cpt 15 -maxh 71
+apptainer exec $GROMACS_CONTAINER mpirun -np $SLURM_NTASKS gmx_mpi mdrun -deffnm md2 -cpt 15 -maxh 71 -maxwarn 1
 echo "Simple MD production run 2 finished."
