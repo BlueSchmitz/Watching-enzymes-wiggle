@@ -1,6 +1,6 @@
 #!/bin/bash  
 
-#SBATCH -J 1JCL_sub_simple_MD
+#SBATCH -J 1JCL_sub3_simple_MD
 #SBATCH -t 72:00:00
 #SBATCH -p rome
 #SBATCH -N 1
@@ -9,7 +9,7 @@
 #SBATCH --gpus=0
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=blueschmitz@tudelft.nl
-#SBATCH --output=simple_MD_%j.out
+#SBATCH --output=simple_MD3_%j.out
 
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 export OMP_NUM_TASKS=$SLURM_NTASKS
@@ -60,7 +60,7 @@ set -o errtrace
 
 ### Project-specific settings ###
 project_dir=1JCL_sub
-output_dir=7_simple_MD
+output_dir=7_simple_MD/rep3
 pH=7
 
 export GMXLIB=$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/force_fields
@@ -109,9 +109,8 @@ mkdir -p ./outputs/$output_dir
 
 ### Simple MD production run ###
 echo "============= Simple MD production run with GROMACS ============="
-cp ./outputs/4_equilibration/npt_5.gro ./outputs/7_simple_MD/npt_pro.gro
-cp ./outputs/4_equilibration/npt_5.cpt ./outputs/7_simple_MD/npt_pro.cpt
-cp ./outputs/4_equilibration/topol_5.top ./outputs/7_simple_MD/topol_pro.top
+cp ./outputs/4_equilibration/npt_5.gro ./outputs/$output_dir/npt_pro.gro
+cp ./outputs/4_equilibration/topol_5.top ./outputs/$output_dir/topol_pro.top
 cd ./outputs/$output_dir/
 # remove any line that includes the posre file from the topology file
 sed -i '/posre_5.itp/d' topol_pro.top
