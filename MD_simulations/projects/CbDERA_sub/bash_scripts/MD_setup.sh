@@ -178,7 +178,7 @@ do
   apptainer exec $GROMACS_CONTAINER mpirun -np $SLURM_NTASKS gmx_mpi mdrun -deffnm npt_${i} -cpt 15
   echo 18 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi energy -f npt_${i}.edr -o pressure_${i}.xvg # choose Pressure (18), 0 terminates input
   echo 24 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi energy -f npt_${i}.edr -o density_${i}.xvg # choose Density (24), 0 terminates input
-  prev=npt_${i}.gro
+  prev=npt_${i}.gro 
 done
 python $scripts/plot_xvg.py pressure_*.xvg
 python $scripts/plot_xvg.py density_*.xvg
