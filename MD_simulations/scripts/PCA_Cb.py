@@ -9,6 +9,9 @@ import matplotlib.pyplot as plt
 import matplotlib
 matplotlib.use("Agg")
 
+plt.rcParams['font.family'] = 'Arial'
+plt.rcParams['font.size'] = 10
+plt.rcParams['pdf.fonttype'] = 42
 cmap = plt.get_cmap("viridis")
 
 ### 1 Plot PC1 vs. PC2 ###
@@ -75,8 +78,8 @@ np.savetxt(
     fmt=["%d", "%.6f", "%.6f"]
 )
 
-plt.figure(figsize=(6, 4))
-plt.scatter(pc1, pc2, s=5, color=cmap(0.5), alpha=0.7)
+plt.figure(figsize=(5, 4))
+plt.scatter(pc1, pc2, s=5, alpha=0.7, rasterized=True)
 plt.xlabel(f"PC1 ({pc1_var:.1f}%)")
 plt.ylabel(f"PC2 ({pc2_var:.1f}%)")
 plt.tight_layout()
@@ -123,8 +126,8 @@ corr_pc1 = np.corrcoef(pc1_match, dist_match)[0,1]
 corr_pc2 = np.corrcoef(pc2_match, dist_match)[0,1]
 
 ### Plot distance vs PC1 ###
-plt.figure(figsize=(6,4))
-plt.scatter(pc1_match, dist_match, s=5, color=cmap(0.5), alpha=0.7)
+plt.figure(figsize=(5,4))
+plt.scatter(pc1_match, dist_match, s=5, alpha=0.7, rasterized=True)
 plt.xlabel(f"PC1 ({pc1_var:.1f}%)")
 plt.ylabel("K151-R212 distance (nm)")
 plt.text(
@@ -138,8 +141,8 @@ plt.savefig("distance_vs_PC1.pdf")
 plt.close()
 
 ### Plot distance vs PC2 ###
-plt.figure(figsize=(6,4))
-plt.scatter(pc2_match, dist_match, s=5, color=cmap(0.5), alpha=0.7)
+plt.figure(figsize=(5,4))
+plt.scatter(pc2_match, dist_match, s=5, alpha=0.7, rasterized=True)
 plt.xlabel(f"PC2 ({pc2_var:.1f}%)")
 plt.ylabel("K151-R212 distance (nm)")
 plt.text(
@@ -154,10 +157,25 @@ plt.close()
 
 ### Plot PC1 vs PC2 colored by distance ###
 plt.figure(figsize=(5,4))
-plt.scatter(pc1, pc2, c=distance, cmap='viridis', s=5)
+plt.scatter(pc1, pc2, c=distance, cmap='viridis', s=5, rasterized=True)
 plt.colorbar(label="K151-R212 distance (nm)")
 plt.xlabel(f"PC1 ({pc1_var:.1f}%)")
 plt.ylabel(f"PC2 ({pc2_var:.1f}%)")
+plt.text(
+    0.24, 0.97,
+    f"r(PC1) = {corr_pc1:.2f}\n"
+    f"r(PC2) = {corr_pc2:.2f}",
+    fontsize=8,
+    transform=plt.gca().transAxes,
+    ha='right',
+    va='top',
+    bbox=dict(
+        facecolor='lightgrey',
+        edgecolor='grey',
+        boxstyle='round,pad=0.3',
+        alpha=0.4,
+    )
+)
 plt.tight_layout()
 plt.savefig("pc1_pc2_colored_by_distance.pdf")
 plt.close()

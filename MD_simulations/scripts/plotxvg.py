@@ -6,6 +6,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import re
 
+plt.rcParams['font.family'] = 'Arial'
+plt.rcParams['font.size'] = 10
+plt.rcParams['pdf.fonttype'] = 42
+
 # Get xvg file.
 xvg_filename = sys.argv[1]
 cmap = plt.get_cmap("viridis")
@@ -45,7 +49,10 @@ for line in f:
 f.close()
 
 # Plot x and y with labels.
-plt.scatter(x, y, s=3, alpha=0.5, linewidths=0)
+plt.figure(figsize=(5,4))
+plt.scatter(x, y, s=3, alpha=0.5, linewidths=0, rasterized=True)
+plt.ylim(0, 5)
+plt.axhline(y=0.6, color='grey', linestyle='--', linewidth=2)
 plt.xlabel(res_x.group(1))
 plt.ylabel(res_y.group(1))
 plt.tight_layout()

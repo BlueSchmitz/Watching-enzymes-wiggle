@@ -22,16 +22,10 @@ What this script does:
 """
 
 import sys
-import os
-import math
-from scipy.stats import f_oneway
-from statsmodels.stats.multicomp import pairwise_tukeyhsd
 from pathlib import Path
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from matplotlib.lines import Line2D
-import matplotlib.patches as patches
 import matplotlib
 matplotlib.use("Agg")  # Use non-GUI backend
 
@@ -327,6 +321,7 @@ def main(infile):
         fig.savefig(plot_dir / f"{safe_enz}_activity.pdf")
         plt.close(fig)
 
+    '''
     # ---------------- STATISTICS ----------------
     stats_rows = []
 
@@ -367,6 +362,7 @@ def main(infile):
     boxplot_pdf = f"enzyme_activity_boxplot_{p.stem}.pdf"
     plot_activity_boxplot(df_summary, df_replicates, tukey_df, boxplot_pdf)
     print(f"Saved boxplot to {boxplot_pdf}")
+    ''' 
 
     out_xlsx = f"activity_summary_{p.stem}.xlsx"
     with pd.ExcelWriter(out_xlsx) as writer:
@@ -374,10 +370,11 @@ def main(infile):
         pd.DataFrame(replicate_rows).to_excel(writer, sheet_name="Replicate_Slopes", index=False)
         pd.DataFrame(enzyme_summary_rows).to_excel(writer, sheet_name="Enzyme_Summary", index=False)
 
+        '''
         if len(stats_rows) > 0:
             pd.DataFrame(stats_rows).to_excel(writer, sheet_name="ANOVA", index=False)
             tukey_df.to_excel(writer, sheet_name="Tukey_posthoc", index=False)
-
+        ''' 
     print("Saved summary Excel to", out_xlsx)
 
 

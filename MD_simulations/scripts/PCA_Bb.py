@@ -13,12 +13,41 @@ from scipy.ndimage import gaussian_filter
 from scipy.spatial import ConvexHull
 from matplotlib.path import Path
 
+plt.rcParams['font.family'] = 'Arial'
+plt.rcParams['font.size'] = 10
+plt.rcParams['pdf.fonttype'] = 42
 cmap = plt.get_cmap("viridis")
+
+### 4 Plot variance explained by PCs ###
+eigen_file = sys.argv[2]
+eig = np.loadtxt(eigen_file, comments=["@", "#"])
+variance = eig[:,1]
+
+variance_percent = variance / np.sum(variance) * 100
+variance_percent = variance_percent[:10]  # show only first 10 PCs
+pc_index = np.arange(1, len(variance_percent) + 1)
+
+df = pd.DataFrame({
+    "PC": pc_index,
+    "variance_percent": variance_percent
+})
+df.to_csv("pc_variance.csv", index=False)
+
+plt.figure(figsize=(8, 4))
+plt.bar(pc_index, variance_percent, edgecolor = "black")
+plt.xlabel("PC index")
+plt.ylabel("Variance explained (%)")
+plt.xticks(pc_index)
+plt.tight_layout()
+plt.savefig("variance_explained.pdf")
+plt.close()
+
+pc1_var = variance_percent[0]
+pc2_var = variance_percent[1]
 
 ### 1 Plot PC1 vs. PC2 ###
 # Load projection file (skip comments)
 proj_file = sys.argv[1]
-eigen_file = sys.argv[2]
 
 pc1 = []
 pc2 = []
@@ -53,10 +82,10 @@ np.savetxt(
     fmt=["%d", "%.6f", "%.6f"]
 )
 
-plt.figure(figsize=(6, 4))
-plt.scatter(pc1, pc2, s=5, color=cmap(0.5), alpha=0.7)
-plt.xlabel("PC1")
-plt.ylabel("PC2")
+plt.figure(figsize=(5, 4))
+plt.scatter(pc1, pc2, s=5, alpha=0.7, rasterized=True)
+plt.xlabel(f"PC1 ({pc1_var:.1f}%)")
+plt.ylabel(f"PC2 ({pc2_var:.1f}%)")
 plt.tight_layout()
 plt.savefig("pc1_vs_pc2.pdf")
 plt.close()
@@ -101,9 +130,9 @@ corr_pc1 = np.corrcoef(pc1_match, dist_match)[0,1]
 corr_pc2 = np.corrcoef(pc2_match, dist_match)[0,1]
 
 ### Plot distance vs PC1 ###
-plt.figure(figsize=(6,4))
-plt.scatter(pc1_match, dist_match, s=5, color=cmap(0.5), alpha=0.7)
-plt.xlabel("PC1")
+plt.figure(figsize=(5,4))
+plt.scatter(pc1_match, dist_match, s=5, alpha=0.7, rasterized=True)
+plt.xlabel(f"PC1 ({pc1_var:.1f}%)")
 plt.ylabel("K151-Y221 distance (nm)")
 plt.text(
     0.05, 0.95,
@@ -116,9 +145,9 @@ plt.savefig("distance_vs_PC1.pdf")
 plt.close()
 
 ### Plot distance vs PC2 ###
-plt.figure(figsize=(6,4))
-plt.scatter(pc2_match, dist_match, s=5, color=cmap(0.5), alpha=0.7)
-plt.xlabel("PC2")
+plt.figure(figsize=(5,4))
+plt.scatter(pc2_match, dist_match, s=5, alpha=0.7, rasterized=True)
+plt.xlabel(f"PC2 ({pc2_var:.1f}%)")
 plt.ylabel("K151-Y221 distance (nm)")
 plt.text(
     0.05, 0.95,
@@ -131,11 +160,31 @@ plt.savefig("distance_vs_PC2.pdf")
 plt.close()
 
 ### Plot PC1 vs PC2 colored by distance ###
-plt.figure(figsize=(8,4))
-plt.scatter(pc1, pc2, c=distance, cmap='viridis', s=5)
+# Sort by distance descending
+idx = np.argsort(distance)[::-1]
+pc1_sorted = pc1[idx]
+pc2_sorted = pc2[idx]
+distance_sorted = distance[idx]
+plt.figure(figsize=(5,4))
+plt.scatter(pc1_sorted, pc2_sorted, c=distance_sorted, cmap='viridis', s=5, rasterized=True)
 plt.colorbar(label="K151-Y221 distance (nm)")
-plt.xlabel("PC1")
-plt.ylabel("PC2")
+plt.xlabel(f"PC1 ({pc1_var:.1f}%)")
+plt.ylabel(f"PC2 ({pc2_var:.1f}%)")
+plt.text(
+    0.24, 0.97,
+    f"r(PC1) = {corr_pc1:.2f}\n"
+    f"r(PC2) = {corr_pc2:.2f}",
+    fontsize=8,
+    transform=plt.gca().transAxes,
+    ha='right',
+    va='top',
+    bbox=dict(
+        facecolor='lightgrey',
+        edgecolor='grey',
+        boxstyle='round,pad=0.3',
+        alpha=0.4,
+    )
+)
 plt.tight_layout()
 plt.savefig("pc1_pc2_colored_by_distance.pdf")
 plt.close()
@@ -223,29 +272,6 @@ np.savetxt(
 
 print("Saved correlations to pc_distance_correlations.dat")
 
-### 4 Plot variance explained by PCs ###
-eig = np.loadtxt(eigen_file, comments=["@", "#"])
-variance = eig[:,1]
-
-variance_percent = variance / np.sum(variance) * 100
-variance_percent = variance_percent[:10]  # show only first 10 PCs
-pc_index = np.arange(1, len(variance_percent) + 1)
-
-df = pd.DataFrame({
-    "PC": pc_index,
-    "variance_percent": variance_percent
-})
-df.to_csv("pc_variance.csv", index=False)
-
-plt.figure(figsize=(8, 4))
-plt.bar(pc_index, variance_percent, color=cmap(0.5), edgecolor = "black")
-plt.xlabel("PC index")
-plt.ylabel("Variance explained (%)")
-plt.xticks(pc_index)
-plt.tight_layout()
-plt.savefig("variance_explained.pdf")
-plt.close()
-
 ### 2 Free energy landscape ###
 kB = 0.008314  # kJ/mol/K
 T = 298  # K
@@ -262,8 +288,8 @@ plt.imshow(F.T, origin='lower',
            aspect='auto')
 
 plt.colorbar(label="Free Energy (kJ/mol)")
-plt.xlabel("PC1")
-plt.ylabel("PC2")
+plt.xlabel(f"PC1 ({pc1_var:.1f}%)")
+plt.ylabel(f"PC2 ({pc2_var:.1f}%)")
 plt.tight_layout()
 plt.savefig("free_energy.pdf")
 plt.close()

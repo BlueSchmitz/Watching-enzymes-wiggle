@@ -10,6 +10,10 @@ matplotlib.use("Agg")  # non-interactive
 import seaborn as sns
 import pandas as pd
 
+plt.rcParams['font.family'] = 'Arial'
+plt.rcParams['font.size'] = 10
+plt.rcParams['pdf.fonttype'] = 42
+
 ### Plotting
 df_clust = pd.read_csv("cluster_assignments.csv")
 
@@ -71,7 +75,8 @@ for (method, selection, cutoff), subdf in df_clust.groupby(["method", "selection
                     color=colors[i-1],
                     s=5,
                     label=f"{i}",
-                    alpha=0.7)
+                    alpha=0.7,
+                    rasterized=True)
         
     # overlay medoids
     sub_medoids = df_medoids[
@@ -91,13 +96,24 @@ for (method, selection, cutoff), subdf in df_clust.groupby(["method", "selection
 
         i = cluster_map[row["cluster"]] - 1
 
-        plt.scatter(x, y,
-                    color=colors[i],
-                    s=80,
-                    marker="*",
-                    edgecolor="black",
-                    linewidth=0.7,
-                    zorder=10)
+        # White halo
+        plt.scatter(
+            x, y,
+            s=300,
+            marker="*",
+            color="white",
+            edgecolor="white",
+            alpha=0.8,
+            zorder=9)
+
+        plt.scatter(
+            x, y,
+            color=colors[i],
+            s=80,
+            marker="*",
+            edgecolor="black",
+            linewidth=0.7,
+            zorder=10)
 
     plt.xlabel(f"PC1 ({pc1_var:.1f}%)")
     plt.ylabel(f"PC2 ({pc2_var:.1f}%)")

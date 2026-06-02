@@ -7,6 +7,9 @@ import numpy as np
 import re
 from matplotlib.ticker import MultipleLocator, FormatStrFormatter
 
+plt.rcParams['font.family'] = 'Arial'
+plt.rcParams['font.size'] = 10
+plt.rcParams['pdf.fonttype'] = 42
 cmap = plt.get_cmap("viridis")
 # Get xvg file
 xvg_filename = sys.argv[1]
@@ -24,25 +27,31 @@ if xvg_filename in ("-h", "--help"):
 x, y = np.loadtxt(xvg_filename, comments = ["@", "#"], unpack = True)
 
 # Plot histogram of distances
-plt.figure(figsize=(6,4))
+plt.figure(figsize=(5,4))
 bin_width = x[1] - x[0]
 print("Summed probability density:", np.sum(y * bin_width))
 x_centers = x + bin_width / 2
 plt.bar(
     x_centers,
     y,
-    color=cmap(0.5),
     width=bin_width,
     align="center",
     edgecolor="black",
     linewidth=0.8
+)
+plt.axvline(
+    x=0.6,
+    color='grey',
+    linestyle='--',
+    linewidth=1
 )
 plt.xlabel("Distance (nm)")
 plt.ylabel(r"Probability density (nm$^{-1}$)")
 ax = plt.gca()
 ax.xaxis.set_major_locator(MultipleLocator(0.4)) # Set x-axis ticks every 0.4 nm
 ax.xaxis.set_major_formatter(FormatStrFormatter('%g'))  # remove unnecessary zeros
-plt.xlim(left=0)
+plt.xlim(0, 4.8)
+plt.ylim(0, 1.4)
 
 # Save figure
 plt.tight_layout()
