@@ -182,7 +182,7 @@ python $scripts/plotxvg_reps.py dist_k167_y259_rep1.xvg dist_k167_y259_rep2.xvg 
 for i in 1 2 3; do
     apptainer exec $GROMACS_CONTAINER gmx_mpi analyze -f dist_k167_y259_rep${i}.xvg -dist dist_k167_y259_hist_rep${i}.xvg -bw 0.2
 done
-python $scripts/plotxvg_hist.py dist_k167_y259_hist_rep1.xvg dist_k167_y259_hist_rep2.xvg dist_k167_y259_hist_rep3.xvg
+python $scripts/plotxvg_hist_reps.py dist_k167_y259_hist_rep1.xvg dist_k167_y259_hist_rep2.xvg dist_k167_y259_hist_rep3.xvg
 # RSMF of CA atoms of the whole protein, output in xvg format
 for i in 1 2 3; do
     tpr="./rep${i}/md${i}.tpr"
@@ -201,12 +201,7 @@ for i in 1 2 3; do
 done
 
 # h-bonds and hydrophobic contacts analysis with MDAnalysis
-for i in 1 2 3; do
-    tpr="./rep${i}/md${i}.tpr"
-    xtc="./md_closed_rep${i}.xtc"
-    python $scripts/contact_matrices_reps.py $tpr $xtc
-done
-python $scripts/contact_distributions_reps.py $tpr md_closed.xtc
+python $scripts/contact_matrices_reps.py ./rep1/md1.tpr ./md_fit_rep1.xtc ./md_fit_rep2.xtc ./md_fit_rep3.xtc
 
 # PCA
 # Combine trajectories of all 3 replicates for PCA
