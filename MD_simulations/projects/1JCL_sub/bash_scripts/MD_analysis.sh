@@ -126,15 +126,15 @@ r 1-248
 name 23 TIM_barrel
 r 1-248 & a CA
 name 24 CA_TIM
-4 & 18 
+4 & 23 
 name 25 TIM_barrel_backbone
 r 249-259
 name 26 tail
 r 249-259 & a CA
 name 27 CA_tail
-4 & 21 
+4 & 26 
 name 28 tail_backbone
-r 167 & a NZ
+r 167 & a N2
 name 29 Lys167_NZ
 r 259 & a OH
 name 30 Tyr259_OH
