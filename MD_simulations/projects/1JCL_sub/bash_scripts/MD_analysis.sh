@@ -82,23 +82,24 @@ module list
 
 ### Copy project to scratch ###
 echo "=== Copying project to scratch ==="
-cp -r $HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/$project_dir "$tmpdir/MD_simulations/projects/"
+cp -r /gpfs/work1/0/prjs2080/$project_dir "$tmpdir/MD_simulations/projects/"
 cd $tmpdir/MD_simulations/projects/$project_dir
 
 # Function to copy back results when error occurs and before the script exits
 function copy_back_results {
     set +e +u # Disable exit on error for this function
-    echo "=== Copying results back to home at $(date). ==="
+    echo "=== Copying results back to project folder at $(date). ==="
     if [[ -d "$tmpdir/MD_simulations/projects/$project_dir/outputs/$output_dir" ]]; then
         rsync -av --partial --inplace \
           "$tmpdir/MD_simulations/projects/$project_dir/outputs/$output_dir/" \
-          "$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/$project_dir/outputs/$output_dir/"
+          "/gpfs/work1/0/prjs2080/$project_dir/outputs/$output_dir/"
         echo "=== Copy complete at $(date) ==="
     else
         echo "Nothing to copy back (outputs directory not found)"
     fi
     # Clean up temporary directory
     rm -rf "$tmpdir"
+    echo "=== Temporary directory cleaned up at $(date). ==="
 }
 trap copy_back_results EXIT
 
