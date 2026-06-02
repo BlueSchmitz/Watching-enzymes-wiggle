@@ -119,7 +119,7 @@ rep2_xct="./rep2/md2.xtc"
 rep3_xct="./rep3/md3.xtc"
 
 # make index file with default + custom groups
-apptainer exec $GROMACS_CONTAINER gmx_mpi make_ndx -f $tpr -o index.ndx << EOF
+apptainer exec $GROMACS_CONTAINER gmx_mpi make_ndx -f ./rep1/md1.tpr -o index.ndx << EOF
 1 | 13
 name 22 Protein_KPS
 r 1-248
@@ -201,7 +201,7 @@ for i in 1 2 3; do
 done
 
 # h-bonds and hydrophobic contacts analysis with MDAnalysis
-python $scripts/contact_matrices_reps.py ./rep1/md1.tpr ./md_fit_rep1.xtc ./md_fit_rep2.xtc ./md_fit_rep3.xtc
+python $scripts/contact_matrices_reps.py ./rep1/md1.tpr ./md_closed_rep1.xtc ./md_closed_rep2.xtc ./md_closed_rep3.xtc
 
 # PCA
 # Combine trajectories of all 3 replicates for PCA
