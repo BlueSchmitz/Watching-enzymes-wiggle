@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Proton abstraction + water-mediated relay detection pipeline
+Optimized proton abstraction + water-mediated relay detection pipeline
 """
 
 import sys
@@ -8,8 +8,8 @@ import numpy as np
 import pandas as pd
 import MDAnalysis as mda
 
-from collections import defaultdict
 from MDAnalysis.lib.distances import distance_array, calc_angles
+from scipy.spatial import cKDTree
 
 
 ###############################################################################
@@ -27,7 +27,6 @@ FRAME_SAVE_CUTOFF = 4.5
 
 DIRECT_DIST_CUTOFF = 3.0
 WATER_DIST_CUTOFF = 3.5
-ANGLE_CUTOFF = 130.0
 
 
 ###############################################################################
@@ -36,33 +35,15 @@ ANGLE_CUTOFF = 130.0
 
 u = mda.Universe(TOP, TRAJ)
 
-C2 = u.select_atoms(f"resname {INTERMEDIATE_RESNAME} and name {C2_NAME}")
-
 lig = u.select_atoms(f"resname {INTERMEDIATE_RESNAME}")
-waters = u.select_atoms("resname WAT and name O")
-
+C2 = lig.select_atoms(f"name {C2_NAME}")
 
 if len(C2) != 1:
     raise ValueError("C2 not found uniquely")
 
+C2_pos0 = C2.positions[0].copy()
 
-###############################################################################
-# HYDROGENS ON C2
-###############################################################################
-
-u.trajectory[0]
-
-hydrogens = lig.select_atoms("name H*")
-
-bonded_H = []
-for H in hydrogens:
-    if np.linalg.norm(H.position - C2.positions[0]) < 1.25:
-        bonded_H.append(H)
-
-
-###############################################################################
-# ACCEPTORS
-###############################################################################
+waters = u.select_atoms("resname WAT and name O")
 
 acceptor_sel = (
     "(resname ASP and name OD1 OD2) or "
@@ -79,78 +60,101 @@ acceptors = u.select_atoms(acceptor_sel)
 
 
 ###############################################################################
+# HYDROGEN SELECTION (cached once)
+###############################################################################
+
+hydrogens = lig.select_atoms("name H*")
+
+bonded_H = []
+for H in hydrogens:
+    if np.linalg.norm(H.position - C2_pos0) < 1.25:
+        bonded_H.append(H)
+
+if len(bonded_H) == 0:
+    raise ValueError("No bonded hydrogens found")
+
+print(f"Bonded H atoms: {len(bonded_H)}")
+print(f"Acceptors: {len(acceptors)}")
+print(f"Water oxygens: {len(waters)}")
+
+
+###############################################################################
 # STORAGE
 ###############################################################################
 
 results = []
 per_frame_data = []
-
 water_events = []
 
 
 ###############################################################################
-# MAIN LOOP
+# MAIN LOOP (OPTIMIZED)
 ###############################################################################
 
-for acc in acceptors:
+n_frames = len(u.trajectory)
 
-    for H in bonded_H:
+for iframe, ts in enumerate(u.trajectory):
 
-        direct_frames = []
-        water_frames = []
+    # --------------------------------------------------
+    # CACHE POSITIONS ONCE PER FRAME
+    # --------------------------------------------------
+    water_pos = waters.positions.copy()
+    acc_pos = acceptors.positions.copy()
 
-        for iframe, ts in enumerate(u.trajectory):
+    # KDTree for fast water proximity queries
+    water_tree = cKDTree(water_pos)
 
+    for acc_i, acc in enumerate(acceptors):
+        A_pos = acc_pos[acc_i].reshape(1, 3)
+
+        for H in bonded_H:
             H_pos = H.position.reshape(1, 3)
-            C_pos = C2.positions
-            A_pos = acc.position.reshape(1, 3)
 
+            # --------------------------------------------------
+            # CORE GEOMETRY
+            # --------------------------------------------------
             dist_HA = distance_array(H_pos, A_pos)[0, 0]
 
             if dist_HA > FRAME_SAVE_CUTOFF:
                 continue
 
             angle = np.degrees(
-                calc_angles(C_pos, H_pos, A_pos)[0]
+                calc_angles(C2_pos0.reshape(1, 3), H_pos, A_pos)[0]
             )
 
-            # --------------------------------------------------
-            # DIRECT INTERACTION
-            # --------------------------------------------------
             direct = (dist_HA < DIRECT_DIST_CUTOFF) and (angle > 140)
 
             # --------------------------------------------------
-            # WATER BRIDGE DETECTION
+            # WATER BRIDGE (FAST KD-TREE QUERY)
             # --------------------------------------------------
             bridge_found = False
 
-            for w in waters:
+            # only nearby waters to H
+            hw_idx = water_tree.query_ball_point(H_pos[0], WATER_DIST_CUTOFF)
 
-                w_pos = w.position.reshape(1, 3)
+            if hw_idx:
+                hw_pos = water_pos[hw_idx]
 
-                d_hw = distance_array(H_pos, w_pos)[0, 0]
-                if d_hw > WATER_DIST_CUTOFF:
-                    continue
+                d_wa = distance_array(hw_pos, A_pos).flatten()
 
-                d_wa = distance_array(w_pos, A_pos)[0, 0]
-                if d_wa > WATER_DIST_CUTOFF:
-                    continue
+                if np.any(d_wa < WATER_DIST_CUTOFF):
+                    bridge_found = True
 
-                bridge_found = True
-
-                water_events.append({
-                    "frame": iframe,
-                    "time_ps": ts.time,
-                    "hydrogen": H.name,
-                    "water_index": w.index,
-                    "acceptor": acc.resname + str(acc.resid),
-                    "H_Ow": d_hw,
-                    "Ow_A": d_wa,
-                    "C_H_A_angle": angle
-                })
+                    for i, wi in enumerate(hw_idx):
+                        if d_wa[i] < WATER_DIST_CUTOFF:
+                            water_events.append({
+                                "frame": iframe,
+                                "time_ps": ts.time,
+                                "hydrogen": H.name,
+                                "water_index": waters[wi].index,
+                                "acceptor": acc.resname + str(acc.resid),
+                                "H_Ow": np.linalg.norm(H_pos[0] - water_pos[wi]),
+                                "Ow_A": d_wa[i],
+                                "C_H_A_angle": angle
+                            })
 
             # --------------------------------------------------
-            # FRAME OUTPUT
+            # FRAME DATA
             # --------------------------------------------------
             per_frame_data.append({
                 "frame": iframe,
@@ -159,45 +163,35 @@ for acc in acceptors:
                 "acceptor_resname": acc.resname,
                 "acceptor_resid": acc.resid,
                 "acceptor_atom": acc.name,
-
                 "H_A_distance": dist_HA,
                 "CHA_angle": angle,
-
                 "direct_contact": direct,
                 "water_bridge": bridge_found
             })
 
+            # --------------------------------------------------
+            # SCORE TRACKING
+            # --------------------------------------------------
             if direct:
-                direct_frames.append(iframe)
-
-            if bridge_found:
-                water_frames.append(iframe)
-
-        # ------------------------------------------------------
-        # SCORE DIRECT RELAY
-        # ------------------------------------------------------
-        occupancy = len(direct_frames) / len(u.trajectory)
-
-        score = occupancy + 0.5 * (len(water_frames) / len(u.trajectory))
-
-        results.append({
-            "acceptor": acc.resname,
-            "resid": acc.resid,
-            "H": H.name,
-            "direct_occupancy": occupancy,
-            "water_occupancy": len(water_frames) / len(u.trajectory),
-            "relay_score": score
-        })
+                results.append((acc.resname, acc.resid, H.name, 1.0, 0.0, 1.0))
+            elif bridge_found:
+                results.append((acc.resname, acc.resid, H.name, 0.0, 1.0, 0.5))
 
 
 ###############################################################################
 # OUTPUT
 ###############################################################################
 
-df = pd.DataFrame(results).sort_values("relay_score", ascending=False)
+df = pd.DataFrame(results, columns=[
+    "acceptor", "resid", "H",
+    "direct_occupancy", "water_occupancy", "relay_score"
+])
+
 per_frame_df = pd.DataFrame(per_frame_data)
 water_df = pd.DataFrame(water_events)
 
+df = df.groupby(["acceptor", "resid", "H"], as_index=False).mean()
+df = df.sort_values("relay_score", ascending=False)
 
 df.to_csv("relay_candidates.csv", index=False)
 per_frame_df.to_csv("proton_abstraction_per_frame.csv", index=False)
