@@ -50,8 +50,8 @@ plt.ylabel(r"Probability density (nm$^{-1}$)")
 ax = plt.gca()
 ax.xaxis.set_major_locator(MultipleLocator(0.4)) # Set x-axis ticks every 0.4 nm
 ax.xaxis.set_major_formatter(FormatStrFormatter('%g'))  # remove unnecessary zeros
-plt.xlim(0, 4.8)
-plt.ylim(0, 1.4)
+#plt.xlim(0, 4.8)
+#plt.ylim(0, 1.4)
 
 # Save figure
 plt.tight_layout()

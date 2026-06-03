@@ -75,8 +75,8 @@ ax = plt.gca()
 ax.xaxis.set_major_locator(MultipleLocator(0.4))
 ax.xaxis.set_major_formatter(FormatStrFormatter('%g'))
 
-plt.xlim(0, 4.8)
-plt.ylim(0, 1.4)
+#plt.xlim(0, 4.8)
+#plt.ylim(0, 2)
 
 plt.legend(frameon=False)
 

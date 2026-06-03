@@ -70,14 +70,28 @@ plt.fill_between(
     label="±1 SD"
 )
 
-# Highlight regions in red (on top of mean)
-mask = np.isin(all_resid, list(residues_to_scale))
-plt.plot(all_resid[mask], mean_rmsf[mask], color='red', linewidth=2)
+# Highlight regions in red 
+highlight_ranges = [
+    (1, 10),
+    (26, 32),
+    (77, 84),
+    (169, 179),
+    (198, 204),
+    (222, 224),
+    (233, 238),
+]
+
+for start_res, end_res in highlight_ranges:
+    mask = (all_resid >= start_res) & (all_resid <= end_res)
+    plt.plot(
+        all_resid[mask],
+        mean_rmsf[mask],
+        color='red',
+        linewidth=2
+    )
 
 plt.xlabel("Residue number")
 plt.ylabel("RMSF (nm)")
-plt.legend(frameon=False)
-plt.grid(alpha=0.3)
 
 plt.tight_layout()
 plt.savefig("rmsf_mean_sd.pdf")

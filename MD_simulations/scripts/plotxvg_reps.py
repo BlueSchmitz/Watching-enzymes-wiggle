@@ -53,7 +53,7 @@ for i, xvg_filename in enumerate(xvg_files):
     plt.scatter(x, y, s=3, alpha=0.5, linewidths=0, rasterized=True, color=colors[i], label=rep_label)
 
 # Reference line (keep your original)
-plt.ylim(0, 5)
+plt.ylim(0, 1)
 plt.axhline(y=0.6, color='grey', linestyle='--', linewidth=2)
 
 plt.xlabel(xlabel)
