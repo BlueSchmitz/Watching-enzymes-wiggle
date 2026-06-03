@@ -6,7 +6,7 @@ Proton abstraction + water-mediated relay detection pipeline
 import sys
 import numpy as np
 import pandas as pd
-import mdanalysis as mda
+import MDAnalysis as mda
 
 from collections import defaultdict
 from MDAnalysis.lib.distances import distance_array, calc_angles
