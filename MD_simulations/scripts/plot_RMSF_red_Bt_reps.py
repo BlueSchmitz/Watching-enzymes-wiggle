@@ -92,6 +92,7 @@ for start_res, end_res in highlight_ranges:
 
 plt.xlabel("Residue number")
 plt.ylabel("RMSF (nm)")
+plt.legend()
 
 plt.tight_layout()
 plt.savefig("rmsf_mean_sd.pdf")

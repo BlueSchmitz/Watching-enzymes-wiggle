@@ -134,11 +134,11 @@ r 222-238 & a CA
 name 27 CA_tail
 4 & 26 
 name 28 tail_backbone
-r 168 & a NZ
+r 168 & a N2
 name 29 Lys168_NZ
 r 238 
 name 30 Leu238
-22 & a CA
+(22 & a CA) | (r 168 & a C5)
 name 31 Protein_KPS_CA
 
 

@@ -138,7 +138,7 @@ r 167 & a N2
 name 29 Lys167_NZ
 r 259 & a OH
 name 30 Tyr259_OH
-22 & a CA
+(22 & a CA) | (r 167 & a C5)
 name 31 Protein_KPS_CA
 
 q
@@ -177,7 +177,7 @@ python $scripts/plotxvg_reps.py rmsd_tail_backbone_rep1.xvg rmsd_tail_backbone_r
 #    xtc="./md_fit_rep${i}.xtc"
 #    apptainer exec $GROMACS_CONTAINER gmx_mpi distance -s $tpr -f $xtc -n index.ndx -oall dist_k167_y259_rep${i}.xvg -tu ns -select 'com of group 29 plus com of group 30'
 #done
-#python $scripts/plotxvg_reps.py dist_k167_y259_rep1.xvg dist_k167_y259_rep2.xvg dist_k167_y259_rep3.xvg
+python $scripts/plotxvg_reps.py dist_k167_y259_rep1.xvg dist_k167_y259_rep2.xvg dist_k167_y259_rep3.xvg
 # histogram of the distance between Lys167 NZ and Tyr259 OH with bin width of 0.2 nm, output in xvg format
 #for i in 1 2 3; do
 #    apptainer exec $GROMACS_CONTAINER gmx_mpi analyze -f dist_k167_y259_rep${i}.xvg -dist dist_k167_y259_hist_rep${i}.xvg -bw 0.2
@@ -195,7 +195,7 @@ for i in 1 2 3; do
     tpr="./rep${i}/md${i}.tpr"
     xtc="./md_fit_rep${i}.xtc"
     # Compute distance time series (ps)
-    apptainer exec $GROMACS_CONTAINER gmx_mpi distance -s $tpr -f $xtc -n index.ndx -oall dist_k167_y259_rep${i}.xvg -tu ps -select 'com of group 29 plus com of group 30'
+    apptainer exec $GROMACS_CONTAINER gmx_mpi distance -s $tpr -f $xtc -n index.ndx -oall dist_k167_y259_ps_rep${i}.xvg -tu ps -select 'com of group 29 plus com of group 30'
     # create new trajectory with selected frames where distance < 0.6 nm
     echo 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_fit_rep${i}.xtc -s $tpr -o md_closed_rep${i}.xtc -drop dist_k167_y259_ps_rep${i}.xvg -dropover 0.6
 done
