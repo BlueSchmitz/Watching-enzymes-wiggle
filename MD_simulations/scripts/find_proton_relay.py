@@ -7,6 +7,7 @@ import sys
 import numpy as np
 import pandas as pd
 import MDAnalysis as mda
+from tqdm import tqdm
 
 from MDAnalysis.lib.distances import distance_array, calc_angles
 from scipy.spatial import cKDTree
@@ -93,7 +94,7 @@ water_events = []
 
 n_frames = len(u.trajectory)
 
-for iframe, ts in enumerate(u.trajectory):
+for iframe, ts in enumerate(tqdm(u.trajectory, total=n_frames)):
 
     # --------------------------------------------------
     # CACHE POSITIONS ONCE PER FRAME
