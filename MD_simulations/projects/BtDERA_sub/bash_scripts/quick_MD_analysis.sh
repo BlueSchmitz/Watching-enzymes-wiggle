@@ -160,6 +160,20 @@ for i in 1 2 3; do
     echo 25 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s $tpr -f $xtc -o md_fit_rep${i}.xtc -fit rot+trans -n index.ndx 
     rm md_center_mol_rep${i}.xtc
 done
+
+# Find proton relay systems
+for i in 1 2 3; do
+    tpr="./rep${i}/md${i}.tpr"
+    xtc="./md_fit_rep${i}.xtc"
+    python $scripts/find_proton_relay.py $tpr $xtc
+    cp relay_candidates.csv relay_candidates.csv_rep${i}.csv
+    rm relay_candidates.csv
+    cp proton_abstraction_per_frame.csv proton_abstraction_per_frame_rep${i}.csv
+    rm proton_abstraction_per_frame.csv
+    cp water_bridge_events.csv water_bridge_events_rep${i}.csv
+    rm water_bridge_events.csv
+done
+
 # calculate RMSD of TIM barrel backbone over time, output in xvg format
 for i in 1 2 3; do
     tpr="./rep${i}/md${i}.tpr"
@@ -236,18 +250,5 @@ python $scripts/PCA_Bt.py proj.xvg eigenvalues.xvg lys168_leu238_distance.xvg pr
 #python $scripts/plot_clustering.py
 # Extract medoids
 #python $scripts/extract_medoids.py
-
-# Find proton relay systems
-for i in 1 2 3; do
-    tpr="./rep${i}/md${i}.tpr"
-    xtc="./md_fit_rep${i}.xtc"
-    python $scripts/find_proton_relay.py $tpr $xtc
-    cp relay_candidates.csv relay_candidates.csv_rep${i}.csv
-    rm relay_candidates.csv
-    cp proton_abstraction_per_frame.csv proton_abstraction_per_frame_rep${i}.csv
-    rm proton_abstraction_per_frame.csv
-    cp water_bridge_events.csv water_bridge_events_rep${i}.csv
-    rm water_bridge_events.csv
-done
 
 echo "Analysis complete. Results will be copied back to home directory."

@@ -138,8 +138,10 @@ r 167 & a N2
 name 29 Lys167_NZ
 r 259 & a OH
 name 30 Tyr259_OH
-(22 & a CA) | (r 167 & a C5)
-name 31 Protein_KPS_CA
+22 & a CA
+name 31 Protein_CA
+31 | r 167 & a C5
+name 32 Protein_KPS_CA
 
 q
 EOF
@@ -184,11 +186,11 @@ python $scripts/plotxvg_reps.py dist_k167_y259_rep1.xvg dist_k167_y259_rep2.xvg 
 #done
 python $scripts/plotxvg_hist_reps.py dist_k167_y259_hist_rep1.xvg dist_k167_y259_hist_rep2.xvg dist_k167_y259_hist_rep3.xvg
 # RSMF of CA atoms of the whole protein, output in xvg format
-#for i in 1 2 3; do
-#    tpr="./rep${i}/md${i}.tpr"
-#    xtc="./md_fit_rep${i}.xtc"
-#    echo 31 | apptainer exec $GROMACS_CONTAINER gmx_mpi rmsf -f md_fit_rep${i}.xtc -s $tpr -o rmsf_Ca_rep${i}.xvg -n index.ndx -b 20000 -res  # start at 20 ns (time in ps)
-#done
+for i in 1 2 3; do
+    tpr="./rep${i}/md${i}.tpr"
+    xtc="./md_fit_rep${i}.xtc"
+    echo 32 | apptainer exec $GROMACS_CONTAINER gmx_mpi rmsf -f md_fit_rep${i}.xtc -s $tpr -o rmsf_Ca_rep${i}.xvg -n index.ndx -b 20000 -res  # start at 20 ns (time in ps)
+done
 python $scripts/plot_RMSF_red_reps.py rmsf_Ca_rep1.xvg rmsf_Ca_rep2.xvg rmsf_Ca_rep3.xvg
 ### define frames with distance between Lys167 NZ and Tyr259 OH < 0.6 nm as "closed" and >= 0.6 nm as "open", output in xvg format
 for i in 1 2 3; do
@@ -208,16 +210,16 @@ python $scripts/contact_matrices_reps.py ./rep1/md1.tpr ./md_closed_rep1.xtc ./m
 gmx trjcat -f md_fit_rep1.xtc md_fit_rep2.xtc md_fit_rep3.xtc -o concat.xtc
 tpr="./rep1/md1.tpr"
 # Compute covariance matrix
-echo 25 31 | apptainer exec $GROMACS_CONTAINER gmx_mpi covar -s $tpr -f concat.xtc -n index.ndx -b 20000 -o eigenvalues.xvg -v eigenvectors.trr
+echo 25 32 | apptainer exec $GROMACS_CONTAINER gmx_mpi covar -s $tpr -f concat.xtc -n index.ndx -b 20000 -o eigenvalues.xvg -v eigenvectors.trr
     # fit to CA TIM, covariance of whole protein CA (so side-chains do not contribute to covariance)
     # eigenvalues.xvg contains the eigenvalues (variance along each PC as mean square fluctuation captured by that PC in nm^2), eigenvectors.trr contains the eigenvectors (PCs) as a trajectory
 # Project trajectory onto PCs
-echo 25 31 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f concat.xtc -s $tpr -n index.ndx -proj proj.xvg -first 1 -last 2
-echo 25 31 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f concat.xtc -s $tpr -n index.ndx -proj proj_20_pcs.xvg -first 1 -last 20
+echo 25 32 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f concat.xtc -s $tpr -n index.ndx -proj proj.xvg -first 1 -last 2
+echo 25 32 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f concat.xtc -s $tpr -n index.ndx -proj proj_20_pcs.xvg -first 1 -last 20
 # Extract extreme projections along PC1 and PC2
-echo 25 31 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f concat.xtc -s $tpr -n index.ndx -extr extremes.pdb -first 1 -last 2
+echo 25 32 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f concat.xtc -s $tpr -n index.ndx -extr extremes.pdb -first 1 -last 2
 # Eigenvector components per atom (which residues dominate the motion)
-echo 31 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f concat.xtc -s $tpr -n index.ndx -rmsf PC_rmsf_per_atom.xvg -first 1 -last 2
+echo 32 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f concat.xtc -s $tpr -n index.ndx -rmsf PC_rmsf_per_atom.xvg -first 1 -last 2
 #calculate distance between Lys167 NZ and Tyr259 OH for each frame of concatenated traj
 apptainer exec $GROMACS_CONTAINER gmx_mpi distance -s $tpr -f concat.xtc -n index.ndx -oall lys167_tyr259_distance.xvg -tu ns -select 'com of group 29 plus com of group 30'
 python $scripts/PCA.py proj.xvg eigenvalues.xvg lys167_tyr259_distance.xvg proj_20_pcs.xvg
@@ -237,7 +239,7 @@ done
 # Find proton relay systems
 for i in 1 2 3; do
     tpr="./rep${i}/md${i}.tpr"
-    xtc="./md_closed_rep${i}.xtc"
+    xtc="./md_fit_rep${i}.xtc"
     python $scripts/find_proton_relay.py $tpr $xtc
     cp relay_candidates.csv relay_candidates.csv_rep${i}.csv
     rm relay_candidates.csv
