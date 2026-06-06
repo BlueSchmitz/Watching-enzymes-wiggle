@@ -76,15 +76,6 @@ def clamp01(x):
 
 u = mda.Universe(TOP, TRAJ)
 
-# Reference group for fitting (TIM barrel backbone)
-ref = u.select_atoms("resid 1-221 and name CA")
-
-u.trajectory.add_transformations(
-    wrap(u.atoms),
-    center_in_box(u.select_atoms("protein or resname KPS")),
-    fit_rot_trans(u.select_atoms("protein"), ref)
-)
-
 lig = u.select_atoms(
     f"resname {INTERMEDIATE_RESNAME}"
 )

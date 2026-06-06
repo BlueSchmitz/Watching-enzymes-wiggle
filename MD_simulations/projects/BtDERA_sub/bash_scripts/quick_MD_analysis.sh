@@ -108,6 +108,6 @@ cd ./outputs/$output_dir/
 
 ### Analysis ###
 echo "============= Find proton relay systems ============="
-python $scripts/scan_proton_relay_MD_speedup.py ./rep1/md1.tpr ./rep1/md1.xtc
+python $scripts/scan_proton_relay_MD_speedup.py ./rep1/md1.tpr md_fit_rep1.xtc
 
 echo "Analysis complete. Results will be copied back to home directory."
