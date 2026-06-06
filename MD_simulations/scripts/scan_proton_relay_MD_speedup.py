@@ -28,6 +28,7 @@ from tqdm import tqdm
 from scipy.spatial import cKDTree
 from MDAnalysis.lib.distances import calc_angles
 from MDAnalysis.lib.nsgrid import FastNS
+from MDAnalysis.transformations import fit_rot_trans, center_in_box, wrap
 
 
 ###############################################################################
@@ -74,6 +75,15 @@ def clamp01(x):
 ###############################################################################
 
 u = mda.Universe(TOP, TRAJ)
+
+# Reference group for fitting (TIM barrel backbone)
+ref = u.select_atoms("resid 1-221 and name CA")
+
+u.trajectory.add_transformations(
+    wrap(u.atoms),
+    center_in_box(u.select_atoms("protein or resname KPS")),
+    fit_rot_trans(u.select_atoms("protein"), ref)
+)
 
 lig = u.select_atoms(
     f"resname {INTERMEDIATE_RESNAME}"
@@ -168,7 +178,8 @@ for iframe, ts in enumerate(tqdm(u.trajectory, total=n_frames)):
         continue
 
     ns_acc = FastNS(ACCEPTOR_SCREEN, acc_pos, acceptors.dimensions)
-    nearby_acc = ns_acc.search(C2_pos.reshape(1, 3))[0]
+    results = ns_acc.search(C2_pos.reshape(1, 3))
+    nearby_acc = results.get_indices()
 
     if DEBUG and iframe % 1000 == 0:
         print(f"  Nearby acceptors: {len(nearby_acc)}")
@@ -251,7 +262,8 @@ for iframe, ts in enumerate(tqdm(u.trajectory, total=n_frames)):
         continue
 
     ns_wat = FastNS(ACCEPTOR_SCREEN, wat_pos, waters.dimensions)
-    nearby_wat = ns_wat.search(C2_pos.reshape(1, 3))[0]
+    results = ns_wat.search(C2_pos.reshape(1, 3))
+    nearby_wat = results.get_indices()
 
     if DEBUG and iframe % 1000 == 0:
         print(f"  Nearby waters: {len(nearby_wat)}")
