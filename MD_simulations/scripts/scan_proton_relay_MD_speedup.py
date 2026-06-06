@@ -384,7 +384,7 @@ for iframe, ts in enumerate(tqdm(u.trajectory, total=n_frames)):
     for h, a, q in zip(H_exp, A_exp, quality):
 
         acc = acceptors[nearby_acc[a]]
-        h_atom = H[h]
+        h_atom = bonded_H[h]
 
         key = (acc.resname, acc.resid, acc.name, h_atom.name)
 
