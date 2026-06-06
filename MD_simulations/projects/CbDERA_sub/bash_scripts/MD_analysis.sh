@@ -226,7 +226,7 @@ done
 
 # PCA
 # Combine trajectories of all 3 replicates for PCA
-gmx trjcat -f md_fit_rep1.xtc md_fit_rep2.xtc md_fit_rep3.xtc -o concat.xtc
+apptainer exec $GROMACS_CONTAINER gmx_mpi trjcat -f md_fit_rep1.xtc md_fit_rep2.xtc md_fit_rep3.xtc -o concat.xtc
 tpr="./rep1/md1.tpr"
 # Compute covariance matrix
 echo 24 33 | apptainer exec $GROMACS_CONTAINER gmx_mpi covar -s $tpr -f concat.xtc -n index.ndx -b 20000 -o eigenvalues.xvg -v eigenvectors.trr
