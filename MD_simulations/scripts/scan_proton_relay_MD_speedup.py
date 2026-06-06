@@ -28,7 +28,7 @@ from tqdm import tqdm
 from scipy.spatial import cKDTree
 from MDAnalysis.lib.distances import calc_angles
 from MDAnalysis.lib.nsgrid import FastNS
-from MDAnalysis.transformations import fit_rot_trans, center_in_box, wrap
+from MDAnalysis.lib.distances import distance_array
 
 
 ###############################################################################
@@ -186,9 +186,10 @@ for iframe, ts in enumerate(tqdm(u.trajectory, total=n_frames)):
     ###########################################################################
 
     # (nH, nA)
-    d_HA = np.linalg.norm(
-        H_pos[:, None, :] - acc_pos_nb[None, :, :],
-        axis=-1
+    d_HA = distance_array(
+        H_pos,
+        acc_pos_nb,
+        box=ts.dimensions
     )
 
     direct_mask = d_HA < DIRECT_DIST_CUTOFF
@@ -267,14 +268,16 @@ for iframe, ts in enumerate(tqdm(u.trajectory, total=n_frames)):
     wat_pos_nb = wat_pos[nearby_wat]
 
     # distances
-    d_HOw = np.linalg.norm(
-        H_pos[:, None, :] - wat_pos_nb[None, :, :],
-        axis=-1
+    d_HOw = distance_array(
+        H_pos,
+        wat_pos_nb,
+        box=ts.dimensions
     )
 
-    d_OwA = np.linalg.norm(
-        wat_pos_nb[:, None, :] - acc_pos_nb[None, :, :],
-        axis=-1
+    d_OwA = distance_array(
+        wat_pos_nb,
+        acc_pos_nb,
+        box=ts.dimensions
     )
 
     ###############################################################################
