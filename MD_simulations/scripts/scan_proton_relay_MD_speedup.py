@@ -170,7 +170,7 @@ for iframe, ts in enumerate(tqdm(u.trajectory, total=n_frames)):
 
     ns_acc = FastNS(ACCEPTOR_SCREEN, acc_pos, acceptors.dimensions)
     results = ns_acc.search(C2_pos.reshape(1, 3))
-    nearby_acc = results.get_indices()
+    nearby_acc = results.indices
 
     if DEBUG and iframe % 1000 == 0:
         print(f"  Nearby acceptors: {len(nearby_acc)}")
@@ -254,7 +254,7 @@ for iframe, ts in enumerate(tqdm(u.trajectory, total=n_frames)):
 
     ns_wat = FastNS(ACCEPTOR_SCREEN, wat_pos, waters.dimensions)
     results = ns_wat.search(C2_pos.reshape(1, 3))
-    nearby_wat = results.get_indices()
+    nearby_wat = results.indices
 
     if DEBUG and iframe % 1000 == 0:
         print(f"  Nearby waters: {len(nearby_wat)}")
