@@ -41,7 +41,7 @@ TRAJ = sys.argv[2]
 INTERMEDIATE_RESNAME = "KPS"
 C2_NAME = "C1"
 
-DEBUG = True
+DEBUG = False
 
 ###############################################################################
 # GEOMETRY CUTS

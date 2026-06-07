@@ -57,7 +57,7 @@ for i, xvg_filename in enumerate(xvg_files):
 
 plt.xlabel(xlabel)
 plt.ylabel(ylabel)
-plt.legend(frameon=False)
+plt.legend()
 
 plt.tight_layout()
 
