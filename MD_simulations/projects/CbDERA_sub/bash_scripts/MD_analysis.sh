@@ -200,37 +200,37 @@ EOF
 #python $scripts/contact_matrices_reps.py ./rep1/md1.tpr ./md_closed_rep1.xtc ./md_closed_rep2.xtc ./md_closed_rep3.xtc
 
 # Find proton relay systems
-for i in 1 2 3; do
-    tpr="./rep${i}/md${i}.tpr"
-    xtc="./md_fit_rep${i}.xtc"
-    echo "Finding proton relay systems in replicate ${i}..."
-    python $scripts/scan_proton_relay_MD_speedup.py $tpr $xtc
-    echo "Proton relay analysis for replicate ${i} complete. Copying results..."
-    cp relay_candidates.csv relay_candidates.csv_rep${i}.csv
-    rm relay_candidates.csv
-    cp direct_candidates.csv direct_candidates.csv_rep${i}.csv
-    rm direct_candidates.csv
-    echo "Results for replicate ${i} copied."
-done
+#for i in 1 2 3; do
+#    tpr="./rep${i}/md${i}.tpr"
+#    xtc="./md_fit_rep${i}.xtc"
+#    echo "Finding proton relay systems in replicate ${i}..."
+#    python $scripts/scan_proton_relay_MD_speedup.py $tpr $xtc
+#    echo "Proton relay analysis for replicate ${i} complete. Copying results..."
+#    cp relay_candidates.csv relay_candidates.csv_rep${i}.csv
+#    rm relay_candidates.csv
+#    cp direct_candidates.csv direct_candidates.csv_rep${i}.csv
+#    rm direct_candidates.csv
+#    echo "Results for replicate ${i} copied."
+#done
 
 # PCA
 # Combine trajectories of all 3 replicates for PCA
-apptainer exec $GROMACS_CONTAINER gmx_mpi trjcat -f md_fit_rep1.xtc md_fit_rep2.xtc md_fit_rep3.xtc -o concat.xtc
-tpr="./rep1/md1.tpr"
+#apptainer exec $GROMACS_CONTAINER gmx_mpi trjcat -f md_fit_rep1.xtc md_fit_rep2.xtc md_fit_rep3.xtc -o concat.xtc
+#tpr="./rep1/md1.tpr"
 # Compute covariance matrix
-echo 24 33 | apptainer exec $GROMACS_CONTAINER gmx_mpi covar -s $tpr -f concat.xtc -n index.ndx -b 20000 -o eigenvalues.xvg -v eigenvectors.trr
+#echo 24 33 | apptainer exec $GROMACS_CONTAINER gmx_mpi covar -s $tpr -f concat.xtc -n index.ndx -b 20000 -o eigenvalues.xvg -v eigenvectors.trr
     # fit to CA TIM, covariance of whole protein CA (so side-chains do not contribute to covariance)
     # eigenvalues.xvg contains the eigenvalues (variance along each PC as mean square fluctuation captured by that PC in nm^2), eigenvectors.trr contains the eigenvectors (PCs) as a trajectory
 # Project trajectory onto PCs
-echo 24 33 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f concat.xtc -s $tpr -n index.ndx -proj proj.xvg -first 1 -last 2
-echo 24 33 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f concat.xtc -s $tpr -n index.ndx -proj proj_20_pcs.xvg -first 1 -last 20
+#echo 24 33 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f concat.xtc -s $tpr -n index.ndx -proj proj.xvg -first 1 -last 2
+#echo 24 33 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f concat.xtc -s $tpr -n index.ndx -proj proj_20_pcs.xvg -first 1 -last 20
 # Extract extreme projections along PC1 and PC2
-echo 24 33 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f concat.xtc -s $tpr -n index.ndx -extr extremes.pdb -first 1 -last 2
+#echo 24 33 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f concat.xtc -s $tpr -n index.ndx -extr extremes.pdb -first 1 -last 2
 # Eigenvector components per atom (which residues dominate the motion)
-echo 33 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f concat.xtc -s $tpr -n index.ndx -rmsf PC_rmsf_per_atom.xvg -first 1 -last 2
+#echo 33 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f concat.xtc -s $tpr -n index.ndx -rmsf PC_rmsf_per_atom.xvg -first 1 -last 2
 #calculate distance between Lys151 NZ and Arg212 for each frame of concatenated traj
-apptainer exec $GROMACS_CONTAINER gmx_mpi distance -s $tpr -f concat.xtc -n index.ndx -oall lys151_arg212_distance.xvg -tu ns -select 'com of group 29 plus com of group 30'
-python $scripts/PCA_Ca.py proj.xvg eigenvalues.xvg lys151_arg212_distance.xvg proj_20_pcs.xvg
+#apptainer exec $GROMACS_CONTAINER gmx_mpi distance -s $tpr -f concat.xtc -n index.ndx -oall lys151_arg212_distance.xvg -tu ns -select 'com of group 29 plus com of group 30'
+python $scripts/PCA_Cb.py proj.xvg eigenvalues.xvg lys151_arg212_distance.xvg proj_20_pcs.xvg
 
 # How many frames in closed trajectory vs full?
 #for i in 1 2 3; do

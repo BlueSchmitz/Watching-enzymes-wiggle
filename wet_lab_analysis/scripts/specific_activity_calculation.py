@@ -29,6 +29,10 @@ import matplotlib.pyplot as plt
 import matplotlib
 matplotlib.use("Agg")  # Use non-GUI backend
 
+plt.rcParams['font.family'] = 'Arial'
+plt.rcParams['font.size'] = 10
+plt.rcParams['pdf.fonttype'] = 42
+
 # ---------- Configurable variables ----------
 SAMPLING_INTERVAL = 16.0       # seconds between data points
 WINDOW_POINTS = 12             # number of points in sliding window

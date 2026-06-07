@@ -16,6 +16,10 @@ import math
 import matplotlib
 matplotlib.use("Agg") # Use non-GUI backend (avoids errors)
 
+plt.rcParams['font.family'] = 'Arial'
+plt.rcParams['font.size'] = 10
+plt.rcParams['pdf.fonttype'] = 42
+
 # Define Boltzmann sigmoid (lower plateau, upper plateau, Tm, slope)
 def sigmoid(x, L, x0, k, b):
     """
@@ -81,10 +85,10 @@ for enzyme in sorted(set(col.split("_")[0] for col in enzymes)):
         y_fit_data = y_fit_data[mask]
 
         # Initial guesses for sigmoid parameters
-        L_guess = max(ydata)
+        L_guess = np.nanmax(ydata_np)
         x0_guess = x_fit_data[np.argmax(np.gradient(y_fit_data))]
         k_guess = 2
-        b_guess = min(ydata)
+        b_guess = np.nanmin(ydata_np)
 
         p0 = [L_guess, x0_guess, k_guess, b_guess]
 
@@ -152,7 +156,7 @@ for enzyme in sorted(set(col.split("_")[0] for col in enzymes)):
     plt.legend(fontsize="small", loc = 'upper right')
     plt.grid(alpha=0.3)
     plt.tight_layout()
-    plt.savefig(f"Tm_plots/{enzyme}_Tm_plot.png", dpi=300)
+    plt.savefig(f"Tm_plots/{enzyme}_Tm_plot.pdf")
     plt.close()
 
     summary_rows.append({
