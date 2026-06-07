@@ -159,33 +159,33 @@ EOF
 #    xtc="./md_fit_rep${i}.xtc"
 #    echo 25 25 | apptainer exec $GROMACS_CONTAINER gmx_mpi rms -s $tpr -f $xtc -n index.ndx -o rmsd_tim_barrel_backbone_rep${i}.xvg -tu ns
 #done
-python $scripts/plotxvg_reps.py rmsd_tim_barrel_backbone_rep1.xvg rmsd_tim_barrel_backbone_rep2.xvg rmsd_tim_barrel_backbone_rep3.xvg
+#python $scripts/plotxvg_reps.py rmsd_tim_barrel_backbone_rep1.xvg rmsd_tim_barrel_backbone_rep2.xvg rmsd_tim_barrel_backbone_rep3.xvg
 # calculate RMSD of tail backbone over time, output in xvg format
 #for i in 1 2 3; do
 #    tpr="./rep${i}/md${i}.tpr"
 #    xtc="./md_fit_rep${i}.xtc"
 #    echo 28 28 | apptainer exec $GROMACS_CONTAINER gmx_mpi rms -s $tpr -f $xtc -n index.ndx -o rmsd_tail_backbone_rep${i}.xvg -tu ns
 #done
-python $scripts/plotxvg_reps.py rmsd_tail_backbone_rep1.xvg rmsd_tail_backbone_rep2.xvg rmsd_tail_backbone_rep3.xvg
+#python $scripts/plotxvg_reps.py rmsd_tail_backbone_rep1.xvg rmsd_tail_backbone_rep2.xvg rmsd_tail_backbone_rep3.xvg
 # calculate distance between Lys151 NZ and Arg212 OH over time, output in xvg format
 #for i in 1 2 3; do
 #    tpr="./rep${i}/md${i}.tpr"
 #    xtc="./md_fit_rep${i}.xtc"
 #    apptainer exec $GROMACS_CONTAINER gmx_mpi distance -s $tpr -f $xtc -n index.ndx -oall dist_k151_r212_rep${i}.xvg -tu ns -select 'com of group 29 plus com of group 30'
 #done
-python $scripts/plotxvg_reps.py dist_k151_r212_rep1.xvg dist_k151_r212_rep2.xvg dist_k151_r212_rep3.xvg
+#python $scripts/plotxvg_reps.py dist_k151_r212_rep1.xvg dist_k151_r212_rep2.xvg dist_k151_r212_rep3.xvg
 # histogram of the distance between Lys151 NZ and Arg212 OH with bin width of 0.2 nm, output in xvg format
 #for i in 1 2 3; do
 #    apptainer exec $GROMACS_CONTAINER gmx_mpi analyze -f dist_k151_r212_rep${i}.xvg -dist dist_k151_r212_hist_rep${i}.xvg -bw 0.2
 #done
-python $scripts/plotxvg_hist_reps.py dist_k151_r212_hist_rep1.xvg dist_k151_r212_hist_rep2.xvg dist_k151_r212_hist_rep3.xvg
+#python $scripts/plotxvg_hist_reps.py dist_k151_r212_hist_rep1.xvg dist_k151_r212_hist_rep2.xvg dist_k151_r212_hist_rep3.xvg
 # RSMF of CA atoms of the whole protein, output in xvg format
 #for i in 1 2 3; do
 #    tpr="./rep${i}/md${i}.tpr"
 #    xtc="./md_fit_rep${i}.xtc"
 #    echo 33 | apptainer exec $GROMACS_CONTAINER gmx_mpi rmsf -f md_fit_rep${i}.xtc -s $tpr -o rmsf_Ca_rep${i}.xvg -n index.ndx -b 20000 -res  # start at 20 ns (time in ps)
 #done
-python $scripts/plot_RMSF_red_Cb_reps.py rmsf_Ca_rep1.xvg rmsf_Ca_rep2.xvg rmsf_Ca_rep3.xvg
+#python $scripts/plot_RMSF_red_Cb_reps.py rmsf_Ca_rep1.xvg rmsf_Ca_rep2.xvg rmsf_Ca_rep3.xvg
 ### define frames with distance between Lys151 NZ and Arg212 < 0.6 nm as "closed" and >= 0.6 nm as "open", output in xvg format
 #for i in 1 2 3; do
 #    tpr="./rep${i}/md${i}.tpr"
@@ -208,10 +208,8 @@ for i in 1 2 3; do
     echo "Proton relay analysis for replicate ${i} complete. Copying results..."
     cp relay_candidates.csv relay_candidates.csv_rep${i}.csv
     rm relay_candidates.csv
-    cp proton_abstraction_per_frame.csv proton_abstraction_per_frame_rep${i}.csv
-    rm proton_abstraction_per_frame.csv
-    cp water_bridge_events.csv water_bridge_events_rep${i}.csv
-    rm water_bridge_events.csv
+    cp direct_candidates.csv direct_candidates.csv_rep${i}.csv
+    rm direct_candidates.csv
     echo "Results for replicate ${i} copied."
 done
 

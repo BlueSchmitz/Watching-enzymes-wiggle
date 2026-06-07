@@ -208,10 +208,8 @@ for i in 1 2 3; do
     echo "Proton relay analysis for replicate ${i} complete. Copying results..."
     cp relay_candidates.csv relay_candidates.csv_rep${i}.csv
     rm relay_candidates.csv
-    cp proton_abstraction_per_frame.csv proton_abstraction_per_frame_rep${i}.csv
-    rm proton_abstraction_per_frame.csv
-    cp water_bridge_events.csv water_bridge_events_rep${i}.csv
-    rm water_bridge_events.csv
+    cp direct_candidates.csv direct_candidates.csv_rep${i}.csv
+    rm direct_candidates.csv
     echo "Results for replicate ${i} copied."
 done
 
