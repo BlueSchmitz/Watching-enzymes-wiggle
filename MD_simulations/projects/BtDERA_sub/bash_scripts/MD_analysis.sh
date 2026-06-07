@@ -109,15 +109,6 @@ cd ./outputs/$output_dir/
 ### Analysis ###
 echo "============= Analysis of trajectory ============="
 
-# quick access
-rep1_tpr="./rep1/md1.tpr"
-rep2_tpr="./rep2/md2.tpr"
-rep3_tpr="./rep3/md3.tpr"
-
-rep1_xct="./rep1/md1.xtc"
-rep2_xct="./rep2/md2.xtc"
-rep3_xct="./rep3/md3.xtc"
-
 # make index file with default + custom groups
 apptainer exec $GROMACS_CONTAINER gmx_mpi make_ndx -f ./rep1/md1.tpr -o index.ndx << EOF
 1 | 13
@@ -213,7 +204,7 @@ for i in 1 2 3; do
     tpr="./rep${i}/md${i}.tpr"
     xtc="./md_fit_rep${i}.xtc"
     echo "Finding proton relay systems in replicate ${i}..."
-    python $scripts/find_proton_relay.py $tpr $xtc
+    python $scripts/scan_proton_relay_MD_speedup.py $tpr $xtc
     echo "Proton relay analysis for replicate ${i} complete. Copying results..."
     cp relay_candidates.csv relay_candidates.csv_rep${i}.csv
     rm relay_candidates.csv
@@ -226,7 +217,7 @@ done
 
 # PCA
 # Combine trajectories of all 3 replicates for PCA
-gmx trjcat -f md_fit_rep1.xtc md_fit_rep2.xtc md_fit_rep3.xtc -o concat.xtc
+apptainer exec $GROMACS_CONTAINER gmx_mpi trjcat -f md_fit_rep1.xtc md_fit_rep2.xtc md_fit_rep3.xtc -o concat.xtc
 tpr="./rep1/md1.tpr"
 # Compute covariance matrix
 echo 24 33 | apptainer exec $GROMACS_CONTAINER gmx_mpi covar -s $tpr -f concat.xtc -n index.ndx -b 20000 -o eigenvalues.xvg -v eigenvectors.trr
