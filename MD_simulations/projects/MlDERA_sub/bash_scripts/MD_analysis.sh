@@ -131,7 +131,7 @@ r 229 & a OD1
 name 30 Asp229_OH
 22 & a CA
 name 31 Protein_CA
-r 151 & a C5
+r 166 & a C5
 name 32 KPS_CA
 31 | 32
 name 33 Protein_KPS_CA
