@@ -433,10 +433,13 @@ for key, s in stats.items():
             "score": relay_occ * (s["relay_quality_sum"] / s["relay_frames"])
         })
 
-df_direct = pd.DataFrame(rows_direct).sort_values("score", ascending=False)
-df_relay = pd.DataFrame(rows_relay).sort_values("score", ascending=False)
-
-df_direct.to_csv("direct_candidates.csv", index=False)
-df_relay.to_csv("relay_candidates.csv", index=False)
+df_direct = pd.DataFrame(rows_direct)
+if not df_direct.empty:
+    df_direct = df_direct.sort_values("score", ascending=False)
+    df_direct.to_csv("direct_candidates.csv", index=False)
+df_relay = pd.DataFrame(rows_relay)
+if not df_relay.empty:
+    df_relay = df_relay.sort_values("score", ascending=False)
+    df_relay.to_csv("relay_candidates.csv", index=False)
 
 print(f"Found {len(df_direct)} direct candidates and {len(df_relay)} relay candidates.")

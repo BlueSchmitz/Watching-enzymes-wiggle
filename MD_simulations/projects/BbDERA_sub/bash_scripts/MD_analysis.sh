@@ -141,51 +141,51 @@ q
 EOF
 
 # center the trajectory on the whole protein and remove PBC artifacts, output in compact format
-for i in 1 2 3; do
-    tpr="./rep${i}/md${i}.tpr"
-    xtc="./rep${i}/md${i}.xtc"
-    echo 1 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s $tpr -f $xtc -o md_center_mol_rep${i}.xtc -center -pbc mol -ur compact
-done
+#for i in 1 2 3; do
+#    tpr="./rep${i}/md${i}.tpr"
+#    xtc="./rep${i}/md${i}.xtc"
+#    echo 1 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s $tpr -f $xtc -o md_center_mol_rep${i}.xtc -center -pbc mol -ur compact
+#done
 # fit trajectory to reference (TIM barrel backbone) to remove overall rotation and translation, keep whole system
-for i in 1 2 3; do
-    tpr="./rep${i}/md${i}.tpr"
-    xtc="./md_center_mol_rep${i}.xtc"
-    echo 25 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s $tpr -f $xtc -o md_fit_rep${i}.xtc -fit rot+trans -n index.ndx 
-    rm md_center_mol_rep${i}.xtc
-done
+#for i in 1 2 3; do
+#    tpr="./rep${i}/md${i}.tpr"
+#    xtc="./md_center_mol_rep${i}.xtc"
+#    echo 25 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s $tpr -f $xtc -o md_fit_rep${i}.xtc -fit rot+trans -n index.ndx 
+#    rm md_center_mol_rep${i}.xtc
+#done
 # calculate RMSD of TIM barrel backbone over time, output in xvg format
-for i in 1 2 3; do
-    tpr="./rep${i}/md${i}.tpr"
-    xtc="./md_fit_rep${i}.xtc"
-    echo 25 25 | apptainer exec $GROMACS_CONTAINER gmx_mpi rms -s $tpr -f $xtc -n index.ndx -o rmsd_tim_barrel_backbone_rep${i}.xvg -tu ns
-done
-python $scripts/plotxvg_reps.py rmsd_tim_barrel_backbone_rep1.xvg rmsd_tim_barrel_backbone_rep2.xvg rmsd_tim_barrel_backbone_rep3.xvg
+#for i in 1 2 3; do
+#    tpr="./rep${i}/md${i}.tpr"
+#    xtc="./md_fit_rep${i}.xtc"
+#    echo 25 25 | apptainer exec $GROMACS_CONTAINER gmx_mpi rms -s $tpr -f $xtc -n index.ndx -o rmsd_tim_barrel_backbone_rep${i}.xvg -tu ns
+#done
+#python $scripts/plotxvg_reps.py rmsd_tim_barrel_backbone_rep1.xvg rmsd_tim_barrel_backbone_rep2.xvg rmsd_tim_barrel_backbone_rep3.xvg
 # calculate RMSD of tail backbone over time, output in xvg format
-for i in 1 2 3; do
-    tpr="./rep${i}/md${i}.tpr"
-    xtc="./md_fit_rep${i}.xtc"
-    echo 28 28 | apptainer exec $GROMACS_CONTAINER gmx_mpi rms -s $tpr -f $xtc -n index.ndx -o rmsd_tail_backbone_rep${i}.xvg -tu ns
-done
-python $scripts/plotxvg_reps.py rmsd_tail_backbone_rep1.xvg rmsd_tail_backbone_rep2.xvg rmsd_tail_backbone_rep3.xvg
+#for i in 1 2 3; do
+#    tpr="./rep${i}/md${i}.tpr"
+#    xtc="./md_fit_rep${i}.xtc"
+#    echo 28 28 | apptainer exec $GROMACS_CONTAINER gmx_mpi rms -s $tpr -f $xtc -n index.ndx -o rmsd_tail_backbone_rep${i}.xvg -tu ns
+#done
+#python $scripts/plotxvg_reps.py rmsd_tail_backbone_rep1.xvg rmsd_tail_backbone_rep2.xvg rmsd_tail_backbone_rep3.xvg
 # calculate distance between Lys151 NZ and Tyr221 OH over time, output in xvg format
-for i in 1 2 3; do
-    tpr="./rep${i}/md${i}.tpr"
-    xtc="./md_fit_rep${i}.xtc"
-    apptainer exec $GROMACS_CONTAINER gmx_mpi distance -s $tpr -f $xtc -n index.ndx -oall dist_k151_y221_rep${i}.xvg -tu ns -select 'com of group 29 plus com of group 30'
-done
-python $scripts/plotxvg_reps.py dist_k151_y221_rep1.xvg dist_k151_y221_rep2.xvg dist_k151_y221_rep3.xvg
+#for i in 1 2 3; do
+#    tpr="./rep${i}/md${i}.tpr"
+#    xtc="./md_fit_rep${i}.xtc"
+#    apptainer exec $GROMACS_CONTAINER gmx_mpi distance -s $tpr -f $xtc -n index.ndx -oall dist_k151_y221_rep${i}.xvg -tu ns -select 'com of group 29 plus com of group 30'
+#done
+#python $scripts/plotxvg_reps.py dist_k151_y221_rep1.xvg dist_k151_y221_rep2.xvg dist_k151_y221_rep3.xvg
 # histogram of the distance between Lys151 NZ and Tyr221 OH with bin width of 0.2 nm, output in xvg format
-for i in 1 2 3; do
-    apptainer exec $GROMACS_CONTAINER gmx_mpi analyze -f dist_k151_y221_rep${i}.xvg -dist dist_k151_y221_hist_rep${i}.xvg -bw 0.2
-done
-python $scripts/plotxvg_hist_reps.py dist_k151_y221_hist_rep1.xvg dist_k151_y221_hist_rep2.xvg dist_k151_y221_hist_rep3.xvg
+#for i in 1 2 3; do
+#    apptainer exec $GROMACS_CONTAINER gmx_mpi analyze -f dist_k151_y221_rep${i}.xvg -dist dist_k151_y221_hist_rep${i}.xvg -bw 0.2
+#done
+#python $scripts/plotxvg_hist_reps.py dist_k151_y221_hist_rep1.xvg dist_k151_y221_hist_rep2.xvg dist_k151_y221_hist_rep3.xvg
 # RSMF of CA atoms of the whole protein, output in xvg format
-for i in 1 2 3; do
-    tpr="./rep${i}/md${i}.tpr"
-    xtc="./md_fit_rep${i}.xtc"
-    echo 33 | apptainer exec $GROMACS_CONTAINER gmx_mpi rmsf -f md_fit_rep${i}.xtc -s $tpr -o rmsf_Ca_rep${i}.xvg -n index.ndx -b 20000 -res  # start at 20 ns (time in ps)
-done
-python $scripts/plot_RMSF_red_Bb_reps.py rmsf_Ca_rep1.xvg rmsf_Ca_rep2.xvg rmsf_Ca_rep3.xvg
+#for i in 1 2 3; do
+#    tpr="./rep${i}/md${i}.tpr"
+#    xtc="./md_fit_rep${i}.xtc"
+#    echo 33 | apptainer exec $GROMACS_CONTAINER gmx_mpi rmsf -f md_fit_rep${i}.xtc -s $tpr -o rmsf_Ca_rep${i}.xvg -n index.ndx -b 20000 -res  # start at 20 ns (time in ps)
+#done
+#python $scripts/plot_RMSF_red_Bb_reps.py rmsf_Ca_rep1.xvg rmsf_Ca_rep2.xvg rmsf_Ca_rep3.xvg
 ### define frames with distance between Lys151 NZ and Tyr221 OH < 0.6 nm as "closed" and >= 0.6 nm as "open", output in xvg format
 #for i in 1 2 3; do
 #    tpr="./rep${i}/md${i}.tpr"
@@ -206,10 +206,14 @@ for i in 1 2 3; do
     echo "Finding proton relay systems in replicate ${i}..."
     python $scripts/scan_proton_relay_MD_speedup.py $tpr $xtc
     echo "Proton relay analysis for replicate ${i} complete. Copying results..."
-    cp relay_candidates.csv relay_candidates.csv_rep${i}.csv
-    rm relay_candidates.csv
-    cp direct_candidates.csv direct_candidates.csv_rep${i}.csv
-    rm direct_candidates.csv
+    if [[ -f relay_candidates.csv ]]; then
+        cp relay_candidates.csv relay_candidates.csv_rep${i}.csv
+        rm relay_candidates.csv
+    fi
+    if [[ -f direct_candidates.csv ]]; then
+        cp direct_candidates.csv direct_candidates.csv_rep${i}.csv
+        rm direct_candidates.csv
+    fi
     echo "Results for replicate ${i} copied."
 done
 
@@ -230,7 +234,7 @@ echo 24 33 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.tr
 echo 33 | apptainer exec $GROMACS_CONTAINER gmx_mpi anaeig -v eigenvectors.trr -f concat.xtc -s $tpr -n index.ndx -rmsf PC_rmsf_per_atom.xvg -first 1 -last 2
 #calculate distance between Lys151 NZ and Tyr221 OH for each frame of concatenated traj
 apptainer exec $GROMACS_CONTAINER gmx_mpi distance -s $tpr -f concat.xtc -n index.ndx -oall lys151_y221_distance.xvg -tu ns -select 'com of group 29 plus com of group 30'
-python $scripts/PCA_Ca.py proj.xvg eigenvalues.xvg lys151_y221_distance.xvg proj_20_pcs.xvg
+python $scripts/PCA_Bb.py proj.xvg eigenvalues.xvg lys151_y221_distance.xvg proj_20_pcs.xvg
 
 # How many frames in closed trajectory vs full?
 #for i in 1 2 3; do
