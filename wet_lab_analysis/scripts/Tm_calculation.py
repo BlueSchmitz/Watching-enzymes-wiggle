@@ -30,6 +30,20 @@ def sigmoid(x, L, x0, k, b):
     """
     return L / (1 + np.exp(-k * (x - x0))) + b
 
+def safe_name(name):
+    return (
+        str(name)
+        .replace("*", "star")
+        .replace("/", "_")
+        .replace("\\", "_")
+        .replace(":", "_")
+        .replace("?", "_")
+        .replace('"', "_")
+        .replace("<", "_")
+        .replace(">", "_")
+        .replace("|", "_")
+    )
+
 # Load Excel
 file_path = sys.argv[1]
 df = pd.read_excel(file_path)
@@ -76,6 +90,7 @@ for enzyme in sorted(set(col.split("_")[0] for col in enzymes)):
         ydata_np = ydata_np[mask]
 
         max_idx = np.argmax(ydata_np)
+        #start_idx = np.searchsorted(xdata_np, 55.0)
         x_fit_data = xdata_np[:max_idx + 10]
         y_fit_data = ydata_np[:max_idx + 10]
 
@@ -156,7 +171,8 @@ for enzyme in sorted(set(col.split("_")[0] for col in enzymes)):
     plt.legend(fontsize="small", loc = 'upper right')
     plt.grid(alpha=0.3)
     plt.tight_layout()
-    plt.savefig(f"Tm_plots/{enzyme}_Tm_plot.pdf")
+    safe_enz = safe_name(enzyme)
+    plt.savefig(f"Tm_plots/{safe_enz}_Tm_plot.pdf")
     plt.close()
 
     summary_rows.append({
@@ -171,7 +187,8 @@ for enzyme in sorted(set(col.split("_")[0] for col in enzymes)):
 summary_df = pd.DataFrame(summary_rows)
 fits_df = pd.DataFrame(fit_rows)
 
-output_name = f"Tm_summary_{'_'.join(summary_df['Enzyme'])}.xlsx"
+safe_enzymes = [safe_name(e) for e in summary_df["Enzyme"]]
+output_name = f"Tm_summary_{'_'.join(safe_enzymes)}.xlsx"
 with pd.ExcelWriter(output_name) as writer:
     summary_df.to_excel(writer, sheet_name="Enzyme_Summary", index=False)
     fits_df.to_excel(writer, sheet_name="Replicate_Fits", index=False)
