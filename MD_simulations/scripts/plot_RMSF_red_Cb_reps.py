@@ -13,17 +13,6 @@ if len(files) < 2 or "-h" in files or "--help" in files:
     print("Usage: python RMSF_plot.py rep1.xvg rep2.xvg rep3.xvg")
     sys.exit(1)
 
-# Residues to color red (e.g., DERA tail/active site regions)
-residues_to_scale = set().union(
-    range(1,11),
-    range(26,33),
-    range(77,85),
-    range(169,180),
-    range(198,205),
-    range(222,225),
-    range(233,239)
-)
-
 all_resid = None
 all_rmsf = []
 
@@ -72,12 +61,12 @@ plt.fill_between(
 
 # Highlight regions in red 
 highlight_ranges = [
-    (1, 5),
-    (11, 16),
-    (62, 68),
-    (152, 161),
-    (181, 186),
-    (204, 211)
+    (1, 6),
+    (11, 17),
+    (62, 69),
+    (152, 162),
+    (181, 187),
+    (204, 212)
 ]
 
 for start_res, end_res in highlight_ranges:
