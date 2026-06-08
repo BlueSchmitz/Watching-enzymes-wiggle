@@ -1,7 +1,7 @@
 #!/bin/bash  
 
 #SBATCH -J BtDERA_relay_analysis
-#SBATCH -t 01:00:00
+#SBATCH -t 02:00:00
 #SBATCH -p rome
 #SBATCH -N 1
 #SBATCH --ntasks=16
@@ -108,6 +108,6 @@ cd ./outputs/$output_dir/
 
 ### Analysis ###
 echo "============= Find proton relay systems ============="
-python $scripts/scan_proton_relay_MD_speedup.py ./rep1/md1.tpr md_fit_rep1.xtc
+python $scripts/analyse_proton_candidates.py ./rep1/md1.tpr md_fit_rep1.xtc direct_candidates_rep1.csv relay_candidates_rep1.csv
 
 echo "Analysis complete. Results will be copied back to home directory."
