@@ -32,6 +32,10 @@ pdb=$TMPDIR/MD_simulations/projects/$project_dir/inputs/*.pdb
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 export OMP_NUM_TASKS=$SLURM_NTASKS
 
+# Create temporary directory on scratch for this job
+tmpdir=$(mktemp -d /gpfs/scratch1/shared/rleveson/Blue/tmp.XXXXXX)
+mkdir -p "$tmpdir/MD_simulations/projects/"
+
 ### Load modules ###
 module load 2023
 module load matplotlib/3.7.2-gfbf-2023a
