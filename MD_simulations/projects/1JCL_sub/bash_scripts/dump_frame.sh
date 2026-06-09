@@ -69,12 +69,6 @@ cd ./outputs/$output_dir/
 
 # Downsample and save trajectory
 echo "============= Downsizing and Exporting trajectory ============="
-echo -e "q" | apptainer exec $GROMACS_CONTAINER gmx_mpi make_ndx -f ./rep3/md3.tpr -o index.ndx << EOF
-1 | 13
-name 22 Protein_KPS
-
-q
-EOF
 # downsample trajectory 
 #echo 1 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s md.tpr -f md.xtc -o md_center_mol.xtc -center -pbc mol -ur compact
 # fit trajectory to reference (TIM barrel backbone) to remove overall rotation and translation, keep whole system
@@ -84,6 +78,6 @@ EOF
 #echo "Trajectory saved as md_1000.xtc"
 
 # extract closed conformations
-echo -e "22\n0" | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_closed_rep3.xtc -s ./rep3/md3.tpr -o frame_closed.pdb -n index.ndx -dump 35000
+echo -e "0\n0" | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_closed_rep3.xtc -s ./rep3/md3.tpr -o frame_closed.pdb -n index.ndx -dump 35000
 
 apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/classical_MD.mdp -c frame_closed.pdb -p ./rep3/topol_pro.top -n index.ndx -o closed.tpr
