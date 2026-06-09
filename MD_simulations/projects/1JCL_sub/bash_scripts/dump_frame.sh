@@ -32,34 +32,36 @@ pdb=$TMPDIR/MD_simulations/projects/$project_dir/inputs/*.pdb
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 export OMP_NUM_TASKS=$SLURM_NTASKS
 
-### Copy project to scratch ###
-echo "=== Copying project to scratch ==="
-cp -r $HOME/Blue/Watching-enzymes-wiggle/MD_simulations/ "$TMPDIR"
-cd $TMPDIR/MD_simulations/projects/$project_dir
-
 ### Load modules ###
 module load 2023
 module load matplotlib/3.7.2-gfbf-2023a
 module list
 
-### Prepare output directory ###
-mkdir -p ./outputs/$output_dir
-cd ./outputs/$output_dir
+### Copy project to scratch ###
+echo "=== Copying project to scratch ==="
+cp -r /gpfs/work1/0/prjs2080/$project_dir "$tmpdir/MD_simulations/projects/"
+cd $tmpdir/MD_simulations/projects/$project_dir
 
 # Function to copy back results when error occurs and before the script exits
 function copy_back_results {
     set +e +u # Disable exit on error for this function
-    echo "=== Copying results back to home at $(date). ==="
-    if [[ -d "$TMPDIR/MD_simulations/projects/$project_dir/outputs/$output_dir" ]]; then
+    echo "=== Copying results back to project folder at $(date). ==="
+    if [[ -d "$tmpdir/MD_simulations/projects/$project_dir/outputs/$output_dir" ]]; then
         rsync -av --partial --inplace \
-          "$TMPDIR/MD_simulations/projects/$project_dir/outputs/$output_dir/" \
-          "$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/$project_dir/outputs/$output_dir/"
+          "$tmpdir/MD_simulations/projects/$project_dir/outputs/$output_dir/" \
+          "/gpfs/work1/0/prjs2080/$project_dir/outputs/$output_dir/"
         echo "=== Copy complete at $(date) ==="
     else
         echo "Nothing to copy back (outputs directory not found)"
     fi
+    # Clean up temporary directory
+    rm -rf "$tmpdir"
+    echo "=== Temporary directory cleaned up at $(date). ==="
 }
 trap copy_back_results EXIT
+
+mkdir -p ./outputs/$output_dir
+cd ./outputs/$output_dir/
 
 # Downsample and save trajectory
 echo "============= Downsizing and Exporting trajectory ============="
@@ -70,12 +72,12 @@ name 22 Protein_KPS
 q
 EOF
 # downsample trajectory 
-echo 1 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s md.tpr -f md.xtc -o md_center_mol.xtc -center -pbc mol -ur compact
+#echo 1 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s md.tpr -f md.xtc -o md_center_mol.xtc -center -pbc mol -ur compact
 # fit trajectory to reference (TIM barrel backbone) to remove overall rotation and translation, keep whole system
-echo 4 22 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s md.tpr -f md_center_mol.xtc -o md_fit.xtc -fit rot+trans -n index.ndx
-rm md_center_mol.xtc
+#echo 4 22 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s md.tpr -f md_center_mol.xtc -o md_fit.xtc -fit rot+trans -n index.ndx
+#rm md_center_mol.xtc
 #echo -e "1\n0" | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_fit.xtc -s topol.tpr -n index.ndx -o md_1000.xtc -dt 1000
 #echo "Trajectory saved as md_1000.xtc"
 
 # extract closed conformations
-echo -e "22\n0" | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_fit.xtc -s md.tpr -o frame1.pdb -n index.ndx -dump 1
+echo -e "22\n0" | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_closed_rep3.xtc -s ./rep3/md3.tpr -o frame_closed.pdb -n index.ndx -dump 1
