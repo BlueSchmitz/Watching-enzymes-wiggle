@@ -220,9 +220,9 @@ EOF
 # Find proton relay systems
 tpr="./rep3/md3.tpr"
 xtc="./md_fit_rep3.xtc"
-echo "Finding proton relay systems in replicate ${i}..."
+echo "Finding proton relay systems in replicate 3..."
 python $scripts/scan_proton_relay_MD_speedup.py $tpr $xtc
-echo "Proton relay analysis for replicate ${i} complete. Copying results..."
+echo "Proton relay analysis for replicate 3 complete. Copying results..."
 if [[ -f relay_candidates.csv ]]; then
     cp relay_candidates.csv relay_candidates.csv_rep3.csv
     rm relay_candidates.csv
