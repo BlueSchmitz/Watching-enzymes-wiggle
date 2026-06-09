@@ -2,6 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 import os
+import glob
 
 plt.rcParams['font.family'] = 'Arial'
 plt.rcParams['font.size'] = 10
@@ -10,10 +11,13 @@ cmap = plt.get_cmap("viridis")
 
 
 dfs = []
+files = sorted(glob.glob("relay_geometry_*.csv"))
+if len(files) == 0:
+    raise FileNotFoundError("No relay_geometry_*.csv files found.")
 
-for rep in range(3):
+for rep, file in enumerate(files):
 
-    df = pd.read_csv(f"relay_geometry_{rep}.csv")
+    df = pd.read_csv(file)
 
     df["replicate"] = rep
 
@@ -25,9 +29,15 @@ for rep in range(3):
     )
 
     dfs.append(df)  
+print(f"Loaded {len(dfs)} replicate(s)")
 
 for rep, df in enumerate(dfs):
     df["frame_global"] = df["frame"] + rep * 100000  
+    df["water_uid"] = (
+        df["replicate"].astype(str)
+        + "_"
+        + df["water_resid"].astype(str)
+    )
 
 df_full = pd.concat(dfs, ignore_index=True)
 
@@ -125,11 +135,6 @@ for pair, g in df_full.groupby("pair"):
 
     # lifetime per water per pair
     water_stats = []
-    df["water_uid"] = (
-        df["replicate"].astype(str)
-        + "_"
-        + df["water_resid"].astype(str)
-    )
     for water, wdf in g.groupby("water_uid"):
         lifetimes = get_lifetimes(wdf["frame"])
         if len(lifetimes) == 0:
@@ -177,13 +182,15 @@ all_lifetimes = []
 labels = []
 
 for pair, g in groups:
-    lt_frames = get_lifetimes(g["frame"])
+    lt_frames = get_lifetimes(g["frame_global"])
     if len(lt_frames):
         lt_ps = np.array(lt_frames) * 2 # convert to ps
         all_lifetimes.append(lt_ps)
         labels.append(pair)
 
-max_lt = max(max(x) for x in all_lifetimes)
+if len(all_lifetimes):
+    max_lt = max(max(x) for x in all_lifetimes)
+
 bins = np.arange(1, max_lt + 2) - 0.5
 
 colors = plt.cm.viridis(
@@ -249,21 +256,6 @@ plt.tight_layout()
 plt.savefig("mean_lifetime_relay.pdf")
 plt.close()
 
-plt.figure(figsize=(5,4))
-plt.hist(
-    lifetimes_ps,
-    bins=np.arange(
-        1,
-        max(lifetimes_ps)+2
-    ) - 0.5
-)
-plt.xlabel("Lifetime (ps)")
-plt.ylabel("Count")
-plt.title(pair)
-plt.tight_layout()
-plt.savefig(f"./{pair}/{pair}_lifetimes_relay.pdf")
-plt.close()
-
 ##################    
 # plot occupancy bar chart for all pairs
 occ_data = []
@@ -291,6 +283,8 @@ occ_summary = (
     .agg(["mean","std"])
     .reset_index()
 )
+occ_summary["std"] = occ_summary["std"].fillna(0)
+lifetime_summary["std"] = lifetime_summary["std"].fillna(0)
 
 plt.figure(figsize=(5, 4))
 plt.bar(
@@ -330,6 +324,7 @@ entropy_summary = (
     .agg(["mean","std"])
     .reset_index()
 )
+entropy_summary["std"] = entropy_summary["std"].fillna(0)
 entropy_summary.to_csv("water_entropy_per_pair.csv", index=False)
 
 # entropy barplot
@@ -355,6 +350,7 @@ entropy_norm_summary = (
     .agg(["mean","std"])
     .reset_index()
 )
+entropy_norm_summary["std"] = entropy_norm_summary["std"].fillna(0)
 plt.figure(figsize=(5,4))
 entropy_norm_summary = entropy_norm_summary.sort_values("mean")
 plt.bar(
