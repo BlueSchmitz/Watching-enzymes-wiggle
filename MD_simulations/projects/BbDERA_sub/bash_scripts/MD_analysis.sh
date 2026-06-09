@@ -228,7 +228,7 @@ if [[ -f relay_candidates.csv ]]; then
     rm relay_candidates.csv
 fi
 if [[ -f direct_candidates.csv ]]; then
-    cp direct_candidates.csv direct_candidates.csv_rep${i}.csv
+    cp direct_candidates.csv direct_candidates.csv_rep3.csv
     rm direct_candidates.csv
 fi
 echo "Results for replicate 3 copied."
