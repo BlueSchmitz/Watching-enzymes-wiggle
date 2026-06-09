@@ -25,9 +25,9 @@ export GROMACS_CONTAINER=$HOME/Blue/software/apptainer_2021/gromacs_plumed.sif
 export PDB2PQR_CONTAINER=$HOME/Blue/software/apptainer_pdb2pqr/pdb2pqr.sif
 export PLUMED_CONTAINER=$HOME/Blue/software/apptainer_plumed/plumed.sif
 
-mdp=$HOME/Blue/Watching-enzymes_wiggle/MD_simulations/mdp_templates
-scripts=$HOME/Blue/Watching-enzymes_wiggle/MD_simulations/scripts
-pdb=$HOME/Blue/Watching-enzymes_wiggle/MD_simulations/projects/$project_dir/inputs/*.pdb
+mdp=$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/mdp_templates
+scripts=$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/scripts
+pdb=$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/$project_dir/inputs/*.pdb
 
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 export OMP_NUM_TASKS=$SLURM_NTASKS
