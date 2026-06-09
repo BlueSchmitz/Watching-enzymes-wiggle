@@ -17,7 +17,7 @@ set -o errtrace
 
 ### Project-specific settings ###
 project_dir=1JCL_sub
-output_dir=7_simple_MD2
+output_dir=7_simple_MD
 pH=7
 
 export GMXLIB=$TMPDIR/MD_simulations/force_fields
