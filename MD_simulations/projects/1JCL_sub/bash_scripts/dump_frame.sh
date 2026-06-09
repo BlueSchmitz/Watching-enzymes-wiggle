@@ -25,9 +25,9 @@ export GROMACS_CONTAINER=$HOME/Blue/software/apptainer_2021/gromacs_plumed.sif
 export PDB2PQR_CONTAINER=$HOME/Blue/software/apptainer_pdb2pqr/pdb2pqr.sif
 export PLUMED_CONTAINER=$HOME/Blue/software/apptainer_plumed/plumed.sif
 
-mdp=$TMPDIR/MD_simulations/mdp_templates
-scripts=$TMPDIR/MD_simulations/scripts
-pdb=$TMPDIR/MD_simulations/projects/$project_dir/inputs/*.pdb
+mdp=$HOME/MD_simulations/mdp_templates
+scripts=$HOME/MD_simulations/scripts
+pdb=$HOME/MD_simulations/projects/$project_dir/inputs/*.pdb
 
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 export OMP_NUM_TASKS=$SLURM_NTASKS
@@ -84,6 +84,6 @@ EOF
 #echo "Trajectory saved as md_1000.xtc"
 
 # extract closed conformations
-echo -e "22\n0" | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_closed_rep3.xtc -s ./rep3/md3.tpr -o frame_closed.pdb -n index.ndx -dump 1
+echo -e "22\n0" | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_closed_rep3.xtc -s ./rep3/md3.tpr -o frame_closed.pdb -n index.ndx -dump 35000
 
 apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/classical_MD.mdp -c frame_closed.pdb -p ./rep3/topol_pro.top -n index.ndx -o closed.tpr
