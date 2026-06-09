@@ -69,7 +69,7 @@ cd ./outputs/$output_dir/
 
 # Downsample and save trajectory
 echo "============= Downsizing and Exporting trajectory ============="
-echo -e "q" | apptainer exec $GROMACS_CONTAINER gmx_mpi make_ndx -f md.tpr -o index.ndx << EOF
+echo -e "q" | apptainer exec $GROMACS_CONTAINER gmx_mpi make_ndx -f ./rep3/md3.tpr -o index.ndx << EOF
 1 | 13
 name 22 Protein_KPS
 
@@ -86,4 +86,4 @@ EOF
 # extract closed conformations
 echo -e "22\n0" | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_closed_rep3.xtc -s ./rep3/md3.tpr -o frame_closed.pdb -n index.ndx -dump 1
 
-apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f md_closed_rep3.mdp -c frame_closed.pdb -p ./rep3/topol_pro.top -n index.ndx -o closed.tpr
+apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/classical_MD.mdp -c frame_closed.pdb -p ./rep3/topol_pro.top -n index.ndx -o closed.tpr
