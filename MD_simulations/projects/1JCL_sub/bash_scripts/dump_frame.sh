@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH -J EcDERA_dump_frame
-#SBATCH -t 00:10:00
+#SBATCH -t 10:00:00
 #SBATCH -p rome
 #SBATCH -N 1
 #SBATCH -n 8
@@ -17,7 +17,7 @@ set -o errtrace
 
 ### Project-specific settings ###
 project_dir=EcDERA_sub
-output_dir=7_simple_MD2
+output_dir=7_simple_MD
 pH=7
 
 export GMXLIB=$TMPDIR/MD_simulations/force_fields
@@ -78,26 +78,26 @@ echo "============= Downsizing and Exporting trajectory ============="
 #echo "Trajectory saved as md_1000.xtc"
 
 # extract closed conformations
-echo -e "0\n0" | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_closed_rep3.xtc -s ./rep3/md3.tpr -o closed_start.gro -n index.ndx -dump 9000
+#echo -e "0\n0" | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_closed_rep3.xtc -s ./rep3/md3.tpr -o closed_start.gro -n index.ndx -dump 9000
 
 ### 3 Energy minimization ###
-#apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/minim.mdp -c closed_start.gro -p topol.top -o em.tpr
-#apptainer exec $GROMACS_CONTAINER mpirun -np $SLURM_NTASKS gmx_mpi mdrun -deffnm em
-#echo 10 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi energy -f em.edr -o potential.xvg # choose potential energy (10), 0 terminates input
-#python $scripts/plot_xvg.py potential.xvg
+apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/minim.mdp -c closed_start.gro -p topol.top -o em.tpr
+apptainer exec $GROMACS_CONTAINER mpirun -np $SLURM_NTASKS gmx_mpi mdrun -deffnm em
+echo 10 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi energy -f em.edr -o potential.xvg # choose potential energy (10), 0 terminates input
+python $scripts/plot_xvg.py potential.xvg
 
 ### 4 Equilibration ###
-#echo "============= Equilibration with GROMACS ============="
+echo "============= Equilibration with GROMACS ============="
 # NVT Equilibration
 # Restraint file
-#echo -e "q" | apptainer exec $GROMACS_CONTAINER gmx_mpi make_ndx -f em.tpr -o index.ndx << EOF
-#1 | 13
-#name 22 Protein_KPS
+echo -e "q" | apptainer exec $GROMACS_CONTAINER gmx_mpi make_ndx -f em.tpr -o index.ndx << EOF
+1 | 13
+name 22 Protein_KPS
 
-#q
-#EOF
+q
+EOF
 
-#echo 22 | apptainer exec $GROMACS_CONTAINER gmx_mpi genrestr -f em.gro -o posre.itp -n index.ndx
+echo 22 | apptainer exec $GROMACS_CONTAINER gmx_mpi genrestr -f em.gro -o posre.itp -n index.ndx
 
 ### include posre.itp in the topology file!
 
