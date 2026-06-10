@@ -108,15 +108,15 @@ cd ./outputs/$output_dir/
 
 ### Analysis ###
 echo "============= Find proton relay systems ============="
-for i in 1 2 3; do
-    tpr="./rep${i}/md${i}.tpr"
-    xtc="./md_fit_rep${i}.xtc"
-    python $scripts/scan_proton_relay_MD_speedup.py $tpr $xtc
-    cp relay_candidates.csv relay_candidates_rep${i}.csv
-    rm relay_candidates.csv
-    cp direct_candidates.csv direct_candidates_rep${i}.csv
-    rm direct_candidates.csv
-done
+#for i in 1 2 3; do
+#    tpr="./rep${i}/md${i}.tpr"
+#    xtc="./md_fit_rep${i}.xtc"
+#    python $scripts/scan_proton_relay_MD_speedup.py $tpr $xtc
+#    cp relay_candidates.csv relay_candidates_rep${i}.csv
+#    rm relay_candidates.csv
+#    cp direct_candidates.csv direct_candidates_rep${i}.csv
+#    rm direct_candidates.csv
+#done
 
 for i in 1 2 3; do
     echo "Analyzing rep$i..."
