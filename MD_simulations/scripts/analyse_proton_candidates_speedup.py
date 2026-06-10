@@ -225,7 +225,11 @@ for ts in tqdm(u.trajectory, total=n_frames):
             (ang_HOwA[idx] - HOwA_ANGLE_CUTOFF) / (180.0 - HOwA_ANGLE_CUTOFF)
         )
 
-        quality = np.clip(dist_score, 0, 1) + np.clip(angle_score, 0, 1)
+        # Each group has 2 terms, so divide by 2 to get a [0,1] score
+        dist_score = np.clip(dist_score / 2.0, 0, 1)
+        angle_score = np.clip(angle_score / 2.0, 0, 1)
+
+        quality = 0.4 * dist_score + 0.6 * angle_score
 
         best = idx[np.argmax(quality)]
 
