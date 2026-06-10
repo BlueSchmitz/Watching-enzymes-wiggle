@@ -10,9 +10,9 @@ plt.rcParams['pdf.fonttype'] = 42
 cmap = plt.get_cmap("viridis")
 
 dfs = []
-files = sorted(glob.glob("relay_geometry_*.csv"))
+files = sorted(glob.glob("direct_geometry_*.csv"))
 if len(files) == 0:
-    raise FileNotFoundError("No relay_geometry_*.csv files found.")
+    raise FileNotFoundError("No direct_geometry_*.csv files found.")
 
 for rep, file in enumerate(files):
 
