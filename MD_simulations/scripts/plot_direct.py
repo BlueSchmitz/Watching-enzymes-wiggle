@@ -1,33 +1,39 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+import glob
+import os
 
 plt.rcParams['font.family'] = 'Arial'
 plt.rcParams['font.size'] = 10
 plt.rcParams['pdf.fonttype'] = 42
 cmap = plt.get_cmap("viridis")
 
-dfs = {}
-for i in range(3):
-    dfs[i] = pd.read_csv(f"direct_geometry_rep{i}.csv")
+dfs = []
+files = sorted(glob.glob("relay_geometry_*.csv"))
+if len(files) == 0:
+    raise FileNotFoundError("No relay_geometry_*.csv files found.")
 
-df_full = pd.concat([dfs[0], dfs[1], dfs[2]], ignore_index=True)
+for rep, file in enumerate(files):
 
-# Unique identifier for each acceptor-proton pair
-df_full["pair"] = (
-    df_full["resname"] + "_" +
-    df_full["resid"].astype(str) + "_" +
-    df_full["atom"] + "_" +
-    df_full["hydrogen"]
-)
+    df = pd.read_csv(file)
 
-for df in dfs:
+    df["replicate"] = rep
+
     df["pair"] = (
         df["resname"] + "_"
         + df["resid"].astype(str) + "_"
         + df["atom"] + "_"
         + df["hydrogen"]
     )
+
+    dfs.append(df)  
+
+print(f"Loaded {len(dfs)} replicate(s)")
+df_full = pd.concat(dfs, ignore_index=True)
+
+for pair in df_full["pair"].unique():
+    os.makedirs(pair, exist_ok=True)
 
 print(df_full["pair"].unique())
 
@@ -52,8 +58,8 @@ def get_lifetimes(boolean_series):
     return lifetimes
 
 # loop through all pairs and plot distance, angle, free energy landscape, and occupancy
-for i in range(4):
-    for pair, g in dfs[i].groupby("pair"):
+for rep, df in enumerate(dfs):
+    for pair, g in df.groupby("pair"):
 
         plt.figure(figsize=(5,4))
         plt.scatter(g["time_ps"], g["distance_HA"], s=5, alpha=0.7, rasterized=True)
@@ -61,7 +67,7 @@ for i in range(4):
         plt.ylabel("H-A distance (Å)")
         plt.title(pair)
         plt.tight_layout()
-        plt.savefig(f"./rep{i}/{pair}_distance.pdf")
+        plt.savefig(f"./{rep}/{pair}_distance.pdf")
         plt.close()
 
         plt.figure(figsize=(5,4))
@@ -70,7 +76,7 @@ for i in range(4):
         plt.ylabel("C2-H-A Angle (deg)")
         plt.title(pair)
         plt.tight_layout()
-        plt.savefig(f"./rep{i}/{pair}_angle.pdf")
+        plt.savefig(f"./{rep}/{pair}_angle.pdf")
         plt.close()
 
         lifetimes = get_lifetimes(g["within_geometry"])
@@ -89,7 +95,7 @@ for i in range(4):
         plt.ylabel("Count")
         plt.title(pair)
         plt.tight_layout()
-        plt.savefig(f"./rep{i}/{pair}_lifetimes.pdf")
+        plt.savefig(f"./{rep}/{pair}_lifetimes.pdf")
         plt.close()
 
 
