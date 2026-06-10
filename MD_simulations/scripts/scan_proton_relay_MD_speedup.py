@@ -109,7 +109,8 @@ acceptor_sel = (
     "(resname TYR and name OH) or "
     "(resname CYS and name SG) or "
     "(resname SER and name OG) or "
-    "(resname THR and name OG1)"
+    "(resname THR and name OG1) or"
+    "(resname LYS and name NZ)"
 )
 
 acceptors = u.select_atoms(
