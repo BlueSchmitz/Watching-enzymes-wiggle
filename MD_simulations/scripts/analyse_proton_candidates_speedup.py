@@ -144,7 +144,7 @@ for ts in tqdm(u.trajectory, total=n_frames):
             "angle_CHA": ang,
             "within_geometry": bool(
                 (d < DIRECT_DIST_CUTOFF) &
-                (ang < DIRECT_ANGLE_CUTOFF)
+                (ang > DIRECT_ANGLE_CUTOFF)
                 )
             })
 
