@@ -107,6 +107,7 @@ function copy_back_results {
 trap copy_back_results EXIT
 
 mkdir -p ./outputs/$output_dir
+cd ./outputs/$output_dir
 
 ### Simple MD production run ###
 echo "============= Simple MD production run with GROMACS ============="
