@@ -316,40 +316,60 @@ plt.tight_layout()
 plt.savefig("occupancy_relay.pdf")
 plt.close()
 
-# Calculate entropy of waters per A-H pair
 entropy_data = []
+
 for rep, df in enumerate(dfs):
+
     for pair, g in df.groupby("pair"):
+
         counts = g["water_resid"].value_counts()
+
         p_i = counts / counts.sum()
-        S = -(p_i*np.log(p_i)).sum()
+
+        # Shannon entropy
+        S = -(p_i * np.log(p_i)).sum()
+
+        # normalized entropy
         N = len(p_i)
-        if N > 1:
-            S_norm = S / np.log(N)
-        else:
-            S_norm = 0
+        S_norm = S / np.log(N) if N > 1 else 0.0
+
         entropy_data.append({
             "replicate": rep,
             "pair": pair,
             "entropy": S,
             "norm_entropy": S_norm
         })
+
+entropy_df = pd.DataFrame(entropy_data)
+
+# Aggregate across replicates
 entropy_summary = (
-    pd.DataFrame(entropy_data)
-    .groupby("pair")["entropy"]
-    .agg(["mean","std"])
+    entropy_df.groupby("pair")["entropy"]
+    .agg(["mean", "std", "count"])
     .reset_index()
 )
-entropy_summary["std"] = entropy_summary["std"].fillna(0)
-entropy_summary.to_csv("water_entropy_per_pair.csv", index=False)
 
-# entropy barplot
-plt.figure(figsize=(5,4))
-entropy_summary = entropy_summary.sort_values("mean")
+entropy_norm_summary = (
+    entropy_df.groupby("pair")["norm_entropy"]
+    .agg(["mean", "std", "count"])
+    .reset_index()
+)
+
+# Missing values
+entropy_summary["std"] = entropy_summary["std"].fillna(0.0)
+entropy_norm_summary["std"] = entropy_norm_summary["std"].fillna(0.0)
+
+entropy_summary.to_csv("water_entropy_per_pair.csv", index=False)
+entropy_norm_summary.to_csv("water_norm_entropy_per_pair.csv", index=False)
+
+# Plot entropy
+entropy_summary_sorted = entropy_summary.sort_values("mean")
+
+plt.figure(figsize=(5, 4))
 plt.bar(
-    entropy_summary["pair"],
-    entropy_summary["mean"],
-    yerr=entropy_summary["std"],
+    entropy_summary_sorted["pair"],
+    entropy_summary_sorted["mean"],
+    yerr=entropy_summary_sorted["std"],
     capsize=3
 )
 plt.ylabel("Water entropy S")
@@ -359,20 +379,14 @@ plt.tight_layout()
 plt.savefig("water_entropy_barplot.pdf")
 plt.close()
 
-# entropy barplot
-entropy_norm_summary = (
-    pd.DataFrame(entropy_data)
-    .groupby("pair")["norm_entropy"]
-    .agg(["mean","std"])
-    .reset_index()
-)
-entropy_norm_summary["std"] = entropy_norm_summary["std"].fillna(0)
-plt.figure(figsize=(5,4))
-entropy_norm_summary = entropy_norm_summary.sort_values("mean")
+# normalized entropy
+entropy_norm_sorted = entropy_norm_summary.sort_values("mean")
+
+plt.figure(figsize=(5, 4))
 plt.bar(
-    entropy_norm_summary["pair"],
-    entropy_norm_summary["mean"],
-    yerr=entropy_norm_summary["std"],
+    entropy_norm_sorted["pair"],
+    entropy_norm_sorted["mean"],
+    yerr=entropy_norm_sorted["std"],
     capsize=3
 )
 plt.ylabel("Normalized water entropy S")
