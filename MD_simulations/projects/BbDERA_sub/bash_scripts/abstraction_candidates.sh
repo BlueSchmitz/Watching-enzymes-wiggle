@@ -107,14 +107,14 @@ mkdir -p ./outputs/$output_dir
 cd ./outputs/$output_dir/
 
 ### Analysis ###
-#echo "============= Find proton relay systems ============="
-#for i in 1 2 3; do
-#    echo "Analyzing rep$i..."
-#    python $scripts/analyse_proton_candidates_speedup.py ./rep$i/md$i.tpr ./md_fit_rep$i.xtc direct_candidates_rep$i.csv relay_candidates_rep$i.csv
-#    mv direct_geometry.csv direct_geometry_rep$i.csv
-#    mv relay_geometry.csv relay_geometry_rep$i.csv
-#done
-#echo "Analysis complete. Now plotting results."
+echo "============= Find proton relay systems ============="
+for i in 1 2 3; do
+    echo "Analyzing rep$i..."
+    python $scripts/analyse_proton_candidates_speedup.py ./rep$i/md$i.tpr ./md_fit_rep$i.xtc direct_candidates_rep$i.csv relay_candidates_rep$i.csv
+    mv direct_geometry.csv direct_geometry_rep$i.csv
+    mv relay_geometry.csv relay_geometry_rep$i.csv
+done
+echo "Analysis complete. Now plotting results."
 
 for i in 1 2 3; do
     echo "Plotting rep$i"
