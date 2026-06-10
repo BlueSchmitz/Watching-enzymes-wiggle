@@ -110,12 +110,7 @@ mkdir -p ./outputs/$output_dir
 
 ### Simple MD production run ###
 echo "============= Simple MD production run with GROMACS ============="
-cp ./outputs/4_equilibration/npt_5.gro ./outputs/$output_dir/npt_pro.gro
-cp ./outputs/4_equilibration/topol_5.top ./outputs/$output_dir/topol_pro.top
-cd ./outputs/$output_dir/
-# remove any line that includes the posre file from the topology file
-sed -i '/posre_5.itp/d' topol_pro.top
 # run simple MD production
-apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/classical_MD.mdp -c closed_start.gro -p topol_pro.top -o md1.tpr -maxwarn 1
+apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/classical_MD.mdp -c npt_pro.gro -p topol_pro.top -o md1.tpr -maxwarn 1
 apptainer exec $GROMACS_CONTAINER mpirun -np $SLURM_NTASKS gmx_mpi mdrun -deffnm md1 -cpt 15 -maxh 71 
 echo "Simple MD production run 1 finished."
