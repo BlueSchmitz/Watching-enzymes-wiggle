@@ -18,6 +18,8 @@ for rep, file in enumerate(files):
 
     df = pd.read_csv(file)
 
+    os.makedirs(str(rep), exist_ok=True)
+
     df["replicate"] = rep
 
     df["pair"] = (
