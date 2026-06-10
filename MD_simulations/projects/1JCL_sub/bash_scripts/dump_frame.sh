@@ -101,45 +101,45 @@ echo "============= Equilibration with GROMACS ============="
 
 ### include posre.itp in the topology file!
 
-apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/nvt.mdp -c em.gro -r em.gro -p topol.top -o nvt.tpr
-apptainer exec $GROMACS_CONTAINER mpirun -np $SLURM_NTASKS gmx_mpi mdrun -deffnm nvt -cpt 15
-echo 16 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi energy -f nvt.edr -o temperature.xvg # choose Temperature (16), 0 terminates input
-python $scripts/plot_xvg.py temperature.xvg
+#apptainer exec $GROMACS_CONTAINER gmx_mpi grompp -f $mdp/nvt.mdp -c em.gro -r em.gro -p topol.top -o nvt.tpr
+#apptainer exec $GROMACS_CONTAINER mpirun -np $SLURM_NTASKS gmx_mpi mdrun -deffnm nvt -cpt 15
+#echo 16 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi energy -f nvt.edr -o temperature.xvg # choose Temperature (16), 0 terminates input
+#python $scripts/plot_xvg.py temperature.xvg
 # Preparation for NPT Equilibration
 # Gradually reduce restraints from 1000 to 5 kJ mol−1 nm−2 by running 5 short NPT simulations of 500 ps each (5*500=2.5 ns)
-for i in 1000 500 250 100 5;
-do
+#for i in 1000 500 250 100 5;
+#do
   # Copy posre.itp 5 times and modify the force constant in each file
-  cp posre.itp posre_$i.itp
-  sed -i "s/\b1000\b/$i/g" posre_$i.itp # \b for whole word match
-  echo "Modified posre.itp to posre_$i.itp."
+#  cp posre.itp posre_$i.itp
+#  sed -i "s/\b1000\b/$i/g" posre_$i.itp # \b for whole word match
+#  echo "Modified posre.itp to posre_$i.itp."
   # Modify topol.top to include the correct posre file for each run
-  cp topol.top topol_$i.top
-  sed -i "s/posre.itp/posre_$i.itp/g" topol_$i.top
-  echo "Modified topol.top to topol_$i.top."
-done
+#  cp topol.top topol_$i.top
+#  sed -i "s/posre.itp/posre_$i.itp/g" topol_$i.top
+#  echo "Modified topol.top to topol_$i.top."
+#done
 
 ### fix NPT topol files 
 
 # NPT Equilibration
-#for i in 1000 500 250 100 5;
-#do
-#  echo "Running NPT equilibration with restraints = ${i}"
+for i in 1000 500 250 100 5;
+do
+  echo "Running NPT equilibration with restraints = ${i}"
 
-#  apptainer exec $GROMACS_CONTAINER gmx_mpi grompp \
-#             -f $mdp/npt.mdp \
-#             -c ${prev:-nvt.gro} \
-#             -r ${prev:-nvt.gro} \
-#             -p topol_${i}.top \
-#             -o npt_${i}.tpr \
-#              -maxwarn 1
+  apptainer exec $GROMACS_CONTAINER gmx_mpi grompp \
+             -f $mdp/npt.mdp \
+             -c ${prev:-nvt.gro} \
+             -r ${prev:-nvt.gro} \
+             -p topol_${i}.top \
+             -o npt_${i}.tpr \
+              -maxwarn 1
   # ${prev:-nvt.gro} ensures the first run starts from NVT output, then continues from the last .gro
-#  apptainer exec $GROMACS_CONTAINER mpirun -np $SLURM_NTASKS gmx_mpi mdrun -deffnm npt_${i} -cpt 15
-#  echo 18 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi energy -f npt_${i}.edr -o pressure_${i}.xvg # choose Pressure (18), 0 terminates input
-#  echo 24 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi energy -f npt_${i}.edr -o density_${i}.xvg # choose Density (24), 0 terminates input
-#  prev=npt_${i}.gro
-#done
-#python $scripts/plot_xvg.py pressure_*.xvg
-#python $scripts/plot_xvg.py density_*.xvg
+  apptainer exec $GROMACS_CONTAINER mpirun -np $SLURM_NTASKS gmx_mpi mdrun -deffnm npt_${i} -cpt 15
+  echo 18 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi energy -f npt_${i}.edr -o pressure_${i}.xvg # choose Pressure (18), 0 terminates input
+  echo 24 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi energy -f npt_${i}.edr -o density_${i}.xvg # choose Density (24), 0 terminates input
+  prev=npt_${i}.gro
+done
+python $scripts/plot_xvg.py pressure_*.xvg
+python $scripts/plot_xvg.py density_*.xvg
 
 echo "============= Setup completed successfully. ============="
