@@ -256,41 +256,57 @@ plt.tight_layout()
 plt.savefig("mean_lifetime_relay.pdf")
 plt.close()
 
-##################    
+
 # plot occupancy bar chart for all pairs
 occ_data = []
+n_data = []
 
 for rep, df in enumerate(dfs):
 
-    occ = (
-        df.groupby("pair")["frame"]
-        .nunique()
-        / 50000
-    )
+    # number of events per pair (k)
+    k = df.groupby("pair")["frame"].nunique()
 
-    for pair, value in occ.items():
+    # total frames per replicate (n)
+    n_frames = df["frame"].nunique()
 
+    for pair, k_val in k.items():
         occ_data.append({
             "replicate": rep,
             "pair": pair,
-            "occupancy": value
+            "k": k_val,
+            "n": n_frames
         })
 
 occ_df = pd.DataFrame(occ_data)
 
-occ_summary = (
-    occ_df.groupby("pair")["occupancy"]
-    .agg(["mean","std"])
-    .reset_index()
+occ_df["p"] = occ_df["k"] / occ_df["n"]
+
+# binomial variance per replicate
+occ_df["var"] = occ_df["p"] * (1 - occ_df["p"]) / occ_df["n"]
+
+# Pooled estimator
+pooled = occ_df.groupby("pair").agg(
+    k_total=("k", "sum"),
+    n_total=("n", "sum")
 )
-occ_summary["std"] = occ_summary["std"].fillna(0)
-lifetime_summary["std"] = lifetime_summary["std"].fillna(0)
+
+pooled["p"] = pooled["k_total"] / pooled["n_total"]
+pooled["std"] = np.sqrt(
+    pooled["p"] * (1 - pooled["p"]) / pooled["n_total"]
+)
+
+# replicate variability
+rep_stats = occ_df.groupby("pair")["p"].agg(["mean", "std"]).rename(
+    columns={"mean": "rep_mean", "std": "rep_std"}
+)
+
+summary = pooled.join(rep_stats)
 
 plt.figure(figsize=(5, 4))
 plt.bar(
-    occ_summary["pair"],
-    occ_summary["mean"]*100,
-    yerr=occ_summary["std"]*100,
+    summary.index,
+    summary["p"] * 100,
+    yerr=summary["std"] * 100,
     capsize=3
 )
 plt.ylabel("Occupancy (%)")

@@ -128,32 +128,39 @@ for pair, g in groups:
     plt.close()
     
 # plot occupancy bar chart
-occupancies = []
+occ_list = []
+n_list = []
 
 for rep, df in enumerate(dfs):
+    g = df.groupby("pair")["within_geometry"]
+    occ_list.append(g.mean())
+    n_list.append(g.count())
 
-    occ = (
-        df.groupby("pair")["within_geometry"]
-        .mean()
-        .rename(f"rep{rep}")
-    )
+occ_df = pd.concat(occ_list, axis=1)
+n_df   = pd.concat(n_list, axis=1)
 
-    occupancies.append(occ)
+# pooled estimator
+k_total = (occ_df * n_df).sum(axis=1)
+n_total = n_df.sum(axis=1)
 
-occ_df = pd.concat(occupancies, axis=1)
+occ_mean = k_total / n_total
 
-occ_mean = occ_df.mean(axis=1)
-occ_sd   = occ_df.std(axis=1, ddof=1)
+# binomial error
+occ_std_binom = np.sqrt(occ_mean * (1 - occ_mean) / n_total)
 
-plt.figure(figsize=(5, 4))
+# replicate variability
+occ_std_rep = occ_df.std(axis=1, ddof=1)
+
+plt.figure(figsize=(5,4))
 plt.bar(
     occ_mean.index,
-    occ_mean*100,
-    yerr=occ_sd*100,
+    occ_mean * 100,
+    yerr=occ_std_binom * 100,
     capsize=3
 )
 plt.ylabel("Occupancy (%)")
 plt.xlabel("A-H Pair")
+plt.xticks(rotation=45, ha="right")
 plt.tight_layout()
 plt.savefig("occupancy.pdf")
 plt.close()
