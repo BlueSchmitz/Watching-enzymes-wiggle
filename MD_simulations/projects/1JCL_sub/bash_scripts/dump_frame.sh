@@ -79,3 +79,4 @@ echo "============= Downsizing and Exporting trajectory ============="
 
 # extract closed conformations
 echo -e "0\n0" | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_closed_rep3.xtc -s ./rep3/md3.tpr -o closed_start.gro -n index.ndx -dump 35000
+apptainer exec $GROMACS_CONTAINER gmx_mpi editconf -f closed_start.gro -o check.pdb
