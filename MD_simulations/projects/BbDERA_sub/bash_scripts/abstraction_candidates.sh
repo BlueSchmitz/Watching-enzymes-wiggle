@@ -118,12 +118,17 @@ echo "============= Find proton relay systems ============="
 #    rm direct_candidates.csv
 #done
 
-for i in 1 2 3; do
-    echo "Analyzing rep$i..."
-    python $scripts/analyse_proton_candidates_speedup.py ./rep$i/md$i.tpr ./md_fit_rep$i.xtc direct_candidates_rep$i.csv relay_candidates_rep$i.csv
-    mv direct_geometry.csv direct_geometry_rep$i.csv
-    mv relay_geometry.csv relay_geometry_rep$i.csv
-done
+#for i in 1 2 3; do
+#    echo "Analyzing rep$i..."
+#    python $scripts/analyse_proton_candidates_speedup.py ./rep$i/md$i.tpr ./md_fit_rep$i.xtc direct_candidates_rep$i.csv relay_candidates_rep$i.csv
+#    mv direct_geometry.csv direct_geometry_rep$i.csv
+#    mv relay_geometry.csv relay_geometry_rep$i.csv
+#done
+
+python $scripts/analyse_proton_candidates_speedup.py ./rep3/md3.tpr ./md_fit_rep3.xtc direct_candidates_rep3.csv relay_candidates_rep2.csv
+mv direct_geometry.csv direct_geometry_rep3.csv
+rm relay_geometry.csv 
+
 echo "Analysis complete. Now plotting results."
 
 for i in 1 2 3; do
