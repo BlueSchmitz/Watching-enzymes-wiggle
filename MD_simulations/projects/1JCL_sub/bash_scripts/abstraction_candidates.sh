@@ -57,7 +57,7 @@ set -o errtrace
 
 ### Project-specific settings ###
 project_dir=EcDERA_sub
-output_dir=7_simple_MD
+output_dir=7_simple_MD2
 pH=7
 
 export GMXLIB=$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/force_fields
