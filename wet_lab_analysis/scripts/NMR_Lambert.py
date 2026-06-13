@@ -46,21 +46,35 @@ bounds = (
     [np.inf, np.inf]
 )
 
-dt = np.gradient(t)
-sigma = 1 / dt
-sigma = sigma / np.mean(sigma)
+#dt = np.gradient(t)
+#sigma = 1 / dt
+#sigma = sigma / np.mean(sigma)
 
 popt, pcov = curve_fit(
     model,
     t,
     Sobs,
     p0=p0,
-    sigma=sigma,
+    #sigma=sigma,
     absolute_sigma=False,
     bounds=bounds,
     maxfev=20000
 )
 Vmax_fit, Km_fit = popt
+
+corr = pcov[0,1] / np.sqrt(pcov[0,0]*pcov[1,1])
+print(corr)
+
+# Timescale diagnostics
+tS = (Km_fit + S0) / Vmax_fit
+tQ = (27 * Km_fit * S0) / (4 * Vmax_fit)
+
+ratio = tQ / tS
+
+print("\n--- Timescale diagnostics ---")
+print(f"tS = {tS:.4f} min")
+print(f"tQ = {tQ:.4f} min")
+print(f"tQ/tS = {ratio:.6e}")
 
 # Plot
 t_fit = np.linspace(t.min(), t.max(), 500)

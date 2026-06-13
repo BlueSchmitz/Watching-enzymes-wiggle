@@ -49,10 +49,10 @@ for line in f:
 f.close()
 
 # Plot x and y with labels.
-plt.figure(figsize=(5,4))
+plt.figure(figsize=(5,3))
 plt.scatter(x, y, s=3, alpha=0.5, linewidths=0, rasterized=True)
-plt.ylim(0, 5)
-plt.axhline(y=0.6, color='grey', linestyle='--', linewidth=2)
+plt.ylim(0, 0.8)
+#plt.axhline(y=0.6, color='grey', linestyle='--', linewidth=2)
 plt.xlabel(res_x.group(1))
 plt.ylabel(res_y.group(1))
 plt.tight_layout()

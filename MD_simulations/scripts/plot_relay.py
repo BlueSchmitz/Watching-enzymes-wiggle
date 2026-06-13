@@ -41,9 +41,6 @@ for rep, df in enumerate(dfs):
 
 df_full = pd.concat(dfs, ignore_index=True)
 
-for pair in df_full["pair"].unique():
-    os.makedirs(pair, exist_ok=True)
-
 print(df_full["pair"].unique())
 
 # helper function to extract lifetimes from a frame of events
@@ -78,7 +75,8 @@ for pair, g in df_full.groupby("pair"):
     plt.ylabel("Ow-A distance (Å)")
     plt.title(pair)
     plt.tight_layout()
-    plt.savefig(f"./{pair}/{pair}_distances_relay.pdf")
+    os.makedirs(f"./relay/{pair}", exist_ok=True)
+    plt.savefig(f"./relay/{pair}/{pair}_distances_relay.pdf")
     plt.close()
 
     plt.figure(figsize=(5,4))
@@ -88,7 +86,7 @@ for pair, g in df_full.groupby("pair"):
     plt.title(pair)
     plt.colorbar(label="Probability density")
     plt.tight_layout()
-    plt.savefig(f"./{pair}/{pair}_distances_relay_2d.pdf")
+    plt.savefig(f"./relay/{pair}/{pair}_distances_relay_2d.pdf")
     plt.close()
 
     plt.figure(figsize=(5,4))
@@ -97,7 +95,7 @@ for pair, g in df_full.groupby("pair"):
     plt.ylabel("H-Ow-A Angle (deg)")
     plt.title(pair)
     plt.tight_layout()
-    plt.savefig(f"./{pair}/{pair}_angle_relay.pdf")
+    plt.savefig(f"./relay/{pair}/{pair}_angle_relay.pdf")
     plt.close()
 
     plt.figure(figsize=(5,4))
@@ -107,7 +105,7 @@ for pair, g in df_full.groupby("pair"):
     plt.title(pair)
     plt.colorbar(label="Probability density")
     plt.tight_layout()
-    plt.savefig(f"./{pair}/{pair}_angle_relay_2d.pdf")
+    plt.savefig(f"./relay/{pair}/{pair}_angle_relay_2d.pdf")
     plt.close()
 
     # water probabilities
@@ -118,7 +116,7 @@ for pair, g in df_full.groupby("pair"):
         "probability": p_i.values
     })
     prob_df.to_csv(
-        f"./{pair}/{pair}_water_probabilities.csv",
+        f"./relay/{pair}/{pair}_water_probabilities.csv",
         index=False
     )
     plt.figure(figsize=(5,4))
@@ -130,7 +128,7 @@ for pair, g in df_full.groupby("pair"):
     plt.ylabel("Probability")
     plt.title(pair)
     plt.tight_layout()
-    plt.savefig(f"./{pair}/{pair}_water_probabilities.pdf")
+    plt.savefig(f"./relay/{pair}/{pair}_water_probabilities.pdf")
     plt.close()
 
     # lifetime per water per pair
@@ -149,7 +147,7 @@ for pair, g in df_full.groupby("pair"):
         })
     water_df = pd.DataFrame(water_stats)
     water_df.to_csv(
-        f"./{pair}/{pair}_water_statistics.csv",
+        f"./relay/{pair}/{pair}_water_statistics.csv",
         index=False
     )
     # plot lifetime and probability
@@ -171,8 +169,9 @@ for pair, g in df_full.groupby("pair"):
     ax2.set_ylabel("Mean lifetime (ps)")
     plt.legend()
     plt.title(pair)
+    plt.xticks(rotation=45, ha="right")
     plt.tight_layout()
-    plt.savefig(f"./{pair}/{pair}_water_prob_lifetime.pdf")
+    plt.savefig(f"./relay/{pair}/{pair}_water_prob_lifetime.pdf")
     plt.close()
 
 # Lifetimes for A-H pairs in stacked histograms
@@ -214,7 +213,7 @@ plt.xlabel("Lifetime (ps)")
 plt.ylabel("Probability density")
 plt.legend()
 plt.tight_layout()
-plt.savefig("lifetimes_histogram_stacked_relay.pdf")
+plt.savefig("./relay/lifetimes_histogram_stacked_relay.pdf")
 plt.close()
 
 # Lifetime of A-H pairs
@@ -253,9 +252,13 @@ plt.ylabel("Mean lifetime (ps)")
 plt.xlabel("A-H pair")
 plt.xticks(rotation=45, ha="right")
 plt.tight_layout()
-plt.savefig("mean_lifetime_relay.pdf")
+plt.savefig("./relay/mean_lifetime_relay.pdf")
 plt.close()
 
+lifetime_summary.to_csv(
+    "./relay/mean_lifetime_relay_summary.csv",
+    index=False
+)
 
 # plot occupancy bar chart for all pairs
 occ_data = []
@@ -267,7 +270,7 @@ for rep, df in enumerate(dfs):
     k = df.groupby("pair")["frame"].nunique()
 
     # total frames per replicate (n)
-    n_frames = df["frame"].nunique()
+    n_frames = 50000
 
     for pair, k_val in k.items():
         occ_data.append({
@@ -313,8 +316,13 @@ plt.ylabel("Occupancy (%)")
 plt.xlabel("A-H Pair")
 plt.xticks(rotation=45, ha="right")
 plt.tight_layout()
-plt.savefig("occupancy_relay.pdf")
+plt.savefig("./relay/occupancy_relay.pdf")
 plt.close()
+
+summary.reset_index().to_csv(
+    "./relay/occupancy_relay.csv",
+    index=False
+)
 
 entropy_data = []
 
@@ -359,8 +367,8 @@ entropy_norm_summary = (
 entropy_summary["std"] = entropy_summary["std"].fillna(0.0)
 entropy_norm_summary["std"] = entropy_norm_summary["std"].fillna(0.0)
 
-entropy_summary.to_csv("water_entropy_per_pair.csv", index=False)
-entropy_norm_summary.to_csv("water_norm_entropy_per_pair.csv", index=False)
+entropy_summary.to_csv("./relay/water_entropy_per_pair.csv", index=False)
+entropy_norm_summary.to_csv("./relay/water_norm_entropy_per_pair.csv", index=False)
 
 # Plot entropy
 entropy_summary_sorted = entropy_summary.sort_values("mean")
@@ -376,7 +384,7 @@ plt.ylabel("Water entropy S")
 plt.xlabel("A-H pair")
 plt.xticks(rotation=45, ha="right")
 plt.tight_layout()
-plt.savefig("water_entropy_barplot.pdf")
+plt.savefig("./relay/water_entropy_barplot.pdf")
 plt.close()
 
 # normalized entropy
@@ -393,5 +401,5 @@ plt.ylabel("Normalized water entropy S")
 plt.xlabel("A-H pair")
 plt.xticks(rotation=45, ha="right")
 plt.tight_layout()
-plt.savefig("water_norm_entropy_barplot.pdf")
+plt.savefig("./relay/water_norm_entropy_barplot.pdf")
 plt.close()

@@ -16,6 +16,10 @@ import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 import sys
 
+plt.rcParams['font.family'] = 'Arial'
+plt.rcParams['font.size'] = 10
+plt.rcParams['pdf.fonttype'] = 42
+
 # Load data from Excel
 file_name = sys.argv[1]
 sheet_name = 0  

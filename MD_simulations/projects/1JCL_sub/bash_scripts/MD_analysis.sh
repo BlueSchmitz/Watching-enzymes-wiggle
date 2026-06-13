@@ -140,51 +140,51 @@ q
 EOF
 
 # center the trajectory on the whole protein and remove PBC artifacts, output in compact format
-#for i in 1 2 3; do
-#    tpr="./rep${i}/md${i}.tpr"
-#    xtc="./rep${i}/md${i}.xtc"
-#    echo 1 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s $tpr -f $xtc -o md_center_mol_rep${i}.xtc -center -pbc mol -ur compact
-#done
+for i in 1 2 3; do
+    tpr="./rep${i}/md${i}.tpr"
+    xtc="./rep${i}/md${i}.xtc"
+    echo 1 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s $tpr -f $xtc -o md_center_mol_rep${i}.xtc -center -pbc mol -ur compact
+done
 # fit trajectory to reference (TIM barrel backbone) to remove overall rotation and translation, keep whole system
-#for i in 1 2 3; do
-#    tpr="./rep${i}/md${i}.tpr"
-#    xtc="./md_center_mol_rep${i}.xtc"
-#    echo 25 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s $tpr -f $xtc -o md_fit_rep${i}.xtc -fit rot+trans -n index.ndx 
-#    rm md_center_mol_rep${i}.xtc
-#done
+for i in 1 2 3; do
+    tpr="./rep${i}/md${i}.tpr"
+    xtc="./md_center_mol_rep${i}.xtc"
+    echo 25 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s $tpr -f $xtc -o md_fit_rep${i}.xtc -fit rot+trans -n index.ndx 
+    rm md_center_mol_rep${i}.xtc
+done
 # calculate RMSD of TIM barrel backbone over time, output in xvg format
-#for i in 1 2 3; do
-#    tpr="./rep${i}/md${i}.tpr"
-#    xtc="./md_fit_rep${i}.xtc"
-#    echo 25 25 | apptainer exec $GROMACS_CONTAINER gmx_mpi rms -s $tpr -f $xtc -n index.ndx -o rmsd_tim_barrel_backbone_rep${i}.xvg -tu ns
-#done
-#python $scripts/plotxvg_reps.py rmsd_tim_barrel_backbone_rep1.xvg rmsd_tim_barrel_backbone_rep2.xvg rmsd_tim_barrel_backbone_rep3.xvg
+for i in 1 2 3; do
+    tpr="./rep${i}/md${i}.tpr"
+    xtc="./md_fit_rep${i}.xtc"
+    echo 25 25 | apptainer exec $GROMACS_CONTAINER gmx_mpi rms -s $tpr -f $xtc -n index.ndx -o rmsd_tim_barrel_backbone_rep${i}.xvg -tu ns
+done
+python $scripts/plotxvg_reps.py rmsd_tim_barrel_backbone_rep1.xvg rmsd_tim_barrel_backbone_rep2.xvg rmsd_tim_barrel_backbone_rep3.xvg
 # calculate RMSD of tail backbone over time, output in xvg format
-#for i in 1 2 3; do
-#    tpr="./rep${i}/md${i}.tpr"
-#    xtc="./md_fit_rep${i}.xtc"
-#    echo 28 28 | apptainer exec $GROMACS_CONTAINER gmx_mpi rms -s $tpr -f $xtc -n index.ndx -o rmsd_tail_backbone_rep${i}.xvg -tu ns
-#done
-#python $scripts/plotxvg_reps.py rmsd_tail_backbone_rep1.xvg rmsd_tail_backbone_rep2.xvg rmsd_tail_backbone_rep3.xvg
+for i in 1 2 3; do
+    tpr="./rep${i}/md${i}.tpr"
+    xtc="./md_fit_rep${i}.xtc"
+    echo 28 28 | apptainer exec $GROMACS_CONTAINER gmx_mpi rms -s $tpr -f $xtc -n index.ndx -o rmsd_tail_backbone_rep${i}.xvg -tu ns
+done
+python $scripts/plotxvg_reps.py rmsd_tail_backbone_rep1.xvg rmsd_tail_backbone_rep2.xvg rmsd_tail_backbone_rep3.xvg
 # calculate distance between Lys167 NZ and Tyr259 OH over time, output in xvg format
-#for i in 1 2 3; do
-#    tpr="./rep${i}/md${i}.tpr"
-#    xtc="./md_fit_rep${i}.xtc"
-#    apptainer exec $GROMACS_CONTAINER gmx_mpi distance -s $tpr -f $xtc -n index.ndx -oall dist_k167_y259_rep${i}.xvg -tu ns -select 'com of group 29 plus com of group 30'
-#done
-#python $scripts/plotxvg_reps.py dist_k167_y259_rep1.xvg dist_k167_y259_rep2.xvg dist_k167_y259_rep3.xvg
+for i in 1 2 3; do
+    tpr="./rep${i}/md${i}.tpr"
+    xtc="./md_fit_rep${i}.xtc"
+    apptainer exec $GROMACS_CONTAINER gmx_mpi distance -s $tpr -f $xtc -n index.ndx -oall dist_k167_y259_rep${i}.xvg -tu ns -select 'com of group 29 plus com of group 30'
+done
+python $scripts/plotxvg_reps.py dist_k167_y259_rep1.xvg dist_k167_y259_rep2.xvg dist_k167_y259_rep3.xvg
 # histogram of the distance between Lys167 NZ and Tyr259 OH with bin width of 0.2 nm, output in xvg format
-#for i in 1 2 3; do
-#    apptainer exec $GROMACS_CONTAINER gmx_mpi analyze -f dist_k167_y259_rep${i}.xvg -dist dist_k167_y259_hist_rep${i}.xvg -bw 0.2
-#done
-#python $scripts/plotxvg_hist_reps.py dist_k167_y259_hist_rep1.xvg dist_k167_y259_hist_rep2.xvg dist_k167_y259_hist_rep3.xvg
+for i in 1 2 3; do
+    apptainer exec $GROMACS_CONTAINER gmx_mpi analyze -f dist_k167_y259_rep${i}.xvg -dist dist_k167_y259_hist_rep${i}.xvg -bw 0.2
+done
+python $scripts/plotxvg_hist_reps.py dist_k167_y259_hist_rep1.xvg dist_k167_y259_hist_rep2.xvg dist_k167_y259_hist_rep3.xvg
 # RSMF of CA atoms of the whole protein, output in xvg format
-#for i in 1 2 3; do
-#    tpr="./rep${i}/md${i}.tpr"
-#    xtc="./md_fit_rep${i}.xtc"
-#    echo 33 | apptainer exec $GROMACS_CONTAINER gmx_mpi rmsf -f md_fit_rep${i}.xtc -s $tpr -o rmsf_Ca_rep${i}.xvg -n index.ndx -b 20000 -res  # start at 20 ns (time in ps)
-#done
-#python $scripts/plot_RMSF_red_reps.py rmsf_Ca_rep1.xvg rmsf_Ca_rep2.xvg rmsf_Ca_rep3.xvg
+for i in 1 2 3; do
+    tpr="./rep${i}/md${i}.tpr"
+    xtc="./md_fit_rep${i}.xtc"
+    echo 33 | apptainer exec $GROMACS_CONTAINER gmx_mpi rmsf -f md_fit_rep${i}.xtc -s $tpr -o rmsf_Ca_rep${i}.xvg -n index.ndx -b 20000 -res  # start at 20 ns (time in ps)
+done
+python $scripts/plot_RMSF_red_reps.py rmsf_Ca_rep1.xvg rmsf_Ca_rep2.xvg rmsf_Ca_rep3.xvg
 ### define frames with distance between Lys167 NZ and Tyr259 OH < 0.6 nm as "closed" and >= 0.6 nm as "open", output in xvg format
 #for i in 1 2 3; do
 #    tpr="./rep${i}/md${i}.tpr"
@@ -196,15 +196,27 @@ EOF
 #done
 
 # Find proton relay systems
+echo "============= Find proton relay systems ============="
+# Find proton relay systems
 for i in 1 2 3; do
     tpr="./rep${i}/md${i}.tpr"
     xtc="./md_fit_rep${i}.xtc"
     python $scripts/scan_proton_relay_MD_speedup.py $tpr $xtc
-    cp relay_candidates.csv relay_candidates.csv_rep${i}.csv
-    rm relay_candidates.csv
-    cp direct_candidates.csv direct_candidates.csv_rep${i}.csv
-    rm direct_candidates.csv
+    mv relay_candidates.csv relay_candidates_rep${i}.csv
+    mv direct_candidates.csv direct_candidates_rep${i}.csv
 done
+
+for i in 1 2 3; do
+    echo "Analyzing rep$i..."
+    python $scripts/analyse_proton_candidates_speedup.py ./rep$i/md$i.tpr ./md_fit_rep$i.xtc direct_candidates_rep$i.csv relay_candidates_rep$i.csv
+    mv direct_geometry.csv direct_geometry_rep$i.csv
+    mv relay_geometry.csv relay_geometry_rep$i.csv
+done
+echo "Analysis complete. Now plotting results."
+
+python $scripts/plot_direct.py
+python $scripts/plot_relay.py
+
 
 # h-bonds and hydrophobic contacts analysis with MDAnalysis
 #python $scripts/contact_matrices_reps.py ./rep1/md1.tpr ./md_closed_rep1.xtc ./md_closed_rep2.xtc ./md_closed_rep3.xtc

@@ -18,8 +18,6 @@ for rep, file in enumerate(files):
 
     df = pd.read_csv(file)
 
-    os.makedirs(str(rep), exist_ok=True)
-
     df["replicate"] = rep
 
     df["pair"] = (
@@ -33,9 +31,6 @@ for rep, file in enumerate(files):
 
 print(f"Loaded {len(dfs)} replicate(s)")
 df_full = pd.concat(dfs, ignore_index=True)
-
-for pair in df_full["pair"].unique():
-    os.makedirs(pair, exist_ok=True)
 
 print(df_full["pair"].unique())
 
@@ -69,7 +64,8 @@ for rep, df in enumerate(dfs):
         plt.ylabel("H-A distance (Å)")
         plt.title(pair)
         plt.tight_layout()
-        plt.savefig(f"./{rep}/{pair}_distance.pdf")
+        os.makedirs(f"./direct/{rep}", exist_ok=True)
+        plt.savefig(f"./direct/{rep}/{pair}_distance.pdf")
         plt.close()
 
         plt.figure(figsize=(5,4))
@@ -78,7 +74,7 @@ for rep, df in enumerate(dfs):
         plt.ylabel("C2-H-A Angle (deg)")
         plt.title(pair)
         plt.tight_layout()
-        plt.savefig(f"./{rep}/{pair}_angle.pdf")
+        plt.savefig(f"./direct/{rep}/{pair}_angle.pdf")
         plt.close()
 
         lifetimes = get_lifetimes(g["within_geometry"])
@@ -97,7 +93,7 @@ for rep, df in enumerate(dfs):
         plt.ylabel("Count")
         plt.title(pair)
         plt.tight_layout()
-        plt.savefig(f"./{rep}/{pair}_lifetimes.pdf")
+        plt.savefig(f"./direct/{rep}/{pair}_lifetimes.pdf")
         plt.close()
 
 
@@ -124,7 +120,7 @@ for pair, g in groups:
     plt.ylabel("C2-H-A Angle (deg)")
     plt.title(pair)
     plt.tight_layout()
-    plt.savefig(f"{pair}_free_energy.pdf")
+    plt.savefig(f"./direct/{pair}_free_energy.pdf")
     plt.close()
     
 # plot occupancy bar chart
@@ -162,8 +158,22 @@ plt.ylabel("Occupancy (%)")
 plt.xlabel("A-H Pair")
 plt.xticks(rotation=45, ha="right")
 plt.tight_layout()
-plt.savefig("occupancy.pdf")
+plt.savefig("./direct/occupancy.pdf")
 plt.close()
+
+occupancy_df = pd.DataFrame({
+    "pair": occ_mean.index,
+    "occupancy_fraction": occ_mean.values,
+    "occupancy_percent": occ_mean.values * 100,
+    "occupancy_error_binom": occ_std_binom.values,
+    "occupancy_error_binom_percent": occ_std_binom.values * 100,
+    "occupancy_sd_between_replicates": occ_std_rep.values
+})
+
+occupancy_df.to_csv(
+    "./direct/occupancy_direct.csv",
+    index=False
+)
 
 # Lifetimes in stacked histograms
 groups = list(df_full.groupby("pair"))
@@ -202,5 +212,43 @@ plt.xlabel("Lifetime (ps)")
 plt.ylabel("Probability density")
 plt.legend()
 plt.tight_layout()
-plt.savefig("lifetimes_histogram_stacked.pdf")
+plt.savefig("./direct/lifetimes_histogram_stacked.pdf")
 plt.close()
+
+# Compute mean and SD
+means = [np.mean(x) for x in all_lifetimes]
+sds = [np.std(x, ddof=1) for x in all_lifetimes]  # sample SD
+
+# Bar plot
+plt.figure(figsize=(8, 5))
+
+x = np.arange(len(labels))
+
+plt.bar(
+    x,
+    means,
+    yerr=sds,
+    capsize=5,
+    color=colors,
+    edgecolor="black"
+)
+
+plt.xticks(x, labels, rotation=45, ha="right")
+plt.ylabel("Mean lifetime (ps)")
+plt.xlabel("Pair")
+
+plt.tight_layout()
+plt.savefig("./direct/direct_lifetimes_mean_sd.pdf")
+plt.close()
+
+lifetime_stats_df = pd.DataFrame({
+    "pair": labels,
+    "mean_lifetime_ps": means,
+    "sd_lifetime_ps": sds,
+    "n_events": [len(x) for x in all_lifetimes]
+})
+
+lifetime_stats_df.to_csv(
+    "./direct/direct_lifetimes_mean_sd.csv",
+    index=False
+)

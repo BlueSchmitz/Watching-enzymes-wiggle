@@ -36,7 +36,7 @@ mask = heatmap_data == 0
 
 sns.heatmap(
     heatmap_data,
-    cmap="viridis",
+    cmap="Oranges",
     vmin=0,
     vmax=1,
     mask=mask,
@@ -85,7 +85,7 @@ mask = hydrophobic_data_plot == 0
 
 sns.heatmap(
     hydrophobic_data_plot,
-    cmap="viridis",
+    cmap='Blues',
     vmin=0,
     vmax=1,
     mask=mask,
