@@ -104,10 +104,24 @@ trap copy_back_results EXIT
 ### Analysis ###
 echo "============= Analysis of trajectory ============="
 
+# no scaling
 # center the trajectory on the whole protein and remove PBC artifacts, output in compact format
-echo 1 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s $tpr -f $xtc -o md_center_mol.xtc -center -pbc mol -ur compact
+echo 1 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s topol.tpr -f traj_comp.xtc -o md_center_mol.xtc -center -pbc mol -ur compact
 # fit trajectory to reference (TIM barrel backbone) to remove overall rotation and translation, keep whole system
-echo 20 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s $tpr -f md_center_mol.xtc -o md_fit.xtc -fit rot+trans -n index.ndx
+echo 4 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s topol.tpr -f md_center_mol.xtc -o md_fit.xtc -fit rot+trans
 rm md_center_mol.xtc
 # extract movie 
-apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_fit.xtc -s $tpr -o md_fit_short.xtc -e 10000
+echo 1 1 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_fit.xtc -s topol.tpr -o md_fit_short.xtc -e 10000
+# extract pdb 
+echo 1 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_fit.xtc -s topol.tpr -o frame.pdb -dump 0
+
+# scaling 
+# center the trajectory on the whole protein and remove PBC artifacts, output in compact format
+echo 1 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s topol_scaled.tpr -f traj_comp_scaled.xtc -o md_center_mol_scaled.xtc -center -pbc mol -ur compact
+# fit trajectory to reference (TIM barrel backbone) to remove overall rotation and translation, keep whole system
+echo 4 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s topol_scaled.tpr -f md_center_mol_scaled.xtc -o md_fit_scaled.xtc -fit rot+trans
+rm md_center_mol_scaled.xtc
+# extract movie 
+echo 1 1 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_fit_scaled.xtc -s topol_scaled.tpr -o md_fit_short_scaled.xtc -e 10000
+# extract pdb 
+echo 1 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -f md_fit_scaled.xtc -s topol_scaled.tpr -o frame_scaled.pdb -dump 0
