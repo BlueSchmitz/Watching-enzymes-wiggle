@@ -6,6 +6,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 cmap = plt.get_cmap("viridis")
+plt.rcParams['font.family'] = 'Arial'
+plt.rcParams['font.size'] = 10
+plt.rcParams['pdf.fonttype'] = 42
 
 files = sys.argv[1:]
 

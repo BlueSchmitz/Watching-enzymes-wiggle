@@ -24,7 +24,7 @@ if "-h" in xvg_files or "--help" in xvg_files:
 cmap = plt.get_cmap("viridis")
 colors = [cmap(i) for i in np.linspace(0.2, 0.8, len(xvg_files))]
 
-plt.figure(figsize=(5,4))
+plt.figure(figsize=(5,3))
 
 xlabel = None
 ylabel = None
@@ -52,8 +52,8 @@ for i, xvg_filename in enumerate(xvg_files):
     rep_label = f"rep{i+1}"
     plt.scatter(x, y, s=3, alpha=0.5, linewidths=0, rasterized=True, color=colors[i], label=rep_label)
 
-# Reference line (keep your original)
-#plt.ylim(0, 1)
+plt.ylim(0, 5)
+plt.axhline(y=0.6, color='grey', linestyle='--', linewidth=2)
 
 plt.xlabel(xlabel)
 plt.ylabel(ylabel)

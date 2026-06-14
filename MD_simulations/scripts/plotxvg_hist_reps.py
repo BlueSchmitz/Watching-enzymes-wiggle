@@ -26,7 +26,7 @@ if "-h" in xvg_files or "--help" in xvg_files:
 # Color map for replicas
 colors = [cmap(i) for i in np.linspace(0.2, 0.8, len(xvg_files))]
 
-plt.figure(figsize=(5,4))
+plt.figure(figsize=(5,3))
 
 xlabel_set = False
 
@@ -75,8 +75,8 @@ ax = plt.gca()
 ax.xaxis.set_major_locator(MultipleLocator(0.4))
 ax.xaxis.set_major_formatter(FormatStrFormatter('%g'))
 
-#plt.xlim(0, 4.8)
-#plt.ylim(0, 2)
+plt.xlim(0,3.2)
+plt.ylim(0, 6)
 
 plt.legend(frameon=False)
 

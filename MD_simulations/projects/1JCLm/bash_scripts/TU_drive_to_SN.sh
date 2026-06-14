@@ -1,0 +1,52 @@
+#!/bin/bash  
+
+#SBATCH -J copy_to_TU
+#SBATCH -t 00:10:00
+#SBATCH -p rome
+#SBATCH -N 1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=16
+#SBATCH --gpus=0
+#SBATCH --mail-type=BEGIN,END,FAIL
+#SBATCH --mail-user=blueschmitz@tudelft.nl
+#SBATCH --output=copy_to_TU_%j.out
+
+SRC="tudelft_sftp:/staff-umbrella/biocat dera/MD_simulations/EcDERA/6_HREX/rep0.60/traj_comp.xtc"
+#SRC="/home/rleveson/Blue/Watching-enzymes-wiggle/MD_simulations/projects/1JCL_sub/outputs"
+#SRC="/gpfs/work1/0/prjs2080/BtDERA/outputs/6_HREX/rep1.00"
+#DEST="tudelft_sftp:/staff-umbrella/biocat dera/MD_simulations/BtDERA/outputs/6_HREX/analysis"
+#DEST="/home/rleveson/Blue/Watching-enzymes-wiggle/MD_simulations/projects/BtDERA/outputs/6_HREX/rep1.00"
+DEST="/gpfs/work1/0/prjs2080/movies"
+
+echo "HOSTNAME: $(hostname)"
+echo "PATH: $PATH"
+which rclone || echo "RCLONE NOT FOUND"
+rclone version || echo "RCLONE NOT RUNNING"
+
+rclone copy "$SRC" "$DEST" \
+    -P \
+    -vv \
+    --transfers=8 \
+    --checkers=16 \
+    --timeout=1h \
+    --retries=10 \
+    --retries-sleep=30s \
+    --log-file=rclone_${SLURM_JOB_ID}.log \
+
+SRC="tudelft_sftp:/staff-umbrella/biocat dera/MD_simulations/EcDERA/6_HREX/rep1.00/traj_comp.xtc"
+DEST="/gpfs/work1/0/prjs2080/movies"
+
+echo "HOSTNAME: $(hostname)"
+echo "PATH: $PATH"
+which rclone || echo "RCLONE NOT FOUND"
+rclone version || echo "RCLONE NOT RUNNING"
+
+rclone copy "$SRC" "$DEST" \
+    -P \
+    -vv \
+    --transfers=8 \
+    --checkers=16 \
+    --timeout=1h \
+    --retries=10 \
+    --retries-sleep=30s \
+    --log-file=rclone_${SLURM_JOB_ID}.log \
