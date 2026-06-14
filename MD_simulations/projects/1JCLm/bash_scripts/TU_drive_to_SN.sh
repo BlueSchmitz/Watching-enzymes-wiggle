@@ -11,7 +11,7 @@
 #SBATCH --mail-user=blueschmitz@tudelft.nl
 #SBATCH --output=copy_to_TU_%j.out
 
-SRC="tudelft_sftp:/staff-umbrella/biocat dera/MD_simulations/EcDERA/6_HREX/rep0.60/traj_comp.xtc"
+SRC="tudelft_sftp:/staff-umbrella/biocat dera/MD_simulations/EcDERA/6_HREX/rep1.00/traj_comp.xtc"
 #SRC="/home/rleveson/Blue/Watching-enzymes-wiggle/MD_simulations/projects/1JCL_sub/outputs"
 #SRC="/gpfs/work1/0/prjs2080/BtDERA/outputs/6_HREX/rep1.00"
 #DEST="tudelft_sftp:/staff-umbrella/biocat dera/MD_simulations/BtDERA/outputs/6_HREX/analysis"
