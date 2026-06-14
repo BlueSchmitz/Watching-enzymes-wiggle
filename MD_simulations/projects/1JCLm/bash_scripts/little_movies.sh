@@ -1,6 +1,6 @@
 #!/bin/bash  
 
-#SBATCH -J EcDERA_HREX_analysis
+#SBATCH -J movies
 #SBATCH -t 01:00:00
 #SBATCH -p rome
 #SBATCH -N 1
@@ -9,7 +9,7 @@
 #SBATCH --gpus=0
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=blueschmitz@tudelft.nl
-#SBATCH --output=hrex_analysis_%j.out
+#SBATCH --output=movies_%j.out
 
 : '
 Folder structure:
@@ -56,8 +56,7 @@ set -euo pipefail
 set -o errtrace
 
 ### Project-specific settings ###
-project_dir=1JCLm
-output_dir=6_HREX/analysis
+project_dir=movies
 pH=7
 
 export GMXLIB=$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/force_fields
@@ -89,10 +88,10 @@ cd $tmpdir/MD_simulations/projects/$project_dir
 function copy_back_results {
     set +e +u # Disable exit on error for this function
     echo "=== Copying results back to home at $(date). ==="
-    if [[ -d "$tmpdir/MD_simulations/projects/$project_dir/outputs/$output_dir" ]]; then
+    if [[ -d "$tmpdir/MD_simulations/projects/$project_dir" ]]; then
         rsync -av --partial --inplace \
-          "$tmpdir/MD_simulations/projects/$project_dir/outputs/$output_dir/" \
-          "$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/$project_dir/outputs/$output_dir/"
+          "$tmpdir/MD_simulations/projects/$project_dir/" \
+          "$HOME/Blue/Watching-enzymes-wiggle/MD_simulations/projects/$project_dir/"
         echo "=== Copy complete at $(date) ==="
     else
         echo "Nothing to copy back (outputs directory not found)"
@@ -102,33 +101,8 @@ function copy_back_results {
 }
 trap copy_back_results EXIT
 
-mkdir -p ./outputs/$output_dir
-cd ./outputs/$output_dir/
-
 ### Analysis ###
 echo "============= Analysis of trajectory ============="
-
-# make index file with default + custom groups
-apptainer exec $GROMACS_CONTAINER gmx_mpi make_ndx -f $tpr -o index.ndx << EOF
-r 1-248
-name 18 TIM_barrel
-r 1-248 & a CA
-name 19 CA_TIM
-4 & 18 
-name 20 TIM_barrel_backbone
-r 249-259
-name 21 tail
-r 249-259 & a CA
-name 22 CA_tail
-4 & 21 
-name 23 tail_backbone
-r 167 & a NZ
-name 24 Lys167_NZ
-r 259 & a OH
-name 25 Tyr259_OH
-
-q
-EOF
 
 # center the trajectory on the whole protein and remove PBC artifacts, output in compact format
 echo 1 0 | apptainer exec $GROMACS_CONTAINER gmx_mpi trjconv -s $tpr -f $xtc -o md_center_mol.xtc -center -pbc mol -ur compact
