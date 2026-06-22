@@ -11,3 +11,4 @@ MD_simulations/projects/*/outputs/*.out
 #ignore wet lab analysis data and output
 wet_lab_analysis/Tm_assay
 wet_lab_analysis/activity_assay
+wet_lab_analysis/NMR
